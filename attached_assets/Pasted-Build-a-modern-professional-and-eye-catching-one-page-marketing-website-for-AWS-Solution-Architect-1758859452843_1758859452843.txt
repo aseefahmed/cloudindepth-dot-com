@@ -1,0 +1,52 @@
+Build a modern, professional, and eye-catching one-page marketing website for AWS Solution Architect training.  
+The site should include:  
+
+1. **Hero Section**  
+   - Bold headline: "Master AWS Solution Architect with an Industry Expert"  
+   - Subtext: "Learn from Aseef Ahmed, a Senior DevOps Engineer with 12 AWS & 5 Azure certifications and experience at Amazon, Deloitte, and MSD NZ."  
+   - Call-to-Action button: "Enroll Now" (highlighted and sticky when scrolling).  
+   - Background: sleek cloud / tech-themed imagery.  
+
+2. **About Section**  
+   - Short bio about the trainer’s expertise in AWS, Azure, DevOps, and cloud architecture.  
+   - Mention certifications (12x AWS, 5x Azure) and global industry experience.  
+
+3. **What You’ll Learn Section**  
+   - Bullet points for key topics:  
+     - AWS Core Services (EC2, S3, VPC, RDS)  
+     - Designing High Availability & Scalable Architectures  
+     - Security & IAM Best Practices  
+     - Cost Optimization & Well-Architected Framework  
+     - Exam Prep & Real-World Scenarios  
+
+4. **Why Choose This Training**  
+   - Benefits such as:  
+     - Learn from a seasoned industry expert  
+     - Hands-on labs & practical scenarios  
+     - AWS certification exam preparation  
+     - Guidance on real-world projects & job interviews  
+
+
+5. **Testimonials / Social Proof** (placeholder quotes & student names).  
+
+6. **Call-to-Action Section**  
+   - Another bold CTA: "Start Your Cloud Career Today"  
+   - Button: "Book Your Spot"(uesr should have option to choose from one of the following options):
+      a. 1-to-1 training (300 USD)
+      a. Group Training (2 Person %15) (255 USD each)
+      a. Group Training (3 Person %30) (210 USD each)
+      a. Group Training (4+ Person %40) (180 USD Each)
+
+7. **Footer**  
+   - Contact info (email & LinkedIn)  
+   - Social icons (LinkedIn, YouTube, GitHub)  
+   - Copyright line.  
+
+Design Requirements:  
+- Use modern fonts (e.g., Inter, Poppins).  
+- Professional color scheme (blue, white, dark gray, with accent orange for CTAs).  
+- Responsive and mobile-friendly.  
+- Smooth scroll navigation.  
+- Add subtle animations (fade-in, hover effects, button transitions).  
+
+Generate the full HTML, CSS (with Tailwind CSS if available), and minimal JavaScript if needed.
