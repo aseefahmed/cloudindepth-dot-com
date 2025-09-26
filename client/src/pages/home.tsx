@@ -759,13 +759,13 @@ export default function Home() {
                 Master AWS Solution Architecture with industry expert Aseef Ahmed. Transform your career with comprehensive, hands-on training.
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="text-background/80 hover:text-background transition-colors" data-testid="link-linkedin">
+                <a href="https://linkedin.com/in/aseef-ahmed" target="_blank" rel="noopener noreferrer" className="text-background/80 hover:text-background transition-colors" data-testid="link-linkedin">
                   <i className="fab fa-linkedin text-xl"></i>
                 </a>
-                <a href="#" className="text-background/80 hover:text-background transition-colors" data-testid="link-youtube">
+                <a href="https://youtube.com/@aseef-ahmed" target="_blank" rel="noopener noreferrer" className="text-background/80 hover:text-background transition-colors" data-testid="link-youtube">
                   <i className="fab fa-youtube text-xl"></i>
                 </a>
-                <a href="#" className="text-background/80 hover:text-background transition-colors" data-testid="link-github">
+                <a href="https://github.com/aseef-ahmed" target="_blank" rel="noopener noreferrer" className="text-background/80 hover:text-background transition-colors" data-testid="link-github">
                   <i className="fab fa-github text-xl"></i>
                 </a>
               </div>
