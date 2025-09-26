@@ -57,7 +57,7 @@ export default function Home() {
   return (
     <div className="bg-background text-foreground font-sans">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-40">
+      <nav className="fixed top-0 w-full bg-card/95 backdrop-blur-md border-b border-border shadow-lg z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
