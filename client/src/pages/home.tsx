@@ -64,7 +64,7 @@ export default function Home() {
               <h1 className="text-xl font-heading font-bold text-primary">AWS Expert Training</h1>
             </div>
             <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
+              <div className="ml-10 flex items-center space-x-8">
                 <button 
                   onClick={() => scrollToSection('about')} 
                   className="text-muted-foreground hover:text-primary transition-colors"
@@ -100,6 +100,14 @@ export default function Home() {
                 >
                   Pricing
                 </button>
+                <Button
+                  onClick={() => scrollToSection('pricing')}
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg animate-pulse-scale"
+                  data-testid="nav-enroll-now"
+                >
+                  <Rocket className="mr-2 h-4 w-4" />
+                  Enroll Now
+                </Button>
               </div>
             </div>
             <div className="md:hidden">
