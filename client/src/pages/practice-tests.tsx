@@ -352,17 +352,29 @@ export default function PracticeTests() {
                     ))}
                   </ul>
 
-                  <Button 
-                    className={`w-full ${
-                      test.popular 
-                        ? 'bg-accent hover:bg-accent/90 text-accent-foreground' 
-                        : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                    } transition-all duration-300 transform hover:scale-105`}
-                    data-testid={`button-purchase-${test.id}`}
-                  >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Purchase Now
-                  </Button>
+                  <div className="space-y-2">
+                    <Link href={`/practice-tests/${test.id}`}>
+                      <Button 
+                        variant="outline"
+                        className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                        data-testid={`button-details-${test.id}`}
+                      >
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        View Details
+                      </Button>
+                    </Link>
+                    <Button 
+                      className={`w-full ${
+                        test.popular 
+                          ? 'bg-accent hover:bg-accent/90 text-accent-foreground' 
+                          : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                      } transition-all duration-300 transform hover:scale-105`}
+                      data-testid={`button-purchase-${test.id}`}
+                    >
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Purchase Now
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
