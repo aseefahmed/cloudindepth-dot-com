@@ -1,0 +1,427 @@
+import { useState, useEffect } from "react";
+import { useRoute, useLocation } from "wouter";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Flag,
+  Award,
+  TrendingUp,
+  BookOpen,
+  Home
+} from "lucide-react";
+import { quizQuestions } from "@shared/quiz-data";
+import { Link } from "wouter";
+
+export default function Quiz() {
+  const [, params] = useRoute("/student-portal/quiz/:testId");
+  const [, setLocation] = useLocation();
+  const testId = params?.testId || "";
+  
+  const quizData = quizQuestions.find(q => q.certificationId === testId);
+  
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
+  const [showResults, setShowResults] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [showExitDialog, setShowExitDialog] = useState(false);
+
+  useEffect(() => {
+    if (showResults) return;
+    
+    const timer = setInterval(() => {
+      setTimeElapsed(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [showResults]);
+
+  if (!quizData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-12 text-center">
+            <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Quiz Not Found</h2>
+            <p className="text-muted-foreground mb-6">
+              The practice test you're looking for doesn't exist.
+            </p>
+            <Link href="/student-portal/tests">
+              <Button data-testid="button-back-to-tests">
+                <Home className="h-4 w-4 mr-2" />
+                Back to My Tests
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const currentQuestion = quizData.questions[currentQuestionIndex];
+  const totalQuestions = quizData.questions.length;
+  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+  const answeredCount = Object.keys(selectedAnswers).length;
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleAnswerSelect = (optionIndex: number) => {
+    setSelectedAnswers(prev => ({
+      ...prev,
+      [currentQuestionIndex]: optionIndex
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  };
+
+  const handleQuestionJump = (index: number) => {
+    setCurrentQuestionIndex(index);
+  };
+
+  const toggleFlag = () => {
+    setFlaggedQuestions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(currentQuestionIndex)) {
+        newSet.delete(currentQuestionIndex);
+      } else {
+        newSet.add(currentQuestionIndex);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSubmit = () => {
+    setShowResults(true);
+  };
+
+  const calculateScore = () => {
+    let correct = 0;
+    quizData.questions.forEach((question, index) => {
+      if (selectedAnswers[index] === question.correctAnswer) {
+        correct++;
+      }
+    });
+    return Math.round((correct / totalQuestions) * 100);
+  };
+
+  if (showResults) {
+    const score = calculateScore();
+    const correct = quizData.questions.filter((q, i) => selectedAnswers[i] === q.correctAnswer).length;
+    const incorrect = answeredCount - correct;
+    const unanswered = totalQuestions - answeredCount;
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Results Header */}
+          <Card className="bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 border-2">
+            <CardContent className="p-8 text-center">
+              <Award className="h-20 w-20 text-primary mx-auto mb-4" />
+              <h1 className="text-4xl font-heading font-bold mb-2">Quiz Complete!</h1>
+              <p className="text-xl text-muted-foreground">{quizData.certificationName}</p>
+            </CardContent>
+          </Card>
+
+          {/* Score Card */}
+          <Card className="border-2">
+            <CardContent className="p-8">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent mb-4">
+                  <span className="text-5xl font-bold text-white">{score}%</span>
+                </div>
+                <p className="text-lg text-muted-foreground">Your Score</p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-600">{correct}</p>
+                  <p className="text-sm text-muted-foreground">Correct</p>
+                </div>
+                <div className="text-center p-4 bg-red-50 dark:bg-red-950 rounded-lg">
+                  <XCircle className="h-6 w-6 text-red-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-red-600">{incorrect}</p>
+                  <p className="text-sm text-muted-foreground">Incorrect</p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 dark:bg-gray-950 rounded-lg">
+                  <BookOpen className="h-6 w-6 text-gray-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-gray-600">{unanswered}</p>
+                  <p className="text-sm text-muted-foreground">Unanswered</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Time: {formatTime(timeElapsed)}
+                </div>
+                <div>•</div>
+                <div className="flex items-center gap-2">
+                  <Flag className="h-4 w-4" />
+                  Flagged: {flaggedQuestions.size}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 justify-center">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowResults(false);
+                setCurrentQuestionIndex(0);
+              }}
+              data-testid="button-review-answers"
+            >
+              <BookOpen className="h-4 w-4 mr-2" />
+              Review Answers
+            </Button>
+            <Link href="/student-portal/tests">
+              <Button data-testid="button-back-to-tests-results">
+                <Home className="h-4 w-4 mr-2" />
+                Back to My Tests
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      {/* Top Bar */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h2 className="font-heading font-bold text-lg">{quizData.certificationName}</h2>
+              <p className="text-sm text-muted-foreground">
+                Question {currentQuestionIndex + 1} of {totalQuestions}
+              </p>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 text-sm">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span className="font-mono font-semibold" data-testid="text-timer">
+                  {formatTime(timeElapsed)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span className="font-semibold" data-testid="text-answered-count">
+                  {answeredCount}/{totalQuestions}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowExitDialog(true)}
+                data-testid="button-exit-quiz"
+              >
+                Exit Quiz
+              </Button>
+            </div>
+          </div>
+          <Progress value={progress} className="mt-3 h-2" />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Question Navigator */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-24">
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Question Navigator
+                </h3>
+                <div className="grid grid-cols-5 gap-2">
+                  {quizData.questions.map((_, index) => {
+                    const isAnswered = selectedAnswers.hasOwnProperty(index);
+                    const isFlagged = flaggedQuestions.has(index);
+                    const isCurrent = index === currentQuestionIndex;
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleQuestionJump(index)}
+                        className={`
+                          relative h-10 rounded-md font-semibold text-sm transition-all
+                          ${isCurrent ? 'ring-2 ring-primary ring-offset-2' : ''}
+                          ${isAnswered && !isCurrent ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300' : ''}
+                          ${!isAnswered && !isCurrent ? 'bg-muted hover:bg-muted/80' : ''}
+                        `}
+                        data-testid={`nav-question-${index + 1}`}
+                      >
+                        {index + 1}
+                        {isFlagged && (
+                          <Flag className="h-3 w-3 text-accent absolute -top-1 -right-1 fill-current" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Question Card */}
+          <div className="lg:col-span-3">
+            <Card className="border-2">
+              <CardContent className="p-8">
+                {/* Question Header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Badge className="text-base px-3 py-1">
+                        Question {currentQuestionIndex + 1}
+                      </Badge>
+                      <Badge variant="outline" className="text-sm">
+                        {currentQuestion.domain}
+                      </Badge>
+                    </div>
+                    <h3 className="text-xl font-medium leading-relaxed">
+                      {currentQuestion.question}
+                    </h3>
+                  </div>
+                  <Button
+                    variant={flaggedQuestions.has(currentQuestionIndex) ? "default" : "outline"}
+                    size="sm"
+                    onClick={toggleFlag}
+                    className="ml-4"
+                    data-testid="button-flag-question"
+                  >
+                    <Flag className={`h-4 w-4 ${flaggedQuestions.has(currentQuestionIndex) ? 'fill-current' : ''}`} />
+                  </Button>
+                </div>
+
+                {/* Answer Options */}
+                <div className="space-y-3 mb-8">
+                  {currentQuestion.options.map((option, index) => {
+                    const isSelected = selectedAnswers[currentQuestionIndex] === index;
+                    const optionLetter = String.fromCharCode(65 + index);
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleAnswerSelect(index)}
+                        className={`
+                          w-full text-left p-4 rounded-lg border-2 transition-all
+                          ${isSelected 
+                            ? 'border-primary bg-primary/10 shadow-md' 
+                            : 'border-muted hover:border-primary/50 hover:bg-muted/50'
+                          }
+                        `}
+                        data-testid={`option-${index}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`
+                            flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm
+                            ${isSelected 
+                              ? 'bg-primary text-primary-foreground' 
+                              : 'bg-muted text-muted-foreground'
+                            }
+                          `}>
+                            {optionLetter}
+                          </div>
+                          <span className="flex-1 pt-1">{option}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex items-center justify-between pt-6 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={handlePrevious}
+                    disabled={currentQuestionIndex === 0}
+                    data-testid="button-previous"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    Previous
+                  </Button>
+
+                  {currentQuestionIndex === totalQuestions - 1 ? (
+                    <Button
+                      onClick={handleSubmit}
+                      className="gap-2 bg-gradient-to-r from-primary to-accent"
+                      data-testid="button-submit"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      Submit Quiz
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleNext}
+                      data-testid="button-next"
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Exit Confirmation Dialog */}
+      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Exit Quiz?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your progress will be lost if you exit now. Are you sure you want to leave?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-exit">Continue Quiz</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => setLocation("/student-portal/tests")}
+              data-testid="button-confirm-exit"
+            >
+              Exit Quiz
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
