@@ -31,9 +31,12 @@ Preferred communication style: Simple, everyday language.
 - **Session Storage**: PostgreSQL-backed sessions using connect-pg-simple
 
 ## Authentication and Authorization
-- **Session Management**: Express sessions with PostgreSQL storage
-- **Schema**: Basic user table with username/password fields
-- **Storage Interface**: Abstracted storage layer with in-memory fallback for development
+- **Auth Provider**: Auth0 for secure user authentication and authorization
+- **Auth0 React SDK**: @auth0/auth0-react for seamless React integration
+- **Configuration**: Environment variables (VITE_AUTH0_DOMAIN, VITE_AUTH0_CLIENT_ID) for Auth0 setup
+- **Graceful Degradation**: App continues to function without Auth0 credentials, displaying login UI that warns when clicked
+- **User Profile**: Dropdown menu with user avatar, name, email, and logout functionality
+- **Integration Points**: Authentication UI integrated in all navigation bars (home, practice tests, practice test details)
 
 ## Project Structure
 - **Monorepo**: Single repository with client, server, and shared code
@@ -72,6 +75,7 @@ Preferred communication style: Simple, everyday language.
 - **Date-fns**: Date manipulation and formatting utilities
 - **Class Variance Authority**: Type-safe CSS class composition
 - **Zod**: Runtime type validation for forms and API data
+- **Auth0 React SDK**: Authentication and user management integration
 
 ## Build and Deployment
 - **Vite**: Frontend build tool and development server
