@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { UserProfile } from "@/components/auth-components";
 import { 
   CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, 
   ArrowLeft, Shield, TrendingUp, Target, Zap, PlayCircle, 
@@ -245,6 +246,7 @@ export default function PracticeTestDetails() {
                   Home
                 </Button>
               </Link>
+              <UserProfile />
             </div>
           </div>
         </div>
