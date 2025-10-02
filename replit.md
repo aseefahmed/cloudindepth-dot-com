@@ -1,6 +1,11 @@
 # Overview
 
-This is a modern one-page marketing website for AWS Solution Architect training services. The site promotes Aseef Ahmed's AWS training course, highlighting his expertise as a Senior DevOps Engineer with 12 AWS and 5 Azure certifications. The website features a professional design with multiple sections including hero, about, curriculum, testimonials, and pricing tiers for different training formats (1-to-1, group training with various discount levels).
+This is a comprehensive AWS certification training platform featuring a public marketing website and an authenticated student portal. The site promotes Aseef Ahmed's AWS training course, highlighting his expertise as a Senior DevOps Engineer with 12 AWS and 5 Azure certifications. The platform includes:
+
+- **Marketing Website**: Professional landing page with hero, about, curriculum, testimonials, and pricing sections
+- **Practice Tests Marketplace**: Browse and purchase AWS certification practice tests (12+ certifications covered)
+- **Student Portal**: Authenticated dashboard with personalized learning experience, progress tracking, and practice test access
+- **Auth0 Integration**: Secure authentication with automatic redirect to student portal after login
 
 # User Preferences
 
@@ -36,7 +41,20 @@ Preferred communication style: Simple, everyday language.
 - **Configuration**: Environment variables (VITE_AUTH0_DOMAIN, VITE_AUTH0_CLIENT_ID) for Auth0 setup
 - **Graceful Degradation**: App continues to function without Auth0 credentials, displaying login UI that warns when clicked
 - **User Profile**: Dropdown menu with user avatar, name, email, and logout functionality
-- **Integration Points**: Authentication UI integrated in all navigation bars (home, practice tests, practice test details)
+- **Integration Points**: Authentication UI integrated in all navigation bars (home, practice tests, practice test details, student portal)
+- **Post-Login Flow**: Users automatically redirected to student portal (/student-portal) after successful authentication
+- **Protected Routes**: Student portal routes protected by AuthenticatedRoute wrapper that redirects to login when unauthenticated
+- **Development Mode**: When Auth0 not configured, student portal accessible with mock user data for development/testing
+
+## Student Portal Features
+- **Dashboard Layout**: Professional left sidebar navigation with gradient design and mobile-responsive drawer
+- **Welcome Section**: Eye-catching hero banner with personalized greeting and gradient background
+- **Progress Tracking**: Visual stats cards showing total tests, average score, study time, and learning streak
+- **Practice Tests Overview**: Cards displaying enrolled tests with progress bars, completion status, and quick access buttons
+- **Upcoming Sessions**: Sidebar widget showing scheduled review sessions, practice tests, and coaching calls
+- **Quick Actions**: Fast access to common tasks (take test, review bookmarks, view progress)
+- **Navigation Menu**: Dashboard, My Practice Tests, Progress, Bookmarks, Settings, Support
+- **Responsive Design**: Fixed sidebar on desktop, slide-out drawer on mobile with backdrop overlay
 
 ## Project Structure
 - **Monorepo**: Single repository with client, server, and shared code
