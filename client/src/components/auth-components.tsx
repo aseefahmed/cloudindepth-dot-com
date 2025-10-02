@@ -21,15 +21,21 @@ function useAuth0Safe() {
   const configured = isAuth0Configured();
   
   if (!configured) {
+    // In dev mode without Auth0, show logged-in state with mock user
     return {
-      isAuthenticated: false,
+      isAuthenticated: true,
       isLoading: false,
-      user: null,
+      user: {
+        name: "Aseef Ahmed",
+        email: "student@example.com",
+        picture: undefined,
+      },
       loginWithRedirect: () => {
         alert("Auth0 login is not configured yet. Please add VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID to enable authentication.");
       },
       logout: () => {
-        console.warn("Auth0 not configured");
+        console.log("Logging out (dev mode)");
+        window.location.href = "/";
       },
     };
   }
