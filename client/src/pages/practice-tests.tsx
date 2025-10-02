@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { UserProfile } from "@/components/auth-components";
 import { CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, ArrowLeft } from "lucide-react";
 
 interface PracticeTest {
@@ -252,12 +253,15 @@ export default function PracticeTests() {
             <div className="flex items-center">
               <h1 className="text-xl font-heading font-bold text-primary">AWS Expert Training</h1>
             </div>
-            <Link href="/">
-              <Button variant="ghost" className="flex items-center gap-2" data-testid="button-back-home">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Home
-              </Button>
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <Button variant="ghost" className="flex items-center gap-2" data-testid="button-back-home">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Home
+                </Button>
+              </Link>
+              <UserProfile />
+            </div>
           </div>
         </div>
       </nav>

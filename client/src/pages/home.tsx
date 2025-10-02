@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
+import { UserProfile } from "@/components/auth-components";
 import {
   Star,
   Award,
@@ -124,6 +125,7 @@ export default function Home() {
                   <Rocket className="mr-2 h-4 w-4" />
                   Enroll Now
                 </Button>
+                <UserProfile />
               </div>
             </div>
             <div className="md:hidden">
