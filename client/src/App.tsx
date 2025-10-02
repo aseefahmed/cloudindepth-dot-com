@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 import PracticeTests from "@/pages/practice-tests";
 import PracticeTestDetails from "@/pages/practice-test-details";
 import StudentPortal from "@/pages/student-portal";
+import MyPracticeTests from "@/pages/my-practice-tests";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +23,15 @@ function Router() {
           <AuthenticatedRoute>
             <StudentPortalLayout>
               <StudentPortal />
+            </StudentPortalLayout>
+          </AuthenticatedRoute>
+        )}
+      </Route>
+      <Route path="/student-portal/tests">
+        {() => (
+          <AuthenticatedRoute>
+            <StudentPortalLayout>
+              <MyPracticeTests />
             </StudentPortalLayout>
           </AuthenticatedRoute>
         )}
