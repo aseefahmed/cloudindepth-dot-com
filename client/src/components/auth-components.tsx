@@ -9,20 +9,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogIn, LogOut, User } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LogIn, LogOut, User, AlertCircle } from "lucide-react";
+
+const isAuth0Configured = () => {
+  return !!(import.meta.env.VITE_AUTH0_DOMAIN && import.meta.env.VITE_AUTH0_CLIENT_ID);
+};
 
 function useAuth0Safe() {
-  try {
-    return useAuth0();
-  } catch (error) {
+  const configured = isAuth0Configured();
+  
+  if (!configured) {
     return {
       isAuthenticated: false,
       isLoading: false,
       user: null,
-      loginWithRedirect: () => console.warn("Auth0 not configured"),
-      logout: () => console.warn("Auth0 not configured"),
+      loginWithRedirect: () => {
+        alert("Auth0 login is not configured yet. Please add VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID to enable authentication.");
+      },
+      logout: () => {
+        console.warn("Auth0 not configured");
+      },
     };
   }
+  
+  return useAuth0();
 }
 
 export function LoginButton() {

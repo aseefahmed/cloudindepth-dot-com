@@ -128,7 +128,8 @@ export default function Home() {
                 <UserProfile />
               </div>
             </div>
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center gap-2">
+              <UserProfile />
               <Button
                 variant="ghost"
                 size="icon"
