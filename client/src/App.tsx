@@ -11,6 +11,7 @@ import PracticeTestDetails from "@/pages/practice-test-details";
 import StudentPortal from "@/pages/student-portal";
 import MyPracticeTests from "@/pages/my-practice-tests";
 import Quiz from "@/pages/quiz";
+import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/practice-tests" component={PracticeTests} />
       <Route path="/practice-tests/:id" component={PracticeTestDetails} />
+      <Route path="/checkout/:testId" component={Checkout} />
       <Route path="/student-portal">
         {() => (
           <AuthenticatedRoute>

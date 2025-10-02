@@ -154,18 +154,21 @@ export function PurchaseButton({
   popular = false 
 }: PurchaseButtonProps) {
   const { isAuthenticated, loginWithRedirect } = useAuth0Safe();
-  const [location, setLocation] = useLocation();
-  const detailsUrl = `/practice-tests/${testId}`;
+  const [, setLocation] = useLocation();
 
   const handlePurchaseClick = () => {
     if (!isAuthenticated) {
       if (isAuth0Configured()) {
+        // Redirect to login, then to checkout after authentication
         loginWithRedirect({
-          appState: { returnTo: '/student-portal' }
+          appState: { 
+            returnTo: `/checkout/${testId}`
+          }
         });
       }
     } else {
-      setLocation('/student-portal');
+      // Authenticated - go directly to checkout (test details fetched securely from backend)
+      setLocation(`/checkout/${testId}`);
     }
   };
 
