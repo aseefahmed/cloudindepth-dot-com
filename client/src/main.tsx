@@ -12,7 +12,7 @@ const onRedirectCallback = (appState?: any) => {
   window.history.replaceState(
     {},
     document.title,
-    appState?.returnTo || window.location.pathname
+    appState?.returnTo || '/student-portal'
   );
 };
 

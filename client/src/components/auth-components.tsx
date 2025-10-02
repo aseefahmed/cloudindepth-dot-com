@@ -161,13 +161,11 @@ export function PurchaseButton({
     if (!isAuthenticated) {
       if (isAuth0Configured()) {
         loginWithRedirect({
-          appState: { returnTo: detailsUrl }
+          appState: { returnTo: '/student-portal' }
         });
       }
     } else {
-      if (location !== detailsUrl) {
-        setLocation(detailsUrl);
-      }
+      setLocation('/student-portal');
     }
   };
 
