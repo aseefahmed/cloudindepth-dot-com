@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { UserProfile } from "@/components/auth-components";
+import { UserProfile, PurchaseButton } from "@/components/auth-components";
 import { CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, ArrowLeft } from "lucide-react";
 
 interface PracticeTest {
@@ -367,17 +367,19 @@ export default function PracticeTests() {
                         View Details
                       </Button>
                     </Link>
-                    <Button 
+                    <PurchaseButton
+                      testId={test.id}
+                      popular={test.popular}
                       className={`w-full ${
                         test.popular 
                           ? 'bg-accent hover:bg-accent/90 text-accent-foreground' 
                           : 'bg-primary hover:bg-primary/90 text-primary-foreground'
                       } transition-all duration-300 transform hover:scale-105`}
-                      data-testid={`button-purchase-${test.id}`}
+                      testIdAttr={`button-purchase-${test.id}`}
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />
                       Purchase Now
-                    </Button>
+                    </PurchaseButton>
                   </div>
                 </CardContent>
               </Card>

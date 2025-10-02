@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { UserProfile } from "@/components/auth-components";
+import { UserProfile, PurchaseButton } from "@/components/auth-components";
 import { 
   CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, 
   ArrowLeft, Shield, TrendingUp, Target, Zap, PlayCircle, 
@@ -305,13 +305,14 @@ export default function PracticeTestDetails() {
                     Save ${test.originalPrice - test.price}
                   </Badge>
                 </div>
-                <Button 
+                <PurchaseButton
+                  testId={test.id}
                   className="w-full bg-accent hover:bg-accent/90 text-accent-foreground mb-4 py-6 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
-                  data-testid="button-purchase-main"
+                  testIdAttr="button-purchase-main"
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   Purchase Now
-                </Button>
+                </PurchaseButton>
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center text-sm text-muted-foreground">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />

@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { LogIn, LogOut, User, AlertCircle } from "lucide-react";
+import { LogIn, LogOut, User, AlertCircle, ShoppingCart } from "lucide-react";
 
 const isAuth0Configured = () => {
   return !!(import.meta.env.VITE_AUTH0_DOMAIN && import.meta.env.VITE_AUTH0_CLIENT_ID);
@@ -132,5 +133,57 @@ export function UserProfile() {
         <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+interface PurchaseButtonProps {
+  testId: string;
+  className?: string;
+  children?: React.ReactNode;
+  variant?: "default" | "outline" | "ghost" | "link" | "destructive" | "secondary";
+  testIdAttr?: string;
+  popular?: boolean;
+}
+
+export function PurchaseButton({ 
+  testId, 
+  className = "", 
+  children, 
+  variant = "default",
+  testIdAttr,
+  popular = false 
+}: PurchaseButtonProps) {
+  const { isAuthenticated, loginWithRedirect } = useAuth0Safe();
+  const [location, setLocation] = useLocation();
+  const detailsUrl = `/practice-tests/${testId}`;
+
+  const handlePurchaseClick = () => {
+    if (!isAuthenticated) {
+      if (isAuth0Configured()) {
+        loginWithRedirect({
+          appState: { returnTo: detailsUrl }
+        });
+      }
+    } else {
+      if (location !== detailsUrl) {
+        setLocation(detailsUrl);
+      }
+    }
+  };
+
+  return (
+    <Button 
+      onClick={handlePurchaseClick}
+      variant={variant}
+      className={className}
+      data-testid={testIdAttr}
+    >
+      {children || (
+        <>
+          <ShoppingCart className="mr-2 h-4 w-4" />
+          Purchase Now
+        </>
+      )}
+    </Button>
   );
 }

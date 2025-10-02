@@ -8,6 +8,14 @@ const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
 
 const rootElement = document.getElementById("root")!;
 
+const onRedirectCallback = (appState?: any) => {
+  window.history.replaceState(
+    {},
+    document.title,
+    appState?.returnTo || window.location.pathname
+  );
+};
+
 if (!domain || !clientId) {
   console.warn(
     "Auth0 credentials not configured. Login functionality will be disabled. " +
@@ -22,6 +30,7 @@ if (!domain || !clientId) {
       authorizationParams={{
         redirect_uri: window.location.origin,
       }}
+      onRedirectCallback={onRedirectCallback}
     >
       <App />
     </Auth0Provider>
