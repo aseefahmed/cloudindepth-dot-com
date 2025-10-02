@@ -34,8 +34,15 @@ function useAuth0Safe() {
   
   if (!configured) {
     return {
-      user: null,
-      logout: () => console.warn("Auth0 not configured"),
+      user: { 
+        name: "Aseef Ahmed", 
+        email: "student@example.com",
+        picture: undefined 
+      },
+      logout: () => {
+        console.log("Logging out (dev mode)");
+        window.location.href = "/";
+      },
     };
   }
   
