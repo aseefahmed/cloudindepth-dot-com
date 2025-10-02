@@ -49,27 +49,26 @@ const CheckoutForm = ({ testTitle, price }: CheckoutFormProps) => {
 
     setIsProcessing(true);
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/student-portal`,
-      },
+      redirect: 'if_required',
     });
 
-    setIsProcessing(false);
-
     if (error) {
+      setIsProcessing(false);
       toast({
         title: "Payment Failed",
         description: error.message,
         variant: "destructive",
       });
-    } else {
+    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       toast({
         title: "Payment Successful",
         description: "Thank you for your purchase! Redirecting to student portal...",
       });
-      setTimeout(() => setLocation("/student-portal"), 1500);
+      setTimeout(() => {
+        setLocation("/student-portal");
+      }, 1500);
     }
   };
 
