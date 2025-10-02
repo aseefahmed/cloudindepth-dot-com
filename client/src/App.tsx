@@ -10,6 +10,7 @@ import PracticeTests from "@/pages/practice-tests";
 import PracticeTestDetails from "@/pages/practice-test-details";
 import StudentPortal from "@/pages/student-portal";
 import MyPracticeTests from "@/pages/my-practice-tests";
+import Quiz from "@/pages/quiz";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -33,6 +34,13 @@ function Router() {
             <StudentPortalLayout>
               <MyPracticeTests />
             </StudentPortalLayout>
+          </AuthenticatedRoute>
+        )}
+      </Route>
+      <Route path="/student-portal/quiz/:testId">
+        {() => (
+          <AuthenticatedRoute>
+            <Quiz />
           </AuthenticatedRoute>
         )}
       </Route>

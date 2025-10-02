@@ -1,10 +1,18 @@
 import { useState, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +31,7 @@ import {
   Filter,
   BarChart3,
   Target,
-  Zap,
-  Calendar,
-  Download
+  Calendar
 } from "lucide-react";
 
 const isAuth0Configured = () => {
@@ -80,37 +86,20 @@ const purchasedTests = [
     expiryDate: "Lifetime Access"
   },
   {
-    id: "sap-c02",
-    title: "AWS Certified Solutions Architect",
-    subtitle: "Professional (SAP-C02)",
-    difficulty: "Professional",
+    id: "soa-c02",
+    title: "AWS Certified SysOps Administrator",
+    subtitle: "Associate (SOA-C02)",
+    difficulty: "Associate",
     progress: 0,
     questionsCompleted: 0,
-    totalQuestions: 450,
-    practiceTests: 6,
+    totalQuestions: 280,
+    practiceTests: 5,
     lastAccessed: "Never",
     nextTest: "Practice Test #1",
     avgScore: 0,
     timeSpent: "0h",
     status: "not-started",
-    purchaseDate: "2024-02-15",
-    expiryDate: "Lifetime Access"
-  },
-  {
-    id: "scs-c02",
-    title: "AWS Certified Security",
-    subtitle: "Specialty (SCS-C02)",
-    difficulty: "Specialty",
-    progress: 100,
-    questionsCompleted: 325,
-    totalQuestions: 325,
-    practiceTests: 5,
-    lastAccessed: "1 week ago",
-    nextTest: "Review Mode",
-    avgScore: 91,
-    timeSpent: "15h 45m",
-    status: "completed",
-    purchaseDate: "2023-12-10",
+    purchaseDate: "2024-02-20",
     expiryDate: "Lifetime Access"
   }
 ];
@@ -124,7 +113,7 @@ const getDifficultyColor = (difficulty: string) => {
     case "Specialty":
       return "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300";
     default:
-      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+      return "bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300";
   }
 };
 
@@ -132,22 +121,21 @@ const getStatusBadge = (status: string) => {
   switch (status) {
     case "completed":
       return (
-        <Badge className="bg-green-500 text-white">
-          <CheckCircle className="h-3 w-3 mr-1" />
+        <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 gap-1">
+          <CheckCircle className="h-3 w-3" />
           Completed
         </Badge>
       );
     case "in-progress":
       return (
-        <Badge className="bg-primary text-primary-foreground">
-          <Zap className="h-3 w-3 mr-1" />
+        <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 gap-1">
+          <TrendingUp className="h-3 w-3" />
           In Progress
         </Badge>
       );
     case "not-started":
       return (
-        <Badge variant="outline">
-          <PlayCircle className="h-3 w-3 mr-1" />
+        <Badge className="bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300">
           Not Started
         </Badge>
       );
@@ -162,82 +150,112 @@ export default function MyPracticeTests() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const filteredTests = useMemo(() => {
-    return purchasedTests.filter(test => {
-      const matchesSearch = test.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           test.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || test.status === statusFilter;
+    return purchasedTests.filter((test) => {
+      const matchesSearch = 
+        test.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        test.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesStatus = 
+        statusFilter === "all" || test.status === statusFilter;
+      
       return matchesSearch && matchesStatus;
     });
   }, [searchQuery, statusFilter]);
 
   const totalTests = purchasedTests.length;
-  const avgProgress = Math.round(purchasedTests.reduce((acc, t) => acc + t.progress, 0) / purchasedTests.length);
-  const completedTests = purchasedTests.filter(t => t.status === 'completed').length;
-  const totalTime = "36h";
+  const inProgressTests = purchasedTests.filter(t => t.status === "in-progress").length;
+  const completedTests = purchasedTests.filter(t => t.status === "completed").length;
+  const avgProgress = Math.round(purchasedTests.reduce((sum, t) => sum + t.progress, 0) / purchasedTests.length);
 
   return (
-    <div className="space-y-8">
-      {/* Header Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/90 to-accent p-8 md:p-10 text-white">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+    <div className="space-y-8 p-6 md:p-8">
+      {/* Header Section with Gradient */}
+      <div className="relative rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 p-8 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-accent/30 rounded-full blur-3xl -z-10" />
         
         <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-4">
-            <BookOpen className="h-8 w-8" />
-            <h1 className="text-3xl md:text-4xl font-heading font-bold" data-testid="page-title">
-              My Practice Tests
-            </h1>
-          </div>
-          <p className="text-white/90 text-lg mb-6 max-w-3xl">
-            Track your progress, review completed tests, and continue your AWS certification journey.
-          </p>
-          
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <BookOpen className="h-5 w-5 text-white/80" />
-                <span className="text-sm text-white/80">Total Tests</span>
-              </div>
-              <p className="text-2xl font-bold" data-testid="stat-total-tests-value">{totalTests}</p>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-3 bg-primary/20 rounded-xl backdrop-blur-sm">
+              <BookOpen className="h-7 w-7 text-primary" />
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="h-5 w-5 text-white/80" />
-                <span className="text-sm text-white/80">Avg Progress</span>
-              </div>
-              <p className="text-2xl font-bold" data-testid="stat-avg-progress-value">{avgProgress}%</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Award className="h-5 w-5 text-white/80" />
-                <span className="text-sm text-white/80">Completed</span>
-              </div>
-              <p className="text-2xl font-bold" data-testid="stat-completed-value">{completedTests}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="h-5 w-5 text-white/80" />
-                <span className="text-sm text-white/80">Total Time</span>
-              </div>
-              <p className="text-2xl font-bold" data-testid="stat-total-time-value">{totalTime}</p>
+            <div>
+              <h1 className="text-3xl font-heading font-bold text-foreground">My Practice Tests</h1>
+              <p className="text-muted-foreground mt-1">Track your progress and continue learning</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters and Search */}
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <BookOpen className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" data-testid="stat-total-tests">{totalTests}</p>
+                <p className="text-sm text-muted-foreground">Total Tests</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" data-testid="stat-in-progress">{inProgressTests}</p>
+                <p className="text-sm text-muted-foreground">In Progress</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" data-testid="stat-completed">{completedTests}</p>
+                <p className="text-sm text-muted-foreground">Completed</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-accent/20 rounded-lg">
+                <Target className="h-5 w-5 text-accent" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" data-testid="stat-avg-progress">{avgProgress}%</p>
+                <p className="text-sm text-muted-foreground">Avg Progress</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Search and Filter Bar */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            type="text"
             placeholder="Search practice tests..."
-            className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            data-testid="input-search-tests"
+            className="pl-10"
+            data-testid="input-search"
           />
         </div>
         <DropdownMenu>
@@ -264,150 +282,105 @@ export default function MyPracticeTests() {
         </DropdownMenu>
       </div>
 
-      {/* Practice Tests Grid */}
-      <div className="grid gap-6">
-        {filteredTests.length === 0 ? (
-          <Card className="p-12 text-center">
-            <p className="text-muted-foreground mb-2">No practice tests found</p>
-            <p className="text-sm text-muted-foreground">Try adjusting your search or filter criteria</p>
-          </Card>
-        ) : filteredTests.map((test) => (
-          <Card 
-            key={test.id} 
-            className="hover:shadow-xl transition-all duration-300 group overflow-hidden"
-            data-testid={`practice-test-card-${test.id}`}
-          >
-            <div className="flex flex-col md:flex-row">
-              {/* Left Section - Main Info */}
-              <div className="flex-1 p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
+      {/* Practice Tests Table */}
+      {filteredTests.length === 0 ? (
+        <Card className="p-12 text-center">
+          <p className="text-muted-foreground mb-2">No practice tests found</p>
+          <p className="text-sm text-muted-foreground">Try adjusting your search or filter criteria</p>
+        </Card>
+      ) : (
+        <Card>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-bold">Certification</TableHead>
+                  <TableHead className="font-bold">Difficulty</TableHead>
+                  <TableHead className="font-bold">Status</TableHead>
+                  <TableHead className="font-bold">Progress</TableHead>
+                  <TableHead className="font-bold">Questions</TableHead>
+                  <TableHead className="font-bold">Avg Score</TableHead>
+                  <TableHead className="font-bold">Last Accessed</TableHead>
+                  <TableHead className="font-bold text-center">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredTests.map((test) => (
+                  <TableRow 
+                    key={test.id} 
+                    className="hover:bg-muted/50 transition-colors"
+                    data-testid={`test-row-${test.id}`}
+                  >
+                    <TableCell className="font-medium">
+                      <div>
+                        <p className="font-semibold text-foreground">{test.title}</p>
+                        <p className="text-sm text-muted-foreground">{test.subtitle}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <Badge className={getDifficultyColor(test.difficulty)}>
                         {test.difficulty}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
                       {getStatusBadge(test.status)}
-                    </div>
-                    <h3 className="text-xl font-heading font-bold text-foreground mb-1">
-                      {test.title}
-                    </h3>
-                    <p className="text-muted-foreground">{test.subtitle}</p>
-                  </div>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-foreground">Overall Progress</span>
-                    <span className="text-sm font-bold text-primary">{test.progress}%</span>
-                  </div>
-                  <Progress value={test.progress} className="h-3" />
-                </div>
-
-                {/* Stats Row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Target className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Questions</p>
-                      <p className="font-semibold">{test.questionsCompleted}/{test.totalQuestions}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Avg Score</p>
-                      <p className="font-semibold">{test.avgScore}%</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Time Spent</p>
-                      <p className="font-semibold">{test.timeSpent}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Last Access</p>
-                      <p className="font-semibold">{test.lastAccessed}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-wrap gap-3">
-                  <Link href={`/student-portal/tests/${test.id}/practice`}>
-                    <Button 
-                      className="bg-primary hover:bg-primary/90"
-                      data-testid={`button-continue-${test.id}`}
-                    >
-                      <PlayCircle className="mr-2 h-4 w-4" />
-                      {test.status === 'not-started' ? 'Start Test' : test.status === 'completed' ? 'Review' : 'Continue'}
-                    </Button>
-                  </Link>
-                  <Link href={`/student-portal/tests/${test.id}/analytics`}>
-                    <Button variant="outline" data-testid={`button-analytics-${test.id}`}>
-                      <BarChart3 className="mr-2 h-4 w-4" />
-                      Analytics
-                    </Button>
-                  </Link>
-                  <Button variant="outline" data-testid={`button-download-${test.id}`}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Resources
-                  </Button>
-                </div>
-              </div>
-
-              {/* Right Section - Next Test Info */}
-              <div className="md:w-64 bg-gradient-to-br from-accent/10 to-primary/5 p-6 flex flex-col justify-between border-l border-border">
-                <div>
-                  <p className="text-sm font-semibold text-muted-foreground mb-2">Next Up</p>
-                  <p className="text-lg font-bold text-foreground mb-4">{test.nextTest}</p>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <BookOpen className="h-4 w-4 text-accent" />
-                      <span className="text-muted-foreground">{test.practiceTests} Practice Tests</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4 text-accent" />
-                      <span className="text-muted-foreground">{test.expiryDate}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-xs text-muted-foreground">Purchased on</p>
-                  <p className="text-sm font-semibold text-foreground">
-                    {new Date(test.purchaseDate).toLocaleDateString('en-US', { 
-                      month: 'long', 
-                      day: 'numeric', 
-                      year: 'numeric' 
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-2 min-w-[150px]">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{test.progress}%</span>
+                        </div>
+                        <Progress value={test.progress} className="h-2" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{test.questionsCompleted}</span>
+                      <span className="text-muted-foreground">/{test.totalQuestions}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-semibold">{test.avgScore}%</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        {test.lastAccessed}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Link href={`/student-portal/quiz/${test.id}`}>
+                        <Button 
+                          size="sm" 
+                          className="gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                          data-testid={`button-start-${test.id}`}
+                        >
+                          <PlayCircle className="h-4 w-4" />
+                          Start
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+      )}
 
       {/* Call to Action */}
       <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-dashed border-primary/30">
         <CardContent className="p-8 text-center">
           <Award className="h-12 w-12 text-primary mx-auto mb-4" />
-          <h3 className="text-2xl font-heading font-bold text-foreground mb-3">
-            Ready for More Certifications?
-          </h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Expand your AWS expertise with our comprehensive practice tests covering all certification levels.
+          <h3 className="text-xl font-heading font-bold mb-2">Want More Practice Tests?</h3>
+          <p className="text-muted-foreground mb-6">
+            Explore our full collection of AWS certification practice tests
           </p>
           <Link href="/practice-tests">
-            <Button size="lg" className="bg-primary hover:bg-primary/90" data-testid="button-browse-more">
-              <BookOpen className="mr-2 h-5 w-5" />
-              Browse All Practice Tests
+            <Button className="gap-2" data-testid="button-browse-tests">
+              <BookOpen className="h-4 w-4" />
+              Browse All Tests
             </Button>
           </Link>
         </CardContent>
