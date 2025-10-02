@@ -1,7 +1,30 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Award, Users, CheckCircle, Clock, LifeBuoy, Medal, Server, TrendingUp, Shield, DollarSign, Building, GraduationCap, BookOpen, Trophy, Briefcase, Rocket, PlayCircle, Menu, ChevronDown } from "lucide-react";
+import { Link } from "wouter";
+import {
+  Star,
+  Award,
+  Users,
+  CheckCircle,
+  Clock,
+  LifeBuoy,
+  Medal,
+  Server,
+  TrendingUp,
+  Shield,
+  DollarSign,
+  Building,
+  GraduationCap,
+  BookOpen,
+  Trophy,
+  Briefcase,
+  Rocket,
+  PlayCircle,
+  Menu,
+  ChevronDown,
+  LucideMessageCircle,
+} from "lucide-react";
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,24 +34,24 @@ export default function Home() {
     // Fade in animation on scroll
     const observerOptions = {
       threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
+      rootMargin: "0px 0px -50px 0px",
     };
 
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
+          entry.target.classList.add("visible");
         }
       });
     }, observerOptions);
 
-    document.querySelectorAll('.fade-in').forEach(el => {
+    document.querySelectorAll(".fade-in").forEach((el) => {
       observer.observe(el);
     });
 
     // Sticky CTA button
     const handleScroll = () => {
-      const hero = document.getElementById('hero');
+      const hero = document.getElementById("hero");
       if (hero) {
         const heroBottom = hero.offsetTop + hero.offsetHeight;
         const scrollPosition = window.pageYOffset;
@@ -36,9 +59,9 @@ export default function Home() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
       observer.disconnect();
     };
   }, []);
@@ -49,7 +72,7 @@ export default function Home() {
       const offsetTop = element.offsetTop - 80;
       window.scrollTo({
         top: offsetTop,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -57,53 +80,46 @@ export default function Home() {
   return (
     <div className="bg-background text-foreground font-sans">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-card/95 backdrop-blur-md border-b border-border shadow-lg z-40">
+      <nav className="fixed top-0 w-full bg-[#f2f4f7] text-black backdrop-blur-md border-b border-transparent z-40 shadow-lg shadow-gray-900/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-heading font-bold text-primary">AWS Expert Training</h1>
+              <img src="/images/logo.png" width="70%" />
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-center space-x-8">
-                <button 
-                  onClick={() => scrollToSection('about')} 
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  data-testid="nav-about"
+                <button
+                  onClick={() => scrollToSection("about")}
+                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
                 >
                   About
                 </button>
-                <button 
-                  onClick={() => scrollToSection('curriculum')} 
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  data-testid="nav-curriculum"
+                <button
+                  onClick={() => scrollToSection("curriculum")}
+                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
                 >
                   Curriculum
                 </button>
-                <button 
-                  onClick={() => scrollToSection('benefits')} 
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  data-testid="nav-benefits"
+                <button
+                  onClick={() => scrollToSection("benefits")}
+                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
                 >
                   Benefits
                 </button>
-                <button 
-                  onClick={() => scrollToSection('testimonials')} 
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  data-testid="nav-testimonials"
+                <button
+                  onClick={() => scrollToSection("testimonials")}
+                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
                 >
                   Reviews
                 </button>
-                <button 
-                  onClick={() => scrollToSection('pricing')} 
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  data-testid="nav-pricing"
-                >
-                  Pricing
-                </button>
+                <Link href="/practice-tests">
+                  <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
+                    Practice Tests
+                  </button>
+                </Link>
                 <Button
-                  onClick={() => scrollToSection('pricing')}
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg animate-pulse-scale"
-                  data-testid="nav-enroll-now"
+                  onClick={() => scrollToSection("pricing")}
+                  className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                 >
                   <Rocket className="mr-2 h-4 w-4" />
                   Enroll Now
@@ -115,9 +131,8 @@ export default function Home() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                data-testid="button-menu"
               >
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5 text-black" />
               </Button>
             </div>
           </div>
@@ -125,30 +140,25 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen flex items-center justify-center pt-16">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/5"></div>
-        <div 
-          className="absolute inset-0 opacity-5" 
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        ></div>
-        
+      <section
+        id="hero"
+        className="relative min-h-screen flex items-center justify-center pt-16 bg-[#104d84]"
+      >
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="fade-in">
-            <h1 className="text-4xl md:text-6xl font-heading font-bold text-foreground mb-6 leading-tight">
-              Master AWS Solution Architect with an{" "}
-              <span className="text-primary">Industry Expert</span>
+            <h1 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 leading-tight">
+              Master <span className="text-yellow-400">AWS</span> Solution
+              Architect with an{" "}
+              <span className="text-yellow-400">Industry Expert</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
-              Learn from <strong>Aseef Ahmed</strong>, a Senior DevOps Engineer with{" "}
-              <strong>12 AWS & 5 Azure certifications</strong> and experience at Amazon, Deloitte, and MSD NZ.
+            <p className="text-xl md:text-2xl text-white mb-8 max-w-4xl mx-auto leading-relaxed">
+              Learn from <strong>Aseef Ahmed</strong>, a Senior DevOps Engineer
+              with <strong>12 AWS & 5 Azure certifications</strong> and
+              experience at Amazon, Deloitte, and NZ Ministries & Banks.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Button
-                onClick={() => scrollToSection('pricing')}
+                onClick={() => scrollToSection("pricing")}
                 className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 data-testid="button-enroll-hero"
               >
@@ -156,34 +166,33 @@ export default function Home() {
                 Enroll Now
               </Button>
               <Button
-                variant="outline"
-                onClick={() => scrollToSection('curriculum')}
-                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 py-4 text-lg font-semibold transition-all duration-300"
-                data-testid="button-curriculum-hero"
+                onClick={() => scrollToSection("curriculum")}
+                className="bg-[#f2c617] text-black px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                data-testid="button-enroll-hero"
               >
-                <PlayCircle className="mr-2 h-5 w-5" />
+                <Rocket className="mr-2 h-5 w-5" />
                 View Curriculum
               </Button>
             </div>
             <div className="flex flex-wrap justify-center items-center gap-8 text-muted-foreground">
               <div className="flex items-center">
-                <Award className="h-5 w-5 text-accent mr-2" />
-                <span>17+ Certifications</span>
+                <Award className="h-5 w-5 text-yellow-500 mr-2" />
+                <span className="text-white">17+ Certifications</span>
               </div>
               <div className="flex items-center">
-                <Users className="h-5 w-5 text-accent mr-2" />
-                <span>500+ Students Trained</span>
+                <Users className="h-5 w-5 text-yellow-500 mr-2" />
+                <span className="text-white">500+ Students Trained</span>
               </div>
               <div className="flex items-center">
                 <Star className="h-5 w-5 text-accent mr-2" />
-                <span>4.9/5 Rating</span>
+                <span className="text-white">4.9/5 Rating</span>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="h-8 w-8 text-muted-foreground" />
+          <ChevronDown className="h-8 w-8 text-orange-400" />
         </div>
       </section>
 
@@ -193,9 +202,9 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="fade-in">
               <div className="relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=600" 
-                  alt="Aseef Ahmed - AWS Solution Architect Expert" 
+                <img
+                  src="/images/aseefahmed.png"
+                  alt="Aseef Ahmed - AWS Solution Architect Expert"
                   className="rounded-2xl shadow-2xl w-full max-w-md mx-auto"
                 />
                 <div className="absolute -bottom-6 -right-6 bg-accent text-accent-foreground p-4 rounded-2xl shadow-lg">
@@ -211,19 +220,26 @@ export default function Home() {
                 Meet Your <span className="text-primary">AWS Expert</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Aseef Ahmed is a highly accomplished Senior DevOps Engineer with extensive expertise in cloud architecture, AWS services, and enterprise-scale implementations. His journey spans across industry giants including Amazon, Deloitte, and MSD New Zealand.
+                Aseef Ahmed is a highly accomplished Senior DevOps Engineer with
+                extensive expertise in cloud architecture, AWS services, and
+                enterprise-scale implementations. His journey spans across
+                industry giants including Amazon, Deloitte, and MSD New Zealand.
               </p>
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <Card className="p-4">
                   <CardContent className="p-0">
                     <div className="text-2xl font-bold text-primary">12+</div>
-                    <div className="text-sm text-muted-foreground">AWS Certifications</div>
+                    <div className="text-sm text-muted-foreground">
+                      AWS Certifications
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="p-4">
                   <CardContent className="p-0">
                     <div className="text-2xl font-bold text-primary">5+</div>
-                    <div className="text-sm text-muted-foreground">Azure Certifications</div>
+                    <div className="text-sm text-muted-foreground">
+                      Azure Certifications
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -234,13 +250,19 @@ export default function Home() {
                 </div>
                 <div className="flex items-center text-muted-foreground">
                   <CheckCircle className="h-5 w-5 text-primary mr-3" />
-                  <span>Experience at Amazon, Deloitte, and MSD NZ</span>
+                  <span>
+                    Experience at Amazon, Deloitte, and NZ ministries & banks
+                  </span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
                   <CheckCircle className="h-5 w-5 text-primary mr-3" />
-                  <span>Proven track record in enterprise cloud migrations</span>
+                  <span>
+                    Proven track record in enterprise cloud migrations
+                  </span>
                 </div>
               </div>
+
+              <div></div>
             </div>
           </div>
         </div>
@@ -254,17 +276,23 @@ export default function Home() {
               What You'll <span className="text-primary">Master</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive curriculum designed to make you a confident AWS Solution Architect
+              Comprehensive curriculum designed to make you a confident AWS
+              Solution Architect
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50" data-testid="card-aws-core">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-aws-core"
+            >
               <CardContent className="p-6">
                 <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <Server className="text-primary h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-heading font-semibold mb-3">AWS Core Services</h3>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  AWS Core Services
+                </h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -286,12 +314,17 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50" data-testid="card-high-availability">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-high-availability"
+            >
               <CardContent className="p-6">
                 <div className="bg-accent/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <TrendingUp className="text-accent h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-heading font-semibold mb-3">High Availability & Scalability</h3>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  High Availability & Scalability
+                </h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -313,12 +346,17 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50" data-testid="card-security">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-security"
+            >
               <CardContent className="p-6">
                 <div className="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <Shield className="text-red-600 h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-heading font-semibold mb-3">Security & IAM</h3>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Security & IAM
+                </h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -340,12 +378,17 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50" data-testid="card-cost-optimization">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-cost-optimization"
+            >
               <CardContent className="p-6">
                 <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <DollarSign className="text-green-600 h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-heading font-semibold mb-3">Cost Optimization</h3>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Cost Optimization
+                </h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -367,12 +410,17 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50" data-testid="card-well-architected">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-well-architected"
+            >
               <CardContent className="p-6">
                 <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <Building className="text-purple-600 h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-heading font-semibold mb-3">Well-Architected Framework</h3>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Well-Architected Framework
+                </h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -394,12 +442,17 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50" data-testid="card-exam-prep">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-exam-prep"
+            >
               <CardContent className="p-6">
                 <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <BookOpen className="text-blue-600 h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-heading font-semibold mb-3">Exam Prep & Real-World</h3>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Exam Prep & Real-World
+                </h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -432,7 +485,8 @@ export default function Home() {
               Why Choose <span className="text-primary">Our Training</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Experience the difference of learning from an industry expert with proven results
+              Experience the difference of learning from an industry expert with
+              proven results
             </p>
           </div>
 
@@ -441,32 +495,64 @@ export default function Home() {
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                 <GraduationCap className="text-primary-foreground h-8 w-8" />
               </div>
-              <h3 className="text-xl font-heading font-semibold mb-3">Industry Expert</h3>
-              <p className="text-muted-foreground">Learn from a seasoned professional with real-world experience at top tech companies</p>
+              <h3 className="text-xl font-heading font-semibold mb-3">
+                Industry Expert
+              </h3>
+              <p className="text-muted-foreground">
+                Learn from a seasoned professional with real-world experience at
+                top tech companies
+              </p>
             </div>
 
-            <div className="fade-in text-center" data-testid="benefit-labs" style={{animationDelay: '0.2s'}}>
+            <div
+              className="fade-in text-center"
+              data-testid="benefit-labs"
+              style={{ animationDelay: "0.2s" }}
+            >
               <div className="bg-accent w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                 <BookOpen className="text-accent-foreground h-8 w-8" />
               </div>
-              <h3 className="text-xl font-heading font-semibold mb-3">Hands-on Labs</h3>
-              <p className="text-muted-foreground">Practice with real AWS environments and tackle practical scenarios you'll face in the job</p>
+              <h3 className="text-xl font-heading font-semibold mb-3">
+                Hands-on Labs
+              </h3>
+              <p className="text-muted-foreground">
+                Practice with real AWS environments and tackle practical
+                scenarios you'll face in the job
+              </p>
             </div>
 
-            <div className="fade-in text-center" data-testid="benefit-certification" style={{animationDelay: '0.4s'}}>
+            <div
+              className="fade-in text-center"
+              data-testid="benefit-certification"
+              style={{ animationDelay: "0.4s" }}
+            >
               <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                 <Trophy className="text-white h-8 w-8" />
               </div>
-              <h3 className="text-xl font-heading font-semibold mb-3">Certification Prep</h3>
-              <p className="text-muted-foreground">Comprehensive exam preparation with practice tests and proven strategies</p>
+              <h3 className="text-xl font-heading font-semibold mb-3">
+                Certification Prep
+              </h3>
+              <p className="text-muted-foreground">
+                Comprehensive exam preparation with practice tests and proven
+                strategies
+              </p>
             </div>
 
-            <div className="fade-in text-center" data-testid="benefit-career" style={{animationDelay: '0.6s'}}>
+            <div
+              className="fade-in text-center"
+              data-testid="benefit-career"
+              style={{ animationDelay: "0.6s" }}
+            >
               <div className="bg-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                 <Briefcase className="text-white h-8 w-8" />
               </div>
-              <h3 className="text-xl font-heading font-semibold mb-3">Career Guidance</h3>
-              <p className="text-muted-foreground">Get guidance on real-world projects, job interviews, and career advancement</p>
+              <h3 className="text-xl font-heading font-semibold mb-3">
+                Career Guidance
+              </h3>
+              <p className="text-muted-foreground">
+                Get guidance on real-world projects, job interviews, and career
+                advancement
+              </p>
             </div>
           </div>
 
@@ -477,21 +563,31 @@ export default function Home() {
                   <Clock className="h-6 w-6 text-primary mr-4 mt-1" />
                   <div>
                     <h4 className="font-semibold mb-2">Flexible Schedule</h4>
-                    <p className="text-muted-foreground text-sm">Choose from 1-to-1 or group sessions that fit your schedule</p>
+                    <p className="text-muted-foreground text-sm">
+                      Choose from 1-to-1 or group sessions that fit your
+                      schedule
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <LifeBuoy className="h-6 w-6 text-primary mr-4 mt-1" />
                   <div>
                     <h4 className="font-semibold mb-2">Ongoing Support</h4>
-                    <p className="text-muted-foreground text-sm">Get continued support even after course completion</p>
+                    <p className="text-muted-foreground text-sm">
+                      Get continued support even after course completion
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Medal className="h-6 w-6 text-primary mr-4 mt-1" />
                   <div>
-                    <h4 className="font-semibold mb-2">Completion Certificate</h4>
-                    <p className="text-muted-foreground text-sm">Receive a certificate of completion to showcase your skills</p>
+                    <h4 className="font-semibold mb-2">
+                      Completion Certificate
+                    </h4>
+                    <p className="text-muted-foreground text-sm">
+                      Receive a certificate of completion to showcase your
+                      skills
+                    </p>
                   </div>
                 </div>
               </div>
@@ -508,70 +604,107 @@ export default function Home() {
               What Our <span className="text-primary">Students Say</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              Join hundreds of professionals who've advanced their careers with our training
+              Join hundreds of professionals who've advanced their careers with
+              our training
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="fade-in hover:shadow-lg transition-all duration-300" data-testid="testimonial-michael">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300"
+              data-testid="testimonial-michael"
+            >
               <CardContent className="p-6">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-yellow-400 fill-current"
+                    />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-4">"Aseef's training was exceptional! His real-world experience really showed through. I passed my AWS Solutions Architect exam on the first try thanks to his comprehensive approach."</p>
+                <p className="text-muted-foreground mb-4">
+                  "Aseef's training was exceptional! His real-world experience
+                  really showed through. I passed my AWS Solutions Architect
+                  exam on the first try thanks to his comprehensive approach."
+                </p>
                 <div className="flex items-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" 
-                    alt="Michael Chen testimonial" 
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100"
+                    alt="Michael Chen testimonial"
                     className="w-12 h-12 rounded-full mr-4"
                   />
                   <div>
                     <div className="font-semibold">Michael Chen</div>
-                    <div className="text-sm text-muted-foreground">Cloud Engineer at Microsoft</div>
+                    <div className="text-sm text-muted-foreground">
+                      Cloud Engineer at Microsoft
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300" data-testid="testimonial-sarah">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300"
+              data-testid="testimonial-sarah"
+            >
               <CardContent className="p-6">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-yellow-400 fill-current"
+                    />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-4">"The hands-on labs were incredible. Aseef didn't just teach theory - he showed us how to apply AWS services in real scenarios. It boosted my confidence tremendously."</p>
+                <p className="text-muted-foreground mb-4">
+                  "The hands-on labs were incredible. Aseef didn't just teach
+                  theory - he showed us how to apply AWS services in real
+                  scenarios. It boosted my confidence tremendously."
+                </p>
                 <div className="flex items-center">
                   <div className="w-12 h-12 rounded-full mr-4 bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center">
                     <span className="text-white font-semibold">SJ</span>
                   </div>
                   <div>
                     <div className="font-semibold">Sarah Johnson</div>
-                    <div className="text-sm text-muted-foreground">DevOps Engineer at Shopify</div>
+                    <div className="text-sm text-muted-foreground">
+                      DevOps Engineer at Shopify
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="fade-in hover:shadow-lg transition-all duration-300" data-testid="testimonial-david">
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300"
+              data-testid="testimonial-david"
+            >
               <CardContent className="p-6">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-yellow-400 fill-current"
+                    />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-4">"Best investment in my career! Aseef's industry insights and practical approach helped me land a senior cloud architect role. His teaching style is engaging and effective."</p>
+                <p className="text-muted-foreground mb-4">
+                  "Best investment in my career! Aseef's industry insights and
+                  practical approach helped me land a senior cloud architect
+                  role. His teaching style is engaging and effective."
+                </p>
                 <div className="flex items-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" 
-                    alt="David Rodriguez testimonial" 
+                  <img
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100"
+                    alt="David Rodriguez testimonial"
                     className="w-12 h-12 rounded-full mr-4"
                   />
                   <div>
                     <div className="font-semibold">David Rodriguez</div>
-                    <div className="text-sm text-muted-foreground">Senior Cloud Architect at AWS</div>
+                    <div className="text-sm text-muted-foreground">
+                      Senior Cloud Architect at AWS
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -585,7 +718,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 fade-in">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4">
-              Start Your Cloud Career <span className="text-primary">Today</span>
+              Start Your Cloud Career{" "}
+              <span className="text-primary">Today</span>
             </h2>
             <p className="text-xl text-muted-foreground">
               Choose the training option that works best for you
@@ -594,11 +728,18 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* 1-to-1 Training */}
-            <Card className="fade-in hover:shadow-xl transition-all duration-300 hover:border-primary relative" data-testid="pricing-one-on-one">
+            <Card
+              className="fade-in hover:shadow-xl transition-all duration-300 hover:border-primary relative"
+              data-testid="pricing-one-on-one"
+            >
               <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-heading font-semibold mb-2">1-to-1 Training</h3>
+                <h3 className="text-xl font-heading font-semibold mb-2">
+                  1-to-1 Training
+                </h3>
                 <div className="text-3xl font-bold text-primary mb-4">$300</div>
-                <p className="text-muted-foreground mb-6">Personalized learning experience</p>
+                <p className="text-muted-foreground mb-6">
+                  Personalized learning experience
+                </p>
                 <ul className="space-y-3 text-sm text-muted-foreground mb-6">
                   <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
@@ -617,7 +758,11 @@ export default function Home() {
                     Career guidance
                   </li>
                 </ul>
-                <Button 
+                <Button
+                  onClick={() =>
+                    (window.location.href =
+                      "https://buy.stripe.com/5kQ4gz098evx9OHd0F2Ry0d")
+                  } // 👈 Replace with your Stripe link
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105"
                   data-testid="button-book-one-on-one"
                 >
@@ -627,14 +772,23 @@ export default function Home() {
             </Card>
 
             {/* 2 Person Group */}
-            <Card className="fade-in hover:shadow-xl transition-all duration-300 hover:border-primary relative" data-testid="pricing-two-person">
+            <Card
+              className="fade-in hover:shadow-xl transition-all duration-300 hover:border-primary relative"
+              data-testid="pricing-two-person"
+            >
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">15% OFF</span>
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                  15% OFF
+                </span>
               </div>
               <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-heading font-semibold mb-2">2 Person Group</h3>
+                <h3 className="text-xl font-heading font-semibold mb-2">
+                  2 Person Group
+                </h3>
                 <div className="text-3xl font-bold text-primary mb-4">$255</div>
-                <p className="text-muted-foreground mb-6">Perfect for learning partners</p>
+                <p className="text-muted-foreground mb-6">
+                  Perfect for learning partners
+                </p>
                 <ul className="space-y-3 text-sm text-muted-foreground mb-6">
                   <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
@@ -653,7 +807,11 @@ export default function Home() {
                     Peer motivation
                   </li>
                 </ul>
-                <Button 
+                <Button
+                  onClick={() =>
+                    (window.location.href =
+                      "https://buy.stripe.com/cNi8wP1dcfzBgd55yd2Ry0e")
+                  }
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105"
                   data-testid="button-book-two-person"
                 >
@@ -663,14 +821,23 @@ export default function Home() {
             </Card>
 
             {/* 3 Person Group */}
-            <Card className="fade-in hover:shadow-xl transition-all duration-300 hover:border-primary relative" data-testid="pricing-three-person">
+            <Card
+              className="fade-in hover:shadow-xl transition-all duration-300 hover:border-primary relative"
+              data-testid="pricing-three-person"
+            >
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">30% OFF</span>
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                  30% OFF
+                </span>
               </div>
               <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-heading font-semibold mb-2">3 Person Group</h3>
+                <h3 className="text-xl font-heading font-semibold mb-2">
+                  3 Person Group
+                </h3>
                 <div className="text-3xl font-bold text-primary mb-4">$210</div>
-                <p className="text-muted-foreground mb-6">Great value for small teams</p>
+                <p className="text-muted-foreground mb-6">
+                  Great value for small teams
+                </p>
                 <ul className="space-y-3 text-sm text-muted-foreground mb-6">
                   <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
@@ -689,7 +856,11 @@ export default function Home() {
                     Diverse perspectives
                   </li>
                 </ul>
-                <Button 
+                <Button
+                  onClick={() =>
+                    (window.location.href =
+                      "https://buy.stripe.com/7sY00j9JI3QTgd5e4J2Ry0f")
+                  }
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105"
                   data-testid="button-book-three-person"
                 >
@@ -699,14 +870,23 @@ export default function Home() {
             </Card>
 
             {/* 4+ Person Group */}
-            <Card className="fade-in border-2 border-accent hover:shadow-xl transition-all duration-300 relative" data-testid="pricing-four-plus">
+            <Card
+              className="fade-in border-2 border-accent hover:shadow-xl transition-all duration-300 relative"
+              data-testid="pricing-four-plus"
+            >
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">BEST VALUE</span>
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                  BEST VALUE
+                </span>
               </div>
               <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-heading font-semibold mb-2">4+ Person Group</h3>
+                <h3 className="text-xl font-heading font-semibold mb-2">
+                  4 Person Group
+                </h3>
                 <div className="text-3xl font-bold text-accent mb-4">$180</div>
-                <p className="text-muted-foreground mb-6">Maximum savings & collaboration</p>
+                <p className="text-muted-foreground mb-6">
+                  Maximum savings & collaboration
+                </p>
                 <ul className="space-y-3 text-sm text-muted-foreground mb-6">
                   <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-accent mr-2" />
@@ -725,7 +905,11 @@ export default function Home() {
                     Rich discussions
                   </li>
                 </ul>
-                <Button 
+                <Button
+                  onClick={() =>
+                    (window.location.href =
+                      "https://buy.stripe.com/bJe00j8FE4UXf91e4J2Ry0g")
+                  }
                   className="w-full bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 transform hover:scale-105"
                   data-testid="button-book-four-plus"
                 >
@@ -737,7 +921,8 @@ export default function Home() {
 
           <div className="text-center mt-12 fade-in">
             <p className="text-muted-foreground mb-6">
-              All packages include comprehensive materials, hands-on labs, and post-training support
+              All packages include comprehensive materials, hands-on labs, and
+              post-training support
             </p>
             <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-muted-foreground">
               <div className="flex items-center">
@@ -762,19 +947,41 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-heading font-bold mb-4">AWS Expert Training</h3>
+              <h3 className="text-xl font-heading font-bold mb-4">
+                AWS Expert Training
+              </h3>
               <p className="text-background/80 mb-4">
-                Master AWS Solution Architecture with industry expert Aseef Ahmed. Transform your career with comprehensive, hands-on training.
+                Master AWS Solution Architecture with industry expert Aseef
+                Ahmed. Transform your career with comprehensive, hands-on
+                training.
               </p>
               <div className="flex space-x-4">
-                <a href="https://linkedin.com/in/aseef-ahmed" target="_blank" rel="noopener noreferrer" className="text-background/80 hover:text-background transition-colors" data-testid="link-linkedin">
+                <a
+                  href="https://linkedin.com/in/aseefahmed"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-background/80 hover:text-background transition-colors"
+                  data-testid="link-linkedin"
+                >
                   <i className="fab fa-linkedin text-xl"></i>
                 </a>
-                <a href="https://youtube.com/@aseef-ahmed" target="_blank" rel="noopener noreferrer" className="text-background/80 hover:text-background transition-colors" data-testid="link-youtube">
+                <a
+                  href="https://youtube.com/@cloudindepth"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-background/80 hover:text-background transition-colors"
+                  data-testid="link-youtube"
+                >
                   <i className="fab fa-youtube text-xl"></i>
                 </a>
-                <a href="https://github.com/aseef-ahmed" target="_blank" rel="noopener noreferrer" className="text-background/80 hover:text-background transition-colors" data-testid="link-github">
-                  <i className="fab fa-github text-xl"></i>
+                <a
+                  href="https://www.facebook.com/cloudacademy/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-background/80 hover:text-background transition-colors"
+                  data-testid="link-github"
+                >
+                  <i className="fab fa-facebook text-xl"></i>
                 </a>
               </div>
             </div>
@@ -782,17 +989,8 @@ export default function Home() {
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">
                 <li>
-                  <button 
-                    onClick={() => scrollToSection('about')} 
-                    className="text-background/80 hover:text-background transition-colors"
-                    data-testid="footer-about"
-                  >
-                    About Aseef
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => scrollToSection('curriculum')} 
+                  <button
+                    onClick={() => scrollToSection("curriculum")}
                     className="text-background/80 hover:text-background transition-colors"
                     data-testid="footer-curriculum"
                   >
@@ -800,31 +998,37 @@ export default function Home() {
                   </button>
                 </li>
                 <li>
-                  <button 
-                    onClick={() => scrollToSection('benefits')} 
+                  <button
+                    onClick={() => scrollToSection("benefits")}
                     className="text-background/80 hover:text-background transition-colors"
                     data-testid="footer-benefits"
                   >
                     Benefits
                   </button>
                 </li>
+
                 <li>
-                  <button 
-                    onClick={() => scrollToSection('testimonials')} 
-                    className="text-background/80 hover:text-background transition-colors"
-                    data-testid="footer-testimonials"
-                  >
-                    Testimonials
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => scrollToSection('pricing')} 
+                  <button
+                    onClick={() => scrollToSection("pricing")}
                     className="text-background/80 hover:text-background transition-colors"
                     data-testid="footer-pricing"
                   >
                     Pricing
                   </button>
+                </li>
+                <li>
+                  <a
+                    href="https://skillsprofile.skillbuilder.aws/user/aseefahmed"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <button
+                      className="text-background/80 hover:text-background transition-colors"
+                      data-testid="verify-creds"
+                    >
+                      Verify Credentials
+                    </button>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -833,11 +1037,15 @@ export default function Home() {
               <div className="space-y-3 text-background/80">
                 <div className="flex items-center">
                   <i className="fas fa-envelope mr-3"></i>
-                  <span>aseef.ahmed@example.com</span>
+                  <span>aseefahmed@gmail.com</span>
                 </div>
                 <div className="flex items-center">
                   <i className="fab fa-linkedin mr-3"></i>
-                  <span>linkedin.com/in/aseef-ahmed</span>
+                  <span>linkedin.com/in/aseefahmed</span>
+                </div>
+                <div className="flex items-center">
+                  <i className="fab fa-whatsapp mr-3"></i>
+                  <span>+64 22 194 5611</span>
                 </div>
                 <div className="flex items-center">
                   <i className="fas fa-globe mr-3"></i>
@@ -846,23 +1054,25 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/60">
-            <p>&copy; 2024 AWS Expert Training by Aseef Ahmed. All rights reserved.</p>
-          </div>
         </div>
       </footer>
 
       {/* Sticky CTA Button */}
       {showStickyCta && (
         <div className="sticky-cta show">
-          <Button
-            onClick={() => scrollToSection('pricing')}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-full shadow-2xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center"
-            data-testid="button-sticky-cta"
+          <a
+            href="https://www.linkedin.com/in/aseefahmed/"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <Rocket className="mr-2 h-4 w-4" />
-            Enroll Now
-          </Button>
+            <Button
+              className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-full shadow-2xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center"
+              data-testid="button-sticky-cta"
+            >
+              <LucideMessageCircle className="mr-2 h-4 w-4" />
+              Chat with Me
+            </Button>
+          </a>
         </div>
       )}
     </div>
