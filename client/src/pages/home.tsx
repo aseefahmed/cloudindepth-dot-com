@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
-import { UserProfile } from "@/components/auth-components";
+import { useAuth0 } from "@auth0/auth0-react";
 import {
   Star,
   Award,
@@ -25,11 +25,43 @@ import {
   Menu,
   ChevronDown,
   LucideMessageCircle,
+  LogIn,
+  LogOut,
 } from "lucide-react";
+
+const isAuth0Configured = () => {
+  return !!(import.meta.env.VITE_AUTH0_DOMAIN && import.meta.env.VITE_AUTH0_CLIENT_ID);
+};
+
+function useAuth0Safe() {
+  const configured = isAuth0Configured();
+  
+  if (!configured) {
+    // In dev mode without Auth0, show logged-in state with mock user
+    return {
+      isAuthenticated: true,
+      isLoading: false,
+      user: {
+        name: "Aseef Ahmed",
+        email: "student@example.com",
+      },
+      loginWithRedirect: () => {
+        alert("Auth0 login is not configured yet. Please add VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID to enable authentication.");
+      },
+      logout: () => {
+        console.log("Logging out (dev mode)");
+        window.location.href = "/";
+      },
+    };
+  }
+  
+  return useAuth0();
+}
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0Safe();
 
   useEffect(() => {
     // Fade in animation on scroll
@@ -125,11 +157,51 @@ export default function Home() {
                   <Rocket className="mr-2 h-4 w-4" />
                   Enroll Now
                 </Button>
-                <UserProfile />
+                {isAuthenticated ? (
+                  <Button
+                    onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                    variant="outline"
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                    data-testid="button-logout"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => loginWithRedirect()}
+                    variant="default"
+                    className="bg-primary hover:bg-primary/90"
+                    data-testid="button-login"
+                  >
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Log In
+                  </Button>
+                )}
               </div>
             </div>
             <div className="md:hidden flex items-center gap-2">
-              <UserProfile />
+              {isAuthenticated ? (
+                <Button
+                  onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                  variant="outline"
+                  size="sm"
+                  className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  data-testid="button-logout-mobile"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => loginWithRedirect()}
+                  variant="default"
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90"
+                  data-testid="button-login-mobile"
+                >
+                  <LogIn className="h-4 w-4" />
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"
