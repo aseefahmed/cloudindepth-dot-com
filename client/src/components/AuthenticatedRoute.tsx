@@ -9,8 +9,9 @@ function useAuth0Safe() {
   const configured = isAuth0Configured();
   
   if (!configured) {
+    // In dev mode without Auth0, allow access with mock authentication
     return {
-      isAuthenticated: false,
+      isAuthenticated: true,
       isLoading: false,
       loginWithRedirect: () => {
         alert("Auth0 login is not configured yet. Please add VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID to enable authentication.");
