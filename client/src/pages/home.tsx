@@ -18,6 +18,7 @@ import {
   Building,
   GraduationCap,
   BookOpen,
+  HomeIcon,
   Trophy,
   Briefcase,
   Rocket,
@@ -37,14 +38,11 @@ function useAuth0Safe() {
   const configured = isAuth0Configured();
   
   if (!configured) {
-    // In dev mode without Auth0, show logged-in state with mock user
+    // In dev mode without Auth0, show logged-out state
     return {
-      isAuthenticated: true,
+      isAuthenticated: false,
       isLoading: false,
-      user: {
-        name: "Aseef Ahmed",
-        email: "student@example.com",
-      },
+      user: null,
       loginWithRedirect: () => {
         alert("Auth0 login is not configured yet. Please add VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID to enable authentication.");
       },
@@ -125,29 +123,22 @@ export default function Home() {
                   onClick={() => scrollToSection("about")}
                   className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
                 >
-                  About
-                </button>
-                <button
-                  onClick={() => scrollToSection("curriculum")}
-                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
-                >
-                  Curriculum
-                </button>
-                <button
-                  onClick={() => scrollToSection("benefits")}
-                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
-                >
-                  Benefits
-                </button>
-                <button
-                  onClick={() => scrollToSection("testimonials")}
-                  className="text-black/90 hover:text-black-300 hover:font-bold transition-colors"
-                >
-                  Reviews
+                  <HomeIcon className="mr-2 h-4 w-4" />
                 </button>
                 <Link href="/practice-tests">
                   <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
-                    Practice Tests
+                    AWS
+                  </button>
+                </Link>
+                <Link href="/practice-tests">
+                  <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
+                    Azure
+                  </button>
+                </Link>
+                
+                <Link href="/practice-tests">
+                  <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
+                    DevOps
                   </button>
                 </Link>
                 <Button

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import {
   BookOpen,
   PlayCircle,
@@ -43,14 +43,14 @@ function useAuth0Safe() {
   
   if (!configured) {
     return {
-      user: { name: "Student", email: "student@example.com" },
+      user: null,
     };
   }
   
   return useAuth0();
 }
 
-const purchasedTests = [
+const defaultPurchasedTests = [
   {
     id: "saa-c03",
     title: "AWS Certified Solutions Architect",
@@ -146,26 +146,88 @@ const getStatusBadge = (status: string) => {
 
 export default function MyPracticeTests() {
   const { user } = useAuth0Safe();
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [purchasedTests, setPurchasedTests] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user?.sub) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch(
+      "https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/my_orders",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: user.sub }),
+        signal: controller.signal,
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setPurchasedTests(data);
+        } else if (data && Array.isArray(data?.items)) {
+          setPurchasedTests(data.items);
+        }
+      })
+      .catch(() => {
+        // silently keep defaults on error
+      });
+
+    return () => controller.abort();
+  }, [user?.sub]);
 
   const filteredTests = useMemo(() => {
-    return purchasedTests.filter((test) => {
-      const matchesSearch = 
-        test.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        test.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesStatus = 
-        statusFilter === "all" || test.status === statusFilter;
-      
+    return purchasedTests.filter((test: any) => {
+      const tTitle = (test?.title || test?.name || "").toString().toLowerCase();
+      const tSubtitle = (test?.subtitle || test?.description || "").toString().toLowerCase();
+      const matchesSearch = tTitle.includes(searchQuery.toLowerCase()) || tSubtitle.includes(searchQuery.toLowerCase());
+
+      const tStatus = (test?.status || "").toString();
+      const matchesStatus = statusFilter === "all" || tStatus === statusFilter;
+
       return matchesSearch && matchesStatus;
     });
-  }, [searchQuery, statusFilter]);
+  }, [searchQuery, statusFilter, purchasedTests]);
 
   const totalTests = purchasedTests.length;
-  const inProgressTests = purchasedTests.filter(t => t.status === "in-progress").length;
-  const completedTests = purchasedTests.filter(t => t.status === "completed").length;
-  const avgProgress = Math.round(purchasedTests.reduce((sum, t) => sum + t.progress, 0) / purchasedTests.length);
+  const inProgressTests = purchasedTests.filter((t: any) => (t?.status || "").toString() === "in-progress").length;
+  const completedTests = purchasedTests.filter((t: any) => (t?.status || "").toString() === "completed").length;
+  const avgProgress = purchasedTests.length
+    ? Math.round(
+        purchasedTests.reduce((sum: number, t: any) => sum + (Number(t?.progress ?? 0) || 0), 0) / purchasedTests.length
+      )
+    : 0;
+
+  const handleStartTest = async (test: any) => {
+    const practiceTestId = test?.practice_test_id || test?.id;
+    const userId = user?.sub || (user as any)?.user_id;
+    if (!practiceTestId || !userId) {
+      return;
+    }
+
+    try {
+      await fetch(
+        "https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/generate_mock_test",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            test_id: practiceTestId,
+            user_id: userId,
+          }),
+          keepalive: true,
+        }
+      );
+    } catch {}
+
+    setLocation(`/portal/quiz/${practiceTestId}`);
+  };
 
   return (
     <div className="space-y-8 p-6 md:p-8">
@@ -295,8 +357,6 @@ export default function MyPracticeTests() {
               <TableHeader>
                 <TableRow className="bg-muted/50">
                   <TableHead className="font-bold">Certification</TableHead>
-                  <TableHead className="font-bold">Difficulty</TableHead>
-                  <TableHead className="font-bold">Status</TableHead>
                   <TableHead className="font-bold">Progress</TableHead>
                   <TableHead className="font-bold">Questions</TableHead>
                   <TableHead className="font-bold">Avg Score</TableHead>
@@ -307,59 +367,49 @@ export default function MyPracticeTests() {
               <TableBody>
                 {filteredTests.map((test) => (
                   <TableRow 
-                    key={test.id} 
+                    key={test.practice_test_id} 
                     className="hover:bg-muted/50 transition-colors"
                     data-testid={`test-row-${test.id}`}
                   >
                     <TableCell className="font-medium">
                       <div>
-                        <p className="font-semibold text-foreground">{test.title}</p>
-                        <p className="text-sm text-muted-foreground">{test.subtitle}</p>
+                        <p className="font-semibold text-foreground">{test.test_title || test.name}</p>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getDifficultyColor(test.difficulty)}>
-                        {test.difficulty}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(test.status)}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-2 min-w-[150px]">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{test.progress}%</span>
+                          <span className="text-sm font-medium">{Number(test.progress ?? 0)}%</span>
                         </div>
-                        <Progress value={test.progress} className="h-2" />
+                        <Progress value={Number(test.progress ?? 0)} className="h-2" />
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium">{test.questionsCompleted}</span>
-                      <span className="text-muted-foreground">/{test.totalQuestions}</span>
+                      <span className="font-medium">{test.questionsCompleted ?? test.completedQuestions ?? 0}</span>
+                      <span className="text-muted-foreground">/{test.totalQuestions ?? test.total ?? 0}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-semibold">{test.avgScore}%</span>
+                        <span className="font-semibold">{Number(test.avgScore ?? test.averageScore ?? 0)}%</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock className="h-4 w-4" />
-                        {test.lastAccessed}
+                        {test.lastAccessed || test.last_accessed || ""}
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Link href={`/student-portal/quiz/${test.id}`}>
-                        <Button 
-                          size="sm" 
-                          className="gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                          data-testid={`button-start-${test.id}`}
-                        >
-                          <PlayCircle className="h-4 w-4" />
-                          Start
-                        </Button>
-                      </Link>
+                      <Button 
+                        size="sm" 
+                        className="gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                        data-testid={`button-start-${test.id}`}
+                        onClick={() => handleStartTest(test)}
+                      >
+                        <PlayCircle className="h-4 w-4" />
+                        Start
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

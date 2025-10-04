@@ -1,4 +1,18 @@
-import { useState, useMemo } from "react";
+/**
+ * Practice Tests Page
+ * 
+ * This component fetches practice tests from the API endpoint:
+ * https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod
+ * 
+ * Features:
+ * - API integration with fallback to static data
+ * - Loading and error states
+ * - Retry mechanism for failed requests
+ * - Filtering and sorting capabilities
+ * - Responsive design
+ */
+
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +41,9 @@ import {
   Filter,
   X,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  Loader2,
+  AlertCircle
 } from "lucide-react";
 
 interface PracticeTest {
@@ -44,7 +60,48 @@ interface PracticeTest {
   popular?: boolean;
 }
 
-const practiceTests: PracticeTest[] = [
+// API function to fetch practice tests
+const fetchPracticeTests = async (): Promise<PracticeTest[]> => {
+  try {
+    const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get-practice-test', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('API requires authentication. Please check API configuration.');
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Handle different possible response formats
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data.practiceTests && Array.isArray(data.practiceTests)) {
+      return data.practiceTests;
+    } else if (data.tests && Array.isArray(data.tests)) {
+      return data.tests;
+    } else if (data.data && Array.isArray(data.data)) {
+      return data.data;
+    } else if (data.message) {
+      throw new Error(`API Error: ${data.message}`);
+    } else {
+      throw new Error('Invalid data format received from API');
+    }
+  } catch (error) {
+    console.error('Error fetching practice tests:', error);
+    throw error;
+  }
+};
+
+// Static fallback data in case API fails
+const fallbackPracticeTests: PracticeTest[] = [
   {
     id: "saa-c03",
     title: "AWS Certified Solutions Architect",
@@ -273,6 +330,54 @@ export default function PracticeTests() {
   const [minRating, setMinRating] = useState(0);
   const [showPopularOnly, setShowPopularOnly] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
+  
+  // API state management
+  const [practiceTests, setPracticeTests] = useState<PracticeTest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch practice tests from API
+  useEffect(() => {
+    const loadPracticeTests = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await fetchPracticeTests();
+        setPracticeTests(data);
+      } catch (err) {
+        console.error('Failed to fetch practice tests:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
+        setError(errorMessage);
+        // Fallback to static data
+        setPracticeTests(fallbackPracticeTests);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPracticeTests();
+  }, []);
+
+  // Retry function for failed API calls
+  const retryFetch = () => {
+    const loadPracticeTests = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await fetchPracticeTests();
+        setPracticeTests(data);
+      } catch (err) {
+        console.error('Failed to fetch practice tests:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
+        setError(errorMessage);
+        setPracticeTests(fallbackPracticeTests);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPracticeTests();
+  };
 
   const filteredAndSortedTests = useMemo(() => {
     let filtered = practiceTests.filter((test) => {
@@ -344,6 +449,49 @@ export default function PracticeTests() {
     minRating > 0 || 
     showPopularOnly;
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+          <h2 className="text-2xl font-bold mb-2">Loading Practice Tests</h2>
+          <p className="text-muted-foreground">Fetching the latest practice tests...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Failed to Load Practice Tests</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <p className="text-sm text-muted-foreground mb-6">
+            Showing fallback data. Please check your connection and try again.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Button 
+              onClick={retryFetch} 
+              variant="outline"
+            >
+              Try Again
+            </Button>
+            <Button 
+              onClick={() => window.location.reload()} 
+              variant="default"
+            >
+              Reload Page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
@@ -377,6 +525,20 @@ export default function PracticeTests() {
               Prepare for your AWS certification exams with our comprehensive practice tests. 
               Realistic questions, detailed explanations, and performance tracking.
             </p>
+            
+            {/* API Status Banner */}
+            {error && (
+              <div className="mt-6 max-w-2xl mx-auto">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                  <div className="flex items-center justify-center gap-2 text-yellow-800 dark:text-yellow-200">
+                    <AlertCircle className="h-5 w-5" />
+                    <span className="text-sm font-medium">
+                      Using offline data. API connection failed: {error}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="flex flex-wrap justify-center items-center gap-8 mt-8 text-muted-foreground">
               <div className="flex items-center">
                 <Award className="h-5 w-5 text-accent mr-2" />

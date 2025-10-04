@@ -18,6 +18,7 @@ import {
   Award
 } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth0Safe } from "@/components/auth-components";
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
@@ -31,14 +32,16 @@ const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY
 interface CheckoutFormProps {
   testTitle: string;
   price: number;
+  practiceTestId: string;
 }
 
-const CheckoutForm = ({ testTitle, price }: CheckoutFormProps) => {
+const CheckoutForm = ({ testTitle, price, practiceTestId }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
+  const { user } = useAuth0Safe();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,12 +65,32 @@ const CheckoutForm = ({ testTitle, price }: CheckoutFormProps) => {
         variant: "destructive",
       });
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      // Fire-and-forget recording of the purchase; do not block success UX
+      console.log(testTitle, price, practiceTestId)
+      const userId = (user && (user.sub || user.user_id)) || undefined;
+      try {
+        if (userId) {
+          fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/record_purchase', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              practice_test_id: practiceTestId,
+              test_title: testTitle,
+              price: price
+            }),
+            keepalive: true,
+          }).catch(() => {});
+        }
+      } catch {}
       toast({
         title: "Payment Successful",
         description: "Thank you for your purchase! Redirecting to student portal...",
       });
       setTimeout(() => {
-        setLocation("/student-portal");
+        setLocation("/portal");
       }, 1500);
     }
   };
@@ -285,7 +308,7 @@ export default function Checkout() {
               </CardHeader>
               <CardContent>
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <CheckoutForm testTitle={testDetails.title} price={testDetails.price} />
+                  <CheckoutForm testTitle={testDetails.title} price={testDetails.price} practiceTestId={testId} />
                 </Elements>
               </CardContent>
             </Card>

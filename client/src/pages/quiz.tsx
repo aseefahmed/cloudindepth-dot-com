@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRoute, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,15 +26,20 @@ import {
   BookOpen,
   Home
 } from "lucide-react";
-import { quizQuestions } from "@shared/quiz-data";
 import { Link } from "wouter";
+import { useAuth0Safe } from "@/components/auth-components";
 
 export default function Quiz() {
-  const [, params] = useRoute("/student-portal/quiz/:testId");
+  const [, params] = useRoute("/portal/quiz/:testId");
   const [, setLocation] = useLocation();
   const testId = params?.testId || "";
-  
-  const quizData = quizQuestions.find(q => q.certificationId === testId);
+  const { user } = useAuth0Safe();
+  const userId = useMemo(() => (user && (user.sub || (user as any).user_id)) || "", [user]);
+  const [quizData, setQuizData] = useState<any | null>(null);
+  console.log("++++")
+  console.log(quizData)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string>("");
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
@@ -45,13 +50,53 @@ export default function Quiz() {
 
   useEffect(() => {
     if (showResults) return;
-    
     const timer = setInterval(() => {
       setTimeElapsed(prev => prev + 1);
     }, 1000);
-
     return () => clearInterval(timer);
   }, [showResults]);
+
+  useEffect(() => {
+    if (!testId || !userId) {
+      return;
+    }
+
+    const controller = new AbortController();
+    setIsLoading(true);
+    setLoadError("");
+
+    fetch("https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/fetch_questions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ test_id: testId, user_id: userId }),
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setQuizData(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setLoadError(err?.message || "Failed to load questions");
+        setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [testId, userId]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-12 text-center">
+            <Clock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Loading Quiz</h2>
+            <p className="text-muted-foreground mb-6">Fetching your questions...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!quizData) {
     return (
@@ -60,10 +105,8 @@ export default function Quiz() {
           <CardContent className="p-12 text-center">
             <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Quiz Not Found</h2>
-            <p className="text-muted-foreground mb-6">
-              The practice test you're looking for doesn't exist.
-            </p>
-            <Link href="/student-portal/tests">
+            <p className="text-muted-foreground mb-6">{loadError || "The practice test you're looking for doesn't exist."}</p>
+            <Link href="/portal/practice-tests">
               <Button data-testid="button-back-to-tests">
                 <Home className="h-4 w-4 mr-2" />
                 Back to My Tests
@@ -75,10 +118,33 @@ export default function Quiz() {
     );
   }
 
-  const currentQuestion = quizData.questions[currentQuestionIndex];
-  const totalQuestions = quizData.questions.length;
-  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+  const currentQuestion = quizData?.[currentQuestionIndex];
+  const totalQuestions = quizData?.length || 0;
+  console.log("+++")
+  console.log(quizData)
+  const progress = totalQuestions > 0 ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
   const answeredCount = Object.keys(selectedAnswers).length;
+
+  // Return loading state if no questions available
+  if (totalQuestions === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-12 text-center">
+            <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">No Questions Available {totalQuestions}</h2>
+            <p className="text-muted-foreground mb-6">This quiz doesn't contain any questions.</p>
+            <Link href="/portal/practice-tests">
+              <Button>
+                <Home className="h-4 w-4 mr-2" />
+                Back to My Tests
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -127,7 +193,7 @@ export default function Quiz() {
 
   const calculateScore = () => {
     let correct = 0;
-    quizData.questions.forEach((question, index) => {
+    quizData?.forEach((question, index) => {
       if (selectedAnswers[index] === question.correctAnswer) {
         correct++;
       }
@@ -137,7 +203,7 @@ export default function Quiz() {
 
   if (showResults) {
     const score = calculateScore();
-    const correct = quizData.questions.filter((q, i) => selectedAnswers[i] === q.correctAnswer).length;
+    const correct = quizData.filter((q, i) => selectedAnswers[i] === q.correctAnswer).length;
     const incorrect = answeredCount - correct;
     const unanswered = totalQuestions - answeredCount;
 
@@ -208,7 +274,7 @@ export default function Quiz() {
               <BookOpen className="h-4 w-4 mr-2" />
               Review Answers
             </Button>
-            <Link href="/student-portal/tests">
+            <Link href="/portal/practice-tests">
               <Button data-testid="button-back-to-tests-results">
                 <Home className="h-4 w-4 mr-2" />
                 Back to My Tests
@@ -270,7 +336,7 @@ export default function Quiz() {
                   Question Navigator
                 </h3>
                 <div className="grid grid-cols-5 gap-2">
-                  {quizData.questions.map((_, index) => {
+                  {quizData.map((_, index) => {
                     const isAnswered = selectedAnswers.hasOwnProperty(index);
                     const isFlagged = flaggedQuestions.has(index);
                     const isCurrent = index === currentQuestionIndex;
@@ -414,7 +480,7 @@ export default function Quiz() {
           <AlertDialogFooter>
             <AlertDialogCancel data-testid="button-cancel-exit">Continue Quiz</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => setLocation("/student-portal/tests")}
+              onClick={() => setLocation("/portal/practice-tests")}
               data-testid="button-confirm-exit"
             >
               Exit Quiz

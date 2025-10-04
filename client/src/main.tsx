@@ -3,17 +3,15 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import App from "./App";
 import "./index.css";
 
-const domain = import.meta.env.VITE_AUTH0_DOMAIN;
-const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const domain = "dev-2bl5sf67k380whvu.au.auth0.com"
+const clientId = "vmk2RaCIxYEOw16NnJfGr2GQomrz7o6W";
 
 const rootElement = document.getElementById("root")!;
 
 const onRedirectCallback = (appState?: any) => {
-  window.history.replaceState(
-    {},
-    document.title,
-    appState?.returnTo || '/student-portal'
-  );
+  const returnTo = appState?.returnTo || '/portal';
+  // Use window.location to navigate to the student portal
+  window.location.pathname = returnTo;
 };
 
 if (!domain || !clientId) {
@@ -29,7 +27,10 @@ if (!domain || !clientId) {
       clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
+        scope: "openid profile email",
       }}
+      cacheLocation="localstorage"
+      useRefreshTokens
       onRedirectCallback={onRedirectCallback}
     >
       <App />

@@ -5,12 +5,17 @@ import Stripe from "stripe";
 import { getPracticeTestById } from "@shared/practice-tests-data";
 
 // Initialize Stripe - blueprint: javascript_stripe
+process.env.STRIPE_SECRET_KEY="sk_test_51RVWjSRbKxwer5oNY9KLLXlMJlF6Qzzot1vIxlx6QdHW3FNYAujSEM3F60etIRnynT1NJS1ulkKxB8aQInN0Szv000oy3yhl1x"
 if (!process.env.STRIPE_SECRET_KEY) {
   console.warn('Warning: STRIPE_SECRET_KEY not set. Payment functionality will be disabled.');
 }
 
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      // Increase network timeout and allow automatic retries for transient issues
+      timeout: 60000,
+      maxNetworkRetries: 2,
+    })
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -78,9 +83,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error: any) {
-      console.error("Stripe payment intent error:", error);
+      // Log structured details to aid debugging of network-level issues
+      console.error("Stripe payment intent error:", {
+        message: error?.message,
+        type: error?.type,
+        code: error?.code,
+        statusCode: error?.statusCode,
+        requestId: error?.requestId,
+      });
       res.status(500).json({ 
-        message: "Error creating payment intent: " + error.message 
+        message: "Error creating payment intent: " + (error?.message || "Unknown error"),
+        code: error?.code,
+        type: error?.type,
       });
     }
   });

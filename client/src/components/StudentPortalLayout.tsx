@@ -34,11 +34,7 @@ function useAuth0Safe() {
   
   if (!configured) {
     return {
-      user: { 
-        name: "Aseef Ahmed", 
-        email: "student@example.com",
-        picture: undefined 
-      },
+      user: null,
       logout: () => {
         console.log("Logging out (dev mode)");
         window.location.href = "/";
@@ -54,12 +50,12 @@ interface StudentPortalLayoutProps {
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/student-portal", testId: "nav-dashboard" },
-  { icon: BookOpen, label: "My Practice Tests", path: "/student-portal/tests", testId: "nav-tests" },
-  { icon: TrendingUp, label: "Progress", path: "/student-portal/progress", testId: "nav-progress" },
-  { icon: Bookmark, label: "Bookmarks", path: "/student-portal/bookmarks", testId: "nav-bookmarks" },
-  { icon: Settings, label: "Settings", path: "/student-portal/settings", testId: "nav-settings" },
-  { icon: HelpCircle, label: "Support", path: "/student-portal/support", testId: "nav-support" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/portal", testId: "nav-dashboard" },
+  { icon: BookOpen, label: "My Practice Tests", path: "/portal/practice-tests", testId: "nav-tests" },
+  { icon: TrendingUp, label: "Progress", path: "/portal/progress", testId: "nav-progress" },
+  { icon: Bookmark, label: "Bookmarks", path: "/portal/bookmarks", testId: "nav-bookmarks" },
+  { icon: Settings, label: "Settings", path: "/portal/settings", testId: "nav-settings" },
+  { icon: HelpCircle, label: "Support", path: "/portal/support", testId: "nav-support" },
 ];
 
 export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
@@ -76,7 +72,7 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
         .substring(0, 2)
     : user?.email
     ? user.email.substring(0, 2).toUpperCase()
-    : "ST";
+    : "U";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
@@ -101,7 +97,7 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
       >
         {/* Logo & Brand */}
         <div className="p-6 border-b border-border">
-          <Link href="/student-portal">
+          <Link href="/portal">
             <div className="flex items-center gap-3 cursor-pointer group">
               <div className="bg-gradient-to-br from-primary to-accent p-2 rounded-lg group-hover:scale-110 transition-transform">
                 <GraduationCap className="h-6 w-6 text-white" />

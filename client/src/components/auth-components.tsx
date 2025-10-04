@@ -13,23 +13,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { LogIn, LogOut, User, AlertCircle, ShoppingCart } from "lucide-react";
 
-const isAuth0Configured = () => {
+export const isAuth0Configured = () => {
   return !!(import.meta.env.VITE_AUTH0_DOMAIN && import.meta.env.VITE_AUTH0_CLIENT_ID);
 };
 
-function useAuth0Safe() {
+export function useAuth0Safe() {
   const configured = isAuth0Configured();
   
   if (!configured) {
-    // In dev mode without Auth0, show logged-in state with mock user
+    // In dev mode without Auth0, show logged-out state
     return {
-      isAuthenticated: true,
+      isAuthenticated: false,
       isLoading: false,
-      user: {
-        name: "Aseef Ahmed",
-        email: "student@example.com",
-        picture: undefined,
-      },
+      user: null,
       loginWithRedirect: () => {
         alert("Auth0 login is not configured yet. Please add VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID to enable authentication.");
       },
@@ -171,6 +167,9 @@ export function PurchaseButton({
             returnTo: `/checkout/${testId}`
           }
         });
+      } else {
+        // Dev mode without Auth0: allow proceeding directly to checkout
+        setLocation(`/checkout/${testId}`);
       }
     } else {
       // Authenticated - go directly to checkout (test details fetched securely from backend)
