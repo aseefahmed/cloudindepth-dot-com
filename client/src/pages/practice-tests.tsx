@@ -45,6 +45,7 @@ import {
   Loader2,
   AlertCircle
 } from "lucide-react";
+import Navigation from "@/components/Navigation";
 
 interface PracticeTest {
   id: string;
@@ -495,24 +496,7 @@ export default function PracticeTests() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-card/95 backdrop-blur-md border-b border-border shadow-lg z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-heading font-bold text-primary">AWS Expert Training</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" className="flex items-center gap-2" data-testid="button-back-home">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Home
-                </Button>
-              </Link>
-              <UserProfile />
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Header Section */}
       <section className="pt-28 pb-12 bg-gradient-to-br from-primary/10 to-accent/5">

@@ -1,6 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -128,8 +129,10 @@ export function UserProfile() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem data-testid="menu-profile">
+          <Link href="/dashboard" className="flex items-center w-full">
           <User className="mr-2 h-4 w-4" />
-          Profile
+          Dashboard
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <LogoutButton />

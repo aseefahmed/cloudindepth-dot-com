@@ -8,7 +8,7 @@ import { StudentPortalLayout } from "@/components/StudentPortalLayout";
 import Home from "@/pages/home";
 import PracticeTests from "@/pages/practice-tests";
 import PracticeTestDetails from "@/pages/practice-test-details";
-import StudentPortal from "@/pages/portal";
+import StudentPortal from "@/pages/dashboard";
 import MyPracticeTests from "@/pages/my-practice-tests";
 import Quiz from "@/pages/quiz";
 import Checkout from "@/pages/checkout";
@@ -21,7 +21,7 @@ function Router() {
       <Route path="/practice-tests" component={PracticeTests} />
       <Route path="/practice-tests/:id" component={PracticeTestDetails} />
       <Route path="/checkout/:testId" component={Checkout} />
-      <Route path="/portal">
+      <Route path="/dashboard">
         {() => (
           <AuthenticatedRoute>
             <StudentPortalLayout>
@@ -30,7 +30,7 @@ function Router() {
           </AuthenticatedRoute>
         )}
       </Route>
-      <Route path="/portal/practice-tests">
+      <Route path="/dashboard/practice-tests">
         {() => (
           <AuthenticatedRoute>
             <StudentPortalLayout>
@@ -39,14 +39,14 @@ function Router() {
           </AuthenticatedRoute>
         )}
       </Route>
-      <Route path="/portal/quiz/:testId">
+      <Route path="/dashboard/quiz/:testId">
         {() => (
           <AuthenticatedRoute>
             <Quiz />
           </AuthenticatedRoute>
         )}
       </Route>
-      <Route path="/portal/:rest*">
+      <Route path="/dashboard/:rest*">
         {() => (
           <AuthenticatedRoute>
             <StudentPortalLayout>

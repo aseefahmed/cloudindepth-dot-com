@@ -50,12 +50,12 @@ interface StudentPortalLayoutProps {
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/portal", testId: "nav-dashboard" },
-  { icon: BookOpen, label: "My Practice Tests", path: "/portal/practice-tests", testId: "nav-tests" },
-  { icon: TrendingUp, label: "Progress", path: "/portal/progress", testId: "nav-progress" },
-  { icon: Bookmark, label: "Bookmarks", path: "/portal/bookmarks", testId: "nav-bookmarks" },
-  { icon: Settings, label: "Settings", path: "/portal/settings", testId: "nav-settings" },
-  { icon: HelpCircle, label: "Support", path: "/portal/support", testId: "nav-support" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", testId: "nav-dashboard" },
+  { icon: BookOpen, label: "My Practice Tests", path: "/dashboard/practice-tests", testId: "nav-tests" },
+  { icon: TrendingUp, label: "Progress", path: "/dashboard/progress", testId: "nav-progress" },
+  { icon: Bookmark, label: "Bookmarks", path: "/dashboard/bookmarks", testId: "nav-bookmarks" },
+  { icon: Settings, label: "Settings", path: "/dashboard/settings", testId: "nav-settings" },
+  { icon: HelpCircle, label: "Support", path: "/dashboard/support", testId: "nav-support" },
 ];
 
 export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
@@ -97,7 +97,7 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
       >
         {/* Logo & Brand */}
         <div className="p-6 border-b border-border">
-          <Link href="/portal">
+          <Link href="/dashboard">
             <div className="flex items-center gap-3 cursor-pointer group">
               <div className="bg-gradient-to-br from-primary to-accent p-2 rounded-lg group-hover:scale-110 transition-transform">
                 <GraduationCap className="h-6 w-6 text-white" />

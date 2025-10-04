@@ -9,7 +9,7 @@ const clientId = "vmk2RaCIxYEOw16NnJfGr2GQomrz7o6W";
 const rootElement = document.getElementById("root")!;
 
 const onRedirectCallback = (appState?: any) => {
-  const returnTo = appState?.returnTo || '/portal';
+  const returnTo = appState?.returnTo || '/dashboard';
   // Use window.location to navigate to the student portal
   window.location.pathname = returnTo;
 };

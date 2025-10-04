@@ -90,7 +90,7 @@ const CheckoutForm = ({ testTitle, price, practiceTestId }: CheckoutFormProps) =
         description: "Thank you for your purchase! Redirecting to student portal...",
       });
       setTimeout(() => {
-        setLocation("/portal");
+        setLocation("/dashboard");
       }, 1500);
     }
   };

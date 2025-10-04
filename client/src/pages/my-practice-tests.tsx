@@ -226,7 +226,7 @@ export default function MyPracticeTests() {
       );
     } catch {}
 
-    setLocation(`/portal/quiz/${practiceTestId}`);
+    setLocation(`/dashboard/quiz/${practiceTestId}`);
   };
 
   return (

@@ -30,7 +30,7 @@ import { Link } from "wouter";
 import { useAuth0Safe } from "@/components/auth-components";
 
 export default function Quiz() {
-  const [, params] = useRoute("/portal/quiz/:testId");
+  const [, params] = useRoute("/dashboard/quiz/:testId");
   const [, setLocation] = useLocation();
   const testId = params?.testId || "";
   const { user } = useAuth0Safe();
@@ -106,7 +106,7 @@ export default function Quiz() {
             <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Quiz Not Found</h2>
             <p className="text-muted-foreground mb-6">{loadError || "The practice test you're looking for doesn't exist."}</p>
-            <Link href="/portal/practice-tests">
+            <Link href="/dashboard/practice-tests">
               <Button data-testid="button-back-to-tests">
                 <Home className="h-4 w-4 mr-2" />
                 Back to My Tests
@@ -134,7 +134,7 @@ export default function Quiz() {
             <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">No Questions Available {totalQuestions}</h2>
             <p className="text-muted-foreground mb-6">This quiz doesn't contain any questions.</p>
-            <Link href="/portal/practice-tests">
+            <Link href="/dashboard/practice-tests">
               <Button>
                 <Home className="h-4 w-4 mr-2" />
                 Back to My Tests
@@ -274,7 +274,7 @@ export default function Quiz() {
               <BookOpen className="h-4 w-4 mr-2" />
               Review Answers
             </Button>
-            <Link href="/portal/practice-tests">
+            <Link href="/dashboard/practice-tests">
               <Button data-testid="button-back-to-tests-results">
                 <Home className="h-4 w-4 mr-2" />
                 Back to My Tests
@@ -480,7 +480,7 @@ export default function Quiz() {
           <AlertDialogFooter>
             <AlertDialogCancel data-testid="button-cancel-exit">Continue Quiz</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => setLocation("/portal/practice-tests")}
+              onClick={() => setLocation("/dashboard/practice-tests")}
               data-testid="button-confirm-exit"
             >
               Exit Quiz

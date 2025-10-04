@@ -104,7 +104,7 @@ export default function StudentPortal() {
             You're making great progress! Keep up the momentum and achieve your AWS certification goals.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link href="/portal/practice-tests">
+            <Link href="/dashboard/practice-tests">
               <Button
                 size="lg"
                 className="bg-white text-primary hover:bg-white/90 font-semibold"
@@ -155,7 +155,7 @@ export default function StudentPortal() {
               <Brain className="h-6 w-6 text-primary" />
               My Practice Tests
             </h2>
-            <Link href="/portal/practice-tests">
+            <Link href="/dashboard/practice-tests">
               <Button variant="ghost" size="sm" data-testid="button-view-all-tests">
                 View All <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
@@ -196,7 +196,7 @@ export default function StudentPortal() {
                     <Progress value={test.progress} className="h-2" />
                   </div>
 
-                  <Link href={`/portal/tests/${test.id}`}>
+                  <Link href={`/dashboard/tests/${test.id}`}>
                     <Button
                       variant="outline"
                       className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
@@ -245,19 +245,19 @@ export default function StudentPortal() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/portal/practice-tests">
+              <Link href="/dashboard/practice-tests">
                 <Button variant="outline" className="w-full justify-start" data-testid="button-quick-take-test">
                   <Target className="mr-2 h-4 w-4" />
                   Take Practice Test
                 </Button>
               </Link>
-              <Link href="/portal/bookmarks">
+              <Link href="/dashboard/bookmarks">
                 <Button variant="outline" className="w-full justify-start" data-testid="button-quick-review">
                   <BookOpen className="mr-2 h-4 w-4" />
                   Review Bookmarks
                 </Button>
               </Link>
-              <Link href="/portal/progress">
+              <Link href="/dashboard/progress">
                 <Button variant="outline" className="w-full justify-start" data-testid="button-quick-progress">
                   <Award className="mr-2 h-4 w-4" />
                   View Progress
