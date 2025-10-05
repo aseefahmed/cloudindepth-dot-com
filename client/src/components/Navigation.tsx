@@ -41,6 +41,17 @@ interface NavigationProps {
   scrollToSection: (sectionId: string) => void;
 }
 
+const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
 export default function Navigation({ scrollToSection }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0Safe();

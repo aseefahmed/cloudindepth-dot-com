@@ -326,7 +326,7 @@ const getDifficultyColor = (difficulty: string) => {
 };
 
 export default function PracticeTests() {
-  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(["Associate", "Professional", "Specialty"]);
   const [priceRange, setPriceRange] = useState([0, 100]);
   const [minRating, setMinRating] = useState(0);
   const [showPopularOnly, setShowPopularOnly] = useState(false);
@@ -493,10 +493,21 @@ export default function PracticeTests() {
     );
   }
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <Navigation />
+      <Navigation scrollToSection={scrollToSection}  />
 
       {/* Header Section */}
       <section className="pt-28 pb-12 bg-gradient-to-br from-primary/10 to-accent/5">

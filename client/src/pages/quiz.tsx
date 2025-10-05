@@ -36,8 +36,7 @@ export default function Quiz() {
   const { user } = useAuth0Safe();
   const userId = useMemo(() => (user && (user.sub || (user as any).user_id)) || "", [user]);
   const [quizData, setQuizData] = useState<any | null>(null);
-  console.log("++++")
-  console.log(quizData)
+  const [originalQuestions, setOriginalQuestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string>("");
   
@@ -45,8 +44,14 @@ export default function Quiz() {
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [showResults, setShowResults] = useState(false);
+  const [isReviewMode, setIsReviewMode] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [apiResults, setApiResults] = useState<{
+    right_answers: number;
+    wrong_answers: number;
+    unanswered: number;
+  } | null>(null);
 
   useEffect(() => {
     if (showResults) return;
@@ -73,7 +78,23 @@ export default function Quiz() {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log('API Response:', data);
+        
+        // The API response structure might vary
+        // Try to extract questions from different possible structures
+        let questions = [];
+        if (Array.isArray(data)) {
+          questions = data;
+        } else if (data.questions && Array.isArray(data.questions)) {
+          questions = data.questions;
+        } else if (data.data && Array.isArray(data.data)) {
+          questions = data.data;
+        }
+        
+        // Store the full response for student's answers
         setQuizData(data);
+        // Store the original questions array for review
+        setOriginalQuestions(questions);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -118,10 +139,20 @@ export default function Quiz() {
     );
   }
 
-  const currentQuestion = quizData?.[currentQuestionIndex];
-  const totalQuestions = quizData?.length || 0;
-  console.log("+++")
-  console.log(quizData)
+  // In review mode, use original questions; otherwise use student's questions
+  const currentQuestion = isReviewMode 
+    ? originalQuestions[currentQuestionIndex] 
+    : (Array.isArray(quizData) ? quizData[currentQuestionIndex] : 
+       (quizData?.questions?.[currentQuestionIndex] || quizData?.[currentQuestionIndex]));
+  const totalQuestions = originalQuestions?.length || 0;
+  
+  // Debug logging
+  console.log('Review mode:', isReviewMode);
+  console.log('Current question index:', currentQuestionIndex);
+  console.log('Current question:', currentQuestion);
+  console.log('Original questions:', originalQuestions);
+  console.log('Quiz data:', quizData);
+  console.log('Selected answers:', selectedAnswers);
   const progress = totalQuestions > 0 ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
   const answeredCount = Object.keys(selectedAnswers).length;
 
@@ -187,13 +218,59 @@ export default function Quiz() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // Prepare the quiz data with chosen options
+    const quizDataWithChoices = originalQuestions.map((question: any, index: number) => {
+      const chosenOptions = selectedAnswers[index] !== undefined ? [selectedAnswers[index]] : [];
+      
+      return {
+        ...question,
+        choosen_options: chosenOptions
+      };
+    });
+    
+    console.log('Submitting quiz data with chosen options:', quizDataWithChoices);
+    
+    // Make API call to check answers
+    try {
+      const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/check-answers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(quizDataWithChoices)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Check answers result:', result);
+        // Store the API results for display
+        setApiResults(result);
+      } else {
+        console.error('Failed to check answers:', response.statusText);
+        // Set default results if API fails
+        setApiResults({
+          right_answers: 0,
+          wrong_answers: 0,
+          unanswered: totalQuestions
+        });
+      }
+    } catch (error) {
+      console.error('Error checking answers:', error);
+      // Set default results if API call fails
+      setApiResults({
+        right_answers: 0,
+        wrong_answers: 0,
+        unanswered: totalQuestions
+      });
+    }
+    
     setShowResults(true);
   };
 
   const calculateScore = () => {
     let correct = 0;
-    quizData?.forEach((question, index) => {
+    originalQuestions.forEach((question: any, index: number) => {
       if (selectedAnswers[index] === question.correctAnswer) {
         correct++;
       }
@@ -202,10 +279,11 @@ export default function Quiz() {
   };
 
   if (showResults) {
-    const score = calculateScore();
-    const correct = quizData.filter((q, i) => selectedAnswers[i] === q.correctAnswer).length;
-    const incorrect = answeredCount - correct;
-    const unanswered = totalQuestions - answeredCount;
+    // Use API results if available, otherwise fall back to local calculation
+    const correct = apiResults?.right_answers ?? originalQuestions.filter((q: any, i: number) => selectedAnswers[i] === q.correctAnswer).length;
+    const incorrect = apiResults?.wrong_answers ?? (answeredCount - correct);
+    const unanswered = apiResults?.unanswered ?? (totalQuestions - answeredCount);
+    const score = apiResults ? Math.round((correct / totalQuestions) * 100) : calculateScore();
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 p-6">
@@ -267,6 +345,7 @@ export default function Quiz() {
               variant="outline"
               onClick={() => {
                 setShowResults(false);
+                setIsReviewMode(true);
                 setCurrentQuestionIndex(0);
               }}
               data-testid="button-review-answers"
@@ -274,7 +353,7 @@ export default function Quiz() {
               <BookOpen className="h-4 w-4 mr-2" />
               Review Answers
             </Button>
-            <Link href="/dashboard/practice-tests">
+            <Link href="/portal/practice-tests">
               <Button data-testid="button-back-to-tests-results">
                 <Home className="h-4 w-4 mr-2" />
                 Back to My Tests
@@ -293,9 +372,17 @@ export default function Quiz() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h2 className="font-heading font-bold text-lg">{quizData.certificationName}</h2>
+              <h2 className="font-heading font-bold text-lg">
+                {quizData.certificationName}
+                {isReviewMode && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                    Review Mode
+                  </Badge>
+                )}
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Question {currentQuestionIndex + 1} of {totalQuestions}
+                {isReviewMode && " (Review)"}
               </p>
             </div>
             <div className="flex items-center gap-6">
@@ -336,7 +423,7 @@ export default function Quiz() {
                   Question Navigator
                 </h3>
                 <div className="grid grid-cols-5 gap-2">
-                  {quizData.map((_, index) => {
+                  {originalQuestions.map((_: any, index: number) => {
                     const isAnswered = selectedAnswers.hasOwnProperty(index);
                     const isFlagged = flaggedQuestions.has(index);
                     const isCurrent = index === currentQuestionIndex;
@@ -397,39 +484,127 @@ export default function Quiz() {
 
                 {/* Answer Options */}
                 <div className="space-y-3 mb-8">
-                  {currentQuestion.options.map((option, index) => {
+                  {currentQuestion.options.map((option: string, index: number) => {
                     const isSelected = selectedAnswers[currentQuestionIndex] === index;
+                    const isCorrect = currentQuestion.correctAnswer === index;
                     const optionLetter = String.fromCharCode(65 + index);
+                    
+                    // In review mode, check if the option matches the correct answer
+                    const isCorrectAnswer = isReviewMode ? 
+                      (Array.isArray(currentQuestion.correctAnswer) ? 
+                        currentQuestion.correctAnswer.includes(index) : 
+                        currentQuestion.correctAnswer === index) : 
+                      isCorrect;
+                    
+                    // In review mode, check if this option was chosen by the student
+                    const isChosenByStudent = isReviewMode ? 
+                      (currentQuestion.choosen_options && 
+                       Array.isArray(currentQuestion.choosen_options) && 
+                       currentQuestion.choosen_options.includes(index)) : 
+                      isSelected;
+                    
+                    // Debug logging for review mode
+                    if (isReviewMode && index === 0) {
+                      console.log('Review mode debug:', {
+                        questionIndex: currentQuestionIndex,
+                        correctAnswer: currentQuestion.correctAnswer,
+                        choosen_options: currentQuestion.choosen_options,
+                        optionIndex: index,
+                        isCorrectAnswer,
+                        isChosenByStudent
+                      });
+                    }
+
+                    // In review mode, show correct/incorrect styling
+                    const getOptionStyling = () => {
+                      if (isReviewMode) {
+                        if (isCorrectAnswer && isChosenByStudent) {
+                          // Correct answer that was chosen - show in green
+                          return 'border-green-500 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300';
+                        } else if (isCorrectAnswer && !isChosenByStudent) {
+                          // Correct answer that was not chosen - show in green (lighter)
+                          return 'border-green-300 bg-green-25 dark:bg-green-900 text-green-600 dark:text-green-400';
+                        } else if (!isCorrectAnswer && isChosenByStudent) {
+                          // Wrong answer that was chosen - show in red
+                          return 'border-red-500 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200';
+                        } else {
+                          // Unselected wrong answers - show in muted
+                          return 'border-muted bg-muted/50';
+                        }
+                      }
+                      return isSelected 
+                        ? 'border-primary bg-primary/10 shadow-md' 
+                        : 'border-muted hover:border-primary/50 hover:bg-muted/50';
+                    };
+
+                    const getLetterStyling = () => {
+                      if (isReviewMode) {
+                        if (isCorrectAnswer && isChosenByStudent) {
+                          // Correct answer that was chosen - green
+                          return 'bg-green-500 text-white';
+                        } else if (isCorrectAnswer && !isChosenByStudent) {
+                          // Correct answer that was not chosen - lighter green
+                          return 'bg-green-400 text-white';
+                        } else if (!isCorrectAnswer && isChosenByStudent) {
+                          // Wrong answer that was chosen - red
+                          return 'bg-red-600 text-white';
+                        } else {
+                          // Unselected wrong answers - muted
+                          return 'bg-muted text-muted-foreground';
+                        }
+                      }
+                      return isSelected 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted text-muted-foreground';
+                    };
 
                     return (
-                      <button
+                      <div
                         key={index}
-                        onClick={() => handleAnswerSelect(index)}
                         className={`
                           w-full text-left p-4 rounded-lg border-2 transition-all
-                          ${isSelected 
-                            ? 'border-primary bg-primary/10 shadow-md' 
-                            : 'border-muted hover:border-primary/50 hover:bg-muted/50'
-                          }
+                          ${getOptionStyling()}
+                          ${!isReviewMode ? 'cursor-pointer hover:shadow-sm' : 'cursor-default'}
                         `}
+                        onClick={!isReviewMode ? () => handleAnswerSelect(index) : undefined}
                         data-testid={`option-${index}`}
                       >
                         <div className="flex items-start gap-3">
                           <div className={`
                             flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm
-                            ${isSelected 
-                              ? 'bg-primary text-primary-foreground' 
-                              : 'bg-muted text-muted-foreground'
-                            }
+                            ${getLetterStyling()}
                           `}>
                             {optionLetter}
                           </div>
                           <span className="flex-1 pt-1">{option}</span>
+                          {isReviewMode && isCorrectAnswer && isChosenByStudent && (
+                            <CheckCircle className="h-5 w-5 text-green-500 mt-1" />
+                          )}
+                          {isReviewMode && !isCorrectAnswer && isChosenByStudent && (
+                            <XCircle className="h-5 w-5 text-red-500 mt-1" />
+                          )}
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
+
+                {/* Explanation in Review Mode */}
+                {isReviewMode && currentQuestion?.explanation && (
+                  <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0">
+                        <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Explanation</h4>
+                        <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
+                          {currentQuestion.explanation}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Navigation Buttons */}
                 <div className="flex items-center justify-between pt-6 border-t">
@@ -443,7 +618,30 @@ export default function Quiz() {
                     Previous
                   </Button>
 
-                  {currentQuestionIndex === totalQuestions - 1 ? (
+                  {isReviewMode ? (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsReviewMode(false);
+                          setShowResults(true);
+                        }}
+                        data-testid="button-back-to-results"
+                      >
+                        <Award className="h-4 w-4 mr-2" />
+                        Back to Results
+                      </Button>
+                      {currentQuestionIndex < totalQuestions - 1 && (
+                        <Button
+                          onClick={handleNext}
+                          data-testid="button-next-review"
+                        >
+                          Next
+                          <ChevronRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      )}
+                    </div>
+                  ) : currentQuestionIndex === totalQuestions - 1 ? (
                     <Button
                       onClick={handleSubmit}
                       className="gap-2 bg-gradient-to-r from-primary to-accent"
