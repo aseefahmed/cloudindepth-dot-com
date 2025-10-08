@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { UserProfile, PurchaseButton } from "@/components/auth-components";
+import Navigation from "@/components/Navigation";
 import { 
   CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, 
   ArrowLeft, Shield, TrendingUp, Target, Zap, PlayCircle, 
@@ -225,44 +226,28 @@ export default function PracticeTestDetails() {
   const testId = params?.id || "saa-c03";
   const test = practiceTestsData[testId] || practiceTestsData["saa-c03"];
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-card/95 backdrop-blur-md border-b border-border shadow-lg z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-heading font-bold text-primary">AWS Expert Training</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/practice-tests">
-                <Button variant="ghost" className="flex items-center gap-2" data-testid="button-back-tests">
-                  <ArrowLeft className="h-4 w-4" />
-                  All Tests
-                </Button>
-              </Link>
-              <Link href="/">
-                <Button variant="outline" data-testid="button-home">
-                  Home
-                </Button>
-              </Link>
-              <UserProfile />
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation scrollToSection={scrollToSection} />
 
       {/* Hero Section */}
       <section className="pt-24 pb-12 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8 items-start">
             <div className="md:col-span-2">
-              <Link href="/practice-tests">
-                <Button variant="ghost" size="sm" className="mb-4 -ml-2">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to all tests
-                </Button>
-              </Link>
+              
               <Badge className={`${getDifficultyColor(test.difficulty)} mb-4`}>
                 {test.difficulty} Level
               </Badge>

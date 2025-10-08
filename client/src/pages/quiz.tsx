@@ -41,7 +41,7 @@ export default function Quiz() {
   const [loadError, setLoadError] = useState<string>("");
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number[] }>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [showResults, setShowResults] = useState(false);
   const [isReviewMode, setIsReviewMode] = useState(false);
@@ -183,11 +183,36 @@ export default function Quiz() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Helper function to compare arrays
+  const arraysEqual = (arr1: number[], arr2: number[] | number) => {
+    if (typeof arr2 === 'number') {
+      return arr1.length === 1 && arr1[0] === arr2;
+    }
+    if (arr1.length !== arr2.length) return false;
+    const sorted1 = [...arr1].sort();
+    const sorted2 = [...arr2].sort();
+    return sorted1.every((val, index) => val === sorted2[index]);
+  };
+
   const handleAnswerSelect = (optionIndex: number) => {
-    setSelectedAnswers(prev => ({
-      ...prev,
-      [currentQuestionIndex]: optionIndex
-    }));
+    setSelectedAnswers(prev => {
+      const currentSelections = prev[currentQuestionIndex] || [];
+      const isSelected = currentSelections.includes(optionIndex);
+      
+      if (isSelected) {
+        // Remove the option if it's already selected
+        return {
+          ...prev,
+          [currentQuestionIndex]: currentSelections.filter(opt => opt !== optionIndex)
+        };
+      } else {
+        // Add the option to selections
+        return {
+          ...prev,
+          [currentQuestionIndex]: [...currentSelections, optionIndex]
+        };
+      }
+    });
   };
 
   const handleNext = () => {
@@ -221,7 +246,7 @@ export default function Quiz() {
   const handleSubmit = async () => {
     // Prepare the quiz data with chosen options
     const quizDataWithChoices = originalQuestions.map((question: any, index: number) => {
-      const chosenOptions = selectedAnswers[index] !== undefined ? [selectedAnswers[index]] : [];
+      const chosenOptions = selectedAnswers[index] || [];
       
       return {
         ...question,
@@ -238,7 +263,11 @@ export default function Quiz() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(quizDataWithChoices)
+        body: JSON.stringify({
+          user_id: userId,
+          practice_test_id: testId,
+          questions: quizDataWithChoices
+        })
       });
       
       if (response.ok) {
@@ -271,7 +300,7 @@ export default function Quiz() {
   const calculateScore = () => {
     let correct = 0;
     originalQuestions.forEach((question: any, index: number) => {
-      if (selectedAnswers[index] === question.correctAnswer) {
+      if (arraysEqual(selectedAnswers[index] || [], question.correctAnswer)) {
         correct++;
       }
     });
@@ -280,7 +309,7 @@ export default function Quiz() {
 
   if (showResults) {
     // Use API results if available, otherwise fall back to local calculation
-    const correct = apiResults?.right_answers ?? originalQuestions.filter((q: any, i: number) => selectedAnswers[i] === q.correctAnswer).length;
+    const correct = apiResults?.right_answers ?? originalQuestions.filter((q: any, i: number) => arraysEqual(selectedAnswers[i] || [], q.correctAnswer)).length;
     const incorrect = apiResults?.wrong_answers ?? (answeredCount - correct);
     const unanswered = apiResults?.unanswered ?? (totalQuestions - answeredCount);
     const score = apiResults ? Math.round((correct / totalQuestions) * 100) : calculateScore();
@@ -424,9 +453,13 @@ export default function Quiz() {
                 </h3>
                 <div className="grid grid-cols-5 gap-2">
                   {originalQuestions.map((_: any, index: number) => {
-                    const isAnswered = selectedAnswers.hasOwnProperty(index);
+                    const isAnswered = selectedAnswers.hasOwnProperty(index) && selectedAnswers[index].length > 0;
                     const isFlagged = flaggedQuestions.has(index);
                     const isCurrent = index === currentQuestionIndex;
+                    
+                    // Check if the question was answered incorrectly (only in review mode)
+                    const isWrong = isReviewMode && isAnswered && originalQuestions[index] && 
+                      !arraysEqual(selectedAnswers[index], originalQuestions[index].correctAnswer);
 
                     return (
                       <button
@@ -435,7 +468,9 @@ export default function Quiz() {
                         className={`
                           relative h-10 rounded-md font-semibold text-sm transition-all
                           ${isCurrent ? 'ring-2 ring-primary ring-offset-2' : ''}
-                          ${isAnswered && !isCurrent ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300' : ''}
+                          ${isWrong && !isCurrent ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300' : ''}
+                          ${isAnswered && !isWrong && !isCurrent ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300' : ''}
+                          ${isAnswered && !isReviewMode && !isCurrent ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300' : ''}
                           ${!isAnswered && !isCurrent ? 'bg-muted hover:bg-muted/80' : ''}
                         `}
                         data-testid={`nav-question-${index + 1}`}
@@ -443,6 +478,9 @@ export default function Quiz() {
                         {index + 1}
                         {isFlagged && (
                           <Flag className="h-3 w-3 text-accent absolute -top-1 -right-1 fill-current" />
+                        )}
+                        {isWrong && isReviewMode && (
+                          <XCircle className="h-3 w-3 text-red-500 absolute -top-1 -right-1" />
                         )}
                       </button>
                     );
@@ -467,9 +505,10 @@ export default function Quiz() {
                         {currentQuestion.domain}
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-medium leading-relaxed">
-                      {currentQuestion.question}
-                    </h3>
+                    <h3 
+                      className="text-xl font-medium leading-relaxed text-justify"
+                      dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
+                    />
                   </div>
                   <Button
                     variant={flaggedQuestions.has(currentQuestionIndex) ? "default" : "outline"}
@@ -485,7 +524,7 @@ export default function Quiz() {
                 {/* Answer Options */}
                 <div className="space-y-3 mb-8">
                   {currentQuestion.options.map((option: string, index: number) => {
-                    const isSelected = selectedAnswers[currentQuestionIndex] === index;
+                    const isSelected = selectedAnswers[currentQuestionIndex]?.includes(index) || false;
                     const isCorrect = currentQuestion.correctAnswer === index;
                     const optionLetter = String.fromCharCode(65 + index);
                     
@@ -525,8 +564,8 @@ export default function Quiz() {
                           // Correct answer that was not chosen - show in green (lighter)
                           return 'border-green-300 bg-green-25 dark:bg-green-900 text-green-600 dark:text-green-400';
                         } else if (!isCorrectAnswer && isChosenByStudent) {
-                          // Wrong answer that was chosen - show in red
-                          return 'border-red-500 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200';
+                          // Wrong answer that was chosen - show in light red background
+                          return 'border-red-300 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300';
                         } else {
                           // Unselected wrong answers - show in muted
                           return 'border-muted bg-muted/50';
@@ -546,8 +585,8 @@ export default function Quiz() {
                           // Correct answer that was not chosen - lighter green
                           return 'bg-green-400 text-white';
                         } else if (!isCorrectAnswer && isChosenByStudent) {
-                          // Wrong answer that was chosen - red
-                          return 'bg-red-600 text-white';
+                          // Wrong answer that was chosen - light red
+                          return 'bg-red-400 text-white';
                         } else {
                           // Unselected wrong answers - muted
                           return 'bg-muted text-muted-foreground';
@@ -576,12 +615,21 @@ export default function Quiz() {
                           `}>
                             {optionLetter}
                           </div>
-                          <span className="flex-1 pt-1">{option}</span>
+                          <span 
+                            className="flex-1 pt-1"
+                            dangerouslySetInnerHTML={{ __html: option }}
+                          />
                           {isReviewMode && isCorrectAnswer && isChosenByStudent && (
-                            <CheckCircle className="h-5 w-5 text-green-500 mt-1" />
+                            <div className="flex items-center gap-1 mt-1">
+                              <CheckCircle className="h-5 w-5 text-green-500" />
+                              <span className="text-xs font-semibold text-green-600">CORRECT</span>
+                            </div>
                           )}
                           {isReviewMode && !isCorrectAnswer && isChosenByStudent && (
-                            <XCircle className="h-5 w-5 text-red-500 mt-1" />
+                            <div className="flex items-center gap-1 mt-1">
+                              <XCircle className="h-5 w-5 text-red-500" />
+                              <span className="text-xs font-semibold text-red-500">WRONG</span>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -598,9 +646,10 @@ export default function Quiz() {
                       </div>
                       <div>
                         <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Explanation</h4>
-                        <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
-                          {currentQuestion.explanation}
-                        </p>
+                        <div 
+                          className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed"
+                          dangerouslySetInnerHTML={{ __html: currentQuestion.explanation }}
+                        />
                       </div>
                     </div>
                   </div>

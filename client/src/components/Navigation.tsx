@@ -71,19 +71,10 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
                   Home
                 </button>
               </Link>
+              
               <Link href="/practice-tests">
                 <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
-                  AWS
-                </button>
-              </Link>
-              <Link href="/practice-tests">
-                <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
-                  Azure
-                </button>
-              </Link>
-              <Link href="/practice-tests">
-                <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-practice-tests">
-                  DevOps
+                  Practice Tests
                 </button>
               </Link>
               <Button

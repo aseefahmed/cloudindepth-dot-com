@@ -55,7 +55,7 @@ interface PracticeTest {
   questions: number;
   duration: string;
   rating: number;
-  reviews: number;
+  reviews_count: number;
   difficulty: "Associate" | "Professional" | "Specialty";
   features: string[];
   popular?: boolean;
@@ -102,215 +102,7 @@ const fetchPracticeTests = async (): Promise<PracticeTest[]> => {
 };
 
 // Static fallback data in case API fails
-const fallbackPracticeTests: PracticeTest[] = [
-  {
-    id: "saa-c03",
-    title: "AWS Certified Solutions Architect",
-    subtitle: "Associate (SAA-C03)",
-    price: 49,
-    questions: 390,
-    duration: "65 mins per test",
-    rating: 4.8,
-    reviews: 1250,
-    difficulty: "Associate",
-    features: [
-      "6 full-length practice tests",
-      "Detailed explanations for all answers",
-      "Performance tracking dashboard",
-      "Mobile-friendly interface"
-    ],
-    popular: true
-  },
-  {
-    id: "sap-c02",
-    title: "AWS Certified Solutions Architect",
-    subtitle: "Professional (SAP-C02)",
-    price: 69,
-    questions: 450,
-    duration: "75 mins per test",
-    rating: 4.9,
-    reviews: 890,
-    difficulty: "Professional",
-    features: [
-      "6 full-length practice tests",
-      "Advanced scenario-based questions",
-      "Exam tips and strategies",
-      "Lifetime access to updates"
-    ]
-  },
-  {
-    id: "dva-c02",
-    title: "AWS Certified Developer",
-    subtitle: "Associate (DVA-C02)",
-    price: 45,
-    questions: 325,
-    duration: "65 mins per test",
-    rating: 4.7,
-    reviews: 1100,
-    difficulty: "Associate",
-    features: [
-      "5 full-length practice tests",
-      "Code-based questions included",
-      "Video explanations available",
-      "Practice mode & timed mode"
-    ]
-  },
-  {
-    id: "soa-c02",
-    title: "AWS Certified SysOps Administrator",
-    subtitle: "Associate (SOA-C02)",
-    price: 45,
-    questions: 300,
-    duration: "65 mins per test",
-    rating: 4.6,
-    reviews: 780,
-    difficulty: "Associate",
-    features: [
-      "5 full-length practice tests",
-      "Hands-on lab scenarios",
-      "Performance analytics",
-      "Study mode available"
-    ]
-  },
-  {
-    id: "dop-c02",
-    title: "AWS Certified DevOps Engineer",
-    subtitle: "Professional (DOP-C02)",
-    price: 69,
-    questions: 425,
-    duration: "75 mins per test",
-    rating: 4.8,
-    reviews: 650,
-    difficulty: "Professional",
-    features: [
-      "6 full-length practice tests",
-      "CI/CD scenario questions",
-      "Infrastructure as Code focus",
-      "Expert-level explanations"
-    ],
-    popular: true
-  },
-  {
-    id: "ans-c01",
-    title: "AWS Certified Advanced Networking",
-    subtitle: "Specialty (ANS-C01)",
-    price: 59,
-    questions: 325,
-    duration: "65 mins per test",
-    rating: 4.7,
-    reviews: 420,
-    difficulty: "Specialty",
-    features: [
-      "5 full-length practice tests",
-      "Network architecture scenarios",
-      "Hybrid connectivity questions",
-      "VPC deep-dive questions"
-    ]
-  },
-  {
-    id: "scs-c02",
-    title: "AWS Certified Security",
-    subtitle: "Specialty (SCS-C02)",
-    price: 59,
-    questions: 325,
-    duration: "65 mins per test",
-    rating: 4.9,
-    reviews: 580,
-    difficulty: "Specialty",
-    features: [
-      "5 full-length practice tests",
-      "Security best practices focus",
-      "Compliance scenarios included",
-      "IAM & encryption deep-dive"
-    ]
-  },
-  {
-    id: "dbs-c01",
-    title: "AWS Certified Database",
-    subtitle: "Specialty (DBS-C01)",
-    price: 59,
-    questions: 325,
-    duration: "65 mins per test",
-    rating: 4.6,
-    reviews: 390,
-    difficulty: "Specialty",
-    features: [
-      "5 full-length practice tests",
-      "Database migration scenarios",
-      "Performance optimization focus",
-      "Multi-DB service coverage"
-    ]
-  },
-  {
-    id: "mls-c01",
-    title: "AWS Certified Machine Learning",
-    subtitle: "Specialty (MLS-C01)",
-    price: 59,
-    questions: 325,
-    duration: "65 mins per test",
-    rating: 4.8,
-    reviews: 510,
-    difficulty: "Specialty",
-    features: [
-      "5 full-length practice tests",
-      "ML algorithms & frameworks",
-      "SageMaker deep-dive",
-      "Real-world ML scenarios"
-    ],
-    popular: true
-  },
-  {
-    id: "das-c01",
-    title: "AWS Certified Data Analytics",
-    subtitle: "Specialty (DAS-C01)",
-    price: 59,
-    questions: 325,
-    duration: "65 mins per test",
-    rating: 4.7,
-    reviews: 460,
-    difficulty: "Specialty",
-    features: [
-      "5 full-length practice tests",
-      "Big data architecture focus",
-      "Analytics service coverage",
-      "ETL pipeline scenarios"
-    ]
-  },
-  {
-    id: "sap-bundle",
-    title: "Solutions Architect Bundle",
-    subtitle: "Associate + Professional",
-    price: 99,
-    questions: 840,
-    duration: "Multiple tests",
-    rating: 4.9,
-    reviews: 320,
-    difficulty: "Professional",
-    features: [
-      "Both SAA-C03 & SAP-C02 tests",
-      "Save $19 on bundle",
-      "Complete learning path",
-      "Priority email support"
-    ]
-  },
-  {
-    id: "cloud-practitioner",
-    title: "AWS Certified Cloud Practitioner",
-    subtitle: "Foundational (CLF-C02)",
-    price: 35,
-    questions: 260,
-    duration: "65 mins per test",
-    rating: 4.8,
-    reviews: 1850,
-    difficulty: "Associate",
-    features: [
-      "4 full-length practice tests",
-      "Perfect for beginners",
-      "Cloud concepts explained",
-      "AWS service overview"
-    ]
-  }
-];
+
 
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty) {
@@ -343,13 +135,16 @@ export default function PracticeTests() {
       try {
         setIsLoading(true);
         setError(null);
+        console.log('Fetching practice tests from API...');
         const data = await fetchPracticeTests();
+        console.log('API data received:', data.length, 'tests');
         setPracticeTests(data);
       } catch (err) {
         console.error('Failed to fetch practice tests:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
         setError(errorMessage);
         // Fallback to static data
+        console.log('Using fallback data:', fallbackPracticeTests.length, 'tests');
         setPracticeTests(fallbackPracticeTests);
       } finally {
         setIsLoading(false);
@@ -381,29 +176,44 @@ export default function PracticeTests() {
   };
 
   const filteredAndSortedTests = useMemo(() => {
+    console.log('Filtering tests:', {
+      totalTests: practiceTests.length,
+      selectedDifficulties,
+      priceRange,
+      minRating,
+      showPopularOnly,
+      sortBy
+    });
+    
     let filtered = practiceTests.filter((test) => {
       // Difficulty filter
       if (selectedDifficulties.length > 0 && !selectedDifficulties.includes(test.difficulty)) {
+        console.log('Filtered out by difficulty:', test.title, test.difficulty);
         return false;
       }
 
       // Price range filter
       if (test.price < priceRange[0] || test.price > priceRange[1]) {
+        console.log('Filtered out by price:', test.title, test.price, priceRange);
         return false;
       }
 
       // Rating filter
       if (test.rating < minRating) {
+        console.log('Filtered out by rating:', test.title, test.rating, minRating);
         return false;
       }
 
       // Popular filter
       if (showPopularOnly && !test.popular) {
+        console.log('Filtered out by popular:', test.title, test.popular);
         return false;
       }
 
       return true;
     });
+    
+    console.log('Filtered results:', filtered.length, 'out of', practiceTests.length);
 
     // Sorting
     filtered.sort((a, b) => {
@@ -426,7 +236,7 @@ export default function PracticeTests() {
     });
 
     return filtered;
-  }, [selectedDifficulties, priceRange, minRating, showPopularOnly, sortBy]);
+  }, [practiceTests, selectedDifficulties, priceRange, minRating, showPopularOnly, sortBy]);
 
   const handleDifficultyToggle = (difficulty: string) => {
     setSelectedDifficulties(prev =>
@@ -437,14 +247,14 @@ export default function PracticeTests() {
   };
 
   const resetFilters = () => {
-    setSelectedDifficulties([]);
+    setSelectedDifficulties(["Associate", "Professional", "Specialty"]);
     setPriceRange([0, 100]);
     setMinRating(0);
     setShowPopularOnly(false);
     setSortBy("popular");
   };
 
-  const hasActiveFilters = selectedDifficulties.length > 0 || 
+  const hasActiveFilters = selectedDifficulties.length !== 3 || 
     priceRange[0] !== 0 || 
     priceRange[1] !== 100 || 
     minRating > 0 || 
@@ -751,7 +561,7 @@ export default function PracticeTests() {
                           <div className="flex items-center text-sm">
                             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 mr-1" />
                             <span className="font-semibold">{test.rating}</span>
-                            <span className="text-muted-foreground ml-1">({test.reviews})</span>
+                            <span className="text-muted-foreground ml-1">({test.reviews_count})</span>
                           </div>
                         </div>
                         <CardTitle className="text-xl font-heading mb-1">{test.title}</CardTitle>
