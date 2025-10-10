@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,203 +10,119 @@ import Navigation from "@/components/Navigation";
 import { 
   CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, 
   ArrowLeft, Shield, TrendingUp, Target, Zap, PlayCircle, 
-  BarChart, Download, Video, FileText, MessageCircle
+  BarChart, Download, Video, FileText, MessageCircle, Loader2, AlertCircle
 } from "lucide-react";
+import { practiceTestsData } from "../../../shared/practice-tests-data";
 
-const practiceTestsData: { [key: string]: any } = {
-  "saa-c03": {
-    id: "saa-c03",
-    title: "AWS Certified Solutions Architect",
-    subtitle: "Associate (SAA-C03)",
-    fullTitle: "AWS Certified Solutions Architect - Associate",
-    price: 49,
-    originalPrice: 79,
-    questions: 390,
-    practiceTests: 6,
-    duration: "65 mins per test",
-    rating: 4.8,
-    reviews: 1250,
-    difficulty: "Associate",
-    passingScore: "720/1000",
-    description: "Master the AWS Solutions Architect Associate certification with our comprehensive practice test package. Designed to mirror the actual exam experience with realistic questions and detailed explanations.",
-    whatYouGet: [
-      "6 full-length practice tests (390 total questions)",
-      "Detailed explanations for every question",
-      "Performance tracking and analytics dashboard",
-      "Mobile-friendly access on any device",
-      "Lifetime access to all updates",
-      "Timed and practice modes",
-      "Bookmark difficult questions",
-      "Downloadable study notes"
+// Transform API data to match component expectations
+const transformApiData = (apiData: any): any => {
+  console.log('Transforming API data:', apiData);
+  console.log("__________________________")
+  
+  // Map API fields to component expected fields
+  return {
+    id: apiData.id || apiData.course_id || apiData.courseId,
+    title: apiData.title || apiData.name || apiData.course_title,
+    subtitle: apiData.subtitle || apiData.short_description || apiData.course_subtitle,
+    fullTitle: apiData.fullTitle || apiData.full_title || apiData.course_name || apiData.title,
+    price: apiData.price || apiData.cost || apiData.course_price || 0,
+    originalPrice: apiData.originalPrice || apiData.original_price || apiData.retail_price || apiData.price * 1.5,
+    questions: apiData.questions || apiData.total_questions || apiData.question_count || 0,
+    practiceTests: apiData.practiceTests || apiData.practice_tests || apiData.test_count || 0,
+    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "65 mins per test",
+    rating: apiData.rating || apiData.average_rating || apiData.star_rating || 4.5,
+    reviews: apiData.review_count || apiData.review_count || apiData.total_reviews || 0,
+    difficulty: apiData.difficulty || apiData.level || apiData.course_level || "Associate",
+    passingScore: apiData.passingScore || apiData.passing_score || apiData.minimum_score || "720/1000",
+    description: apiData.description || apiData.course_description || apiData.overview || "Course description not available",
+    status: apiData.status,
+    whatYouGet: apiData.whatYouGet || apiData.features || apiData.included_features || apiData.benefits || [
+      "Practice tests included",
+      "Detailed explanations",
+      "Performance tracking",
+      "Lifetime access"
     ],
-    topics: [
-      { name: "Design Resilient Architectures", percentage: 30 },
-      { name: "Design High-Performing Architectures", percentage: 28 },
-      { name: "Design Secure Applications", percentage: 24 },
-      { name: "Design Cost-Optimized Architectures", percentage: 18 }
+    topics: apiData.topics || apiData.course_topics || apiData.subject_areas || [
+      { name: "Core Concepts", percentage: 50 },
+      { name: "Advanced Topics", percentage: 30 },
+      { name: "Practical Applications", percentage: 20 }
     ],
-    sampleQuestions: [
+    sampleQuestions: apiData.sampleQuestions || apiData.sample_questions || apiData.preview_questions || [
       {
-        question: "A company needs to store frequently accessed data with high durability. Which AWS service combination provides the best solution?",
-        options: ["A) S3 Standard + CloudFront", "B) EBS + EC2", "C) Glacier + Lambda", "D) DynamoDB + ElastiCache"],
-        explanation: "S3 Standard offers 99.999999999% durability and CloudFront provides low-latency access globally."
-      },
-      {
-        question: "What is the most cost-effective way to run a batch processing job that can be interrupted?",
-        options: ["A) On-Demand Instances", "B) Spot Instances", "C) Reserved Instances", "D) Dedicated Hosts"],
-        explanation: "Spot Instances offer up to 90% discount and are perfect for flexible, interruptible workloads."
+        question: "Sample question from the course",
+        options: ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"],
+        explanation: "This is a sample explanation for the question."
       }
     ],
-    faqs: [
+    faqs: apiData.faqs || apiData.frequently_asked_questions || apiData.common_questions || [
       {
-        question: "How similar are these questions to the actual exam?",
-        answer: "Our questions are carefully crafted to match the difficulty and format of the real AWS SAA-C03 exam. They're based on the official exam guide and real-world scenarios."
-      },
-      {
-        question: "Can I retake the practice tests?",
-        answer: "Yes! You have unlimited attempts on all practice tests. We recommend retaking them until you consistently score above 80%."
-      },
-      {
-        question: "Do you offer a money-back guarantee?",
-        answer: "Yes, we offer a 30-day money-back guarantee if you're not satisfied with the practice tests."
-      },
-      {
-        question: "How long do I have access?",
-        answer: "You get lifetime access to all practice tests and any future updates at no additional cost."
+        question: "What is included in this course?",
+        answer: "This course includes practice tests, detailed explanations, and performance tracking."
       }
     ],
-    testimonials: [
+    testimonials: apiData.testimonials || apiData.review_count || apiData.student_feedback || [
       {
-        name: "Sarah Johnson",
-        role: "Cloud Engineer",
+        name: "Student",
+        role: "Learner",
         rating: 5,
-        comment: "These practice tests were instrumental in passing my SAA-C03 exam on the first try! The explanations are thorough and helped me understand the concepts deeply."
-      },
-      {
-        name: "Michael Chen",
-        role: "DevOps Engineer",
-        rating: 5,
-        comment: "Best investment I made for my certification prep. The questions are very similar to the actual exam. Highly recommended!"
-      },
-      {
-        name: "Emily Rodriguez",
-        role: "Solutions Architect",
-        rating: 5,
-        comment: "The performance tracking helped me identify my weak areas. Passed with 890/1000 thanks to these tests!"
+        comment: "Great course with excellent content!"
       }
     ]
-  },
-  "sap-c02": {
-    id: "sap-c02",
-    title: "AWS Certified Solutions Architect",
-    subtitle: "Professional (SAP-C02)",
-    fullTitle: "AWS Certified Solutions Architect - Professional",
-    price: 69,
-    originalPrice: 99,
-    questions: 450,
-    practiceTests: 6,
-    duration: "75 mins per test",
-    rating: 4.9,
-    reviews: 890,
-    difficulty: "Professional",
-    passingScore: "750/1000",
-    description: "Advance your AWS career with our Professional-level practice tests. Tackle complex scenarios and multi-tier architectures that reflect real enterprise challenges.",
-    whatYouGet: [
-      "6 full-length professional practice tests",
-      "450 advanced scenario-based questions",
-      "In-depth architectural explanations",
-      "Case study questions included",
-      "Exam strategies and tips",
-      "Priority email support",
-      "Performance analytics dashboard",
-      "Lifetime access with updates"
-    ],
-    topics: [
-      { name: "Design Solutions for Organizational Complexity", percentage: 26 },
-      { name: "Design for New Solutions", percentage: 29 },
-      { name: "Continuous Improvement for Existing Solutions", percentage: 25 },
-      { name: "Accelerate Workload Migration and Modernization", percentage: 20 }
-    ],
-    sampleQuestions: [
-      {
-        question: "A global company needs to migrate a 500TB database with minimal downtime. Which migration strategy is most appropriate?",
-        options: ["A) AWS DMS with CDC", "B) Snowball Edge", "C) Direct Connect + DMS", "D) S3 Transfer Acceleration"],
-        explanation: "AWS DMS with Change Data Capture allows continuous replication with minimal downtime for large databases."
-      }
-    ],
-    faqs: [
-      {
-        question: "What's the difference between Associate and Professional level?",
-        answer: "Professional-level questions are more complex, involving multi-account strategies, hybrid architectures, and enterprise-scale design patterns."
+  };
+};
+
+// API function to fetch course details
+const fetchCourseDetails = async (courseId: string): Promise<any> => {
+  try {
+    console.log('Fetching course details for ID:', courseId);
+    const response = await fetch(`https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get_course_details`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
-      {
-        question: "Should I have work experience before taking this?",
-        answer: "AWS recommends 2+ years of hands-on experience. Our practice tests help bridge the gap between theory and practice."
+      body: JSON.stringify({ id: courseId }),
+    });
+    
+    console.log('API Response status:', response.status);
+    
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('API requires authentication. Please check API configuration.');
       }
-    ],
-    testimonials: [
-      {
-        name: "David Martinez",
-        role: "Senior Solutions Architect",
-        rating: 5,
-        comment: "The complexity of these questions prepared me perfectly for the SAP-C02 exam. Worth every penny!"
+      if (response.status === 404) {
+        throw new Error('Course not found. Please check the course ID.');
       }
-    ]
-  },
-  "dva-c02": {
-    id: "dva-c02",
-    title: "AWS Certified Developer",
-    subtitle: "Associate (DVA-C02)",
-    fullTitle: "AWS Certified Developer - Associate",
-    price: 45,
-    originalPrice: 69,
-    questions: 325,
-    practiceTests: 5,
-    duration: "65 mins per test",
-    rating: 4.7,
-    reviews: 1100,
-    difficulty: "Associate",
-    passingScore: "720/1000",
-    description: "Perfect your AWS development skills with practice tests covering Lambda, API Gateway, DynamoDB, and more. Includes code-based questions!",
-    whatYouGet: [
-      "5 full-length developer practice tests",
-      "325 code-focused questions",
-      "Video explanations for complex topics",
-      "SDK and CLI question coverage",
-      "Serverless architecture scenarios",
-      "CI/CD pipeline questions",
-      "Practice and timed modes",
-      "Mobile app access"
-    ],
-    topics: [
-      { name: "Development with AWS Services", percentage: 32 },
-      { name: "Security", percentage: 26 },
-      { name: "Deployment", percentage: 24 },
-      { name: "Troubleshooting and Optimization", percentage: 18 }
-    ],
-    sampleQuestions: [
-      {
-        question: "Which SDK method should you use to implement exponential backoff for DynamoDB throttling?",
-        options: ["A) Custom retry logic", "B) Built-in SDK retry", "C) Lambda retry", "D) SQS DLQ"],
-        explanation: "AWS SDKs have built-in exponential backoff for retrying throttled requests automatically."
-      }
-    ],
-    faqs: [
-      {
-        question: "Do I need to know programming?",
-        answer: "Yes, the DVA-C02 exam includes code-based questions. Familiarity with at least one programming language (Python, JavaScript, or Java) is essential."
-      }
-    ],
-    testimonials: [
-      {
-        name: "Alex Thompson",
-        role: "Full Stack Developer",
-        rating: 5,
-        comment: "The code examples and SDK questions were spot-on. Passed with 850!"
-      }
-    ]
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('API Response data:', data);
+    
+    // Handle different possible response formats
+    let courseData;
+    if (data.course) {
+      courseData = data.course;
+    } else if (data.data) {
+      courseData = data.data;
+    } else if (data.message) {
+      throw new Error(`API Error: ${data.message}`);
+    } else {
+      courseData = data;
+    }
+    
+    // Transform the API data to match component expectations
+    const transformedData = transformApiData(courseData);
+    console.log('Transformed data for component:', transformedData);
+    return transformedData;
+  } catch (error) {
+    console.error('Error fetching course details:', error);
+    throw error;
   }
 };
+
+// Static fallback data in case API fails
+
 
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty) {
@@ -224,7 +140,121 @@ const getDifficultyColor = (difficulty: string) => {
 export default function PracticeTestDetails() {
   const [, params] = useRoute("/practice-tests/:id");
   const testId = params?.id || "saa-c03";
-  const test = practiceTestsData[testId] || practiceTestsData["saa-c03"];
+  
+  // State for API data
+  const [test, setTest] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isApiData, setIsApiData] = useState(false);
+
+  // Fetch course details from API
+  useEffect(() => {
+    const loadCourseDetails = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log('Fetching course details for:', testId);
+        const data = await fetchCourseDetails(testId);
+        console.log('API data received:', data);
+        setTest(data);
+        setIsApiData(true);
+      } catch (err) {
+        console.error('Failed to fetch course details:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load course details';
+        setError(errorMessage);
+        // Fallback to static data
+        console.log('Using fallback data for:', testId);
+        setTest(practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0]);
+        setIsApiData(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCourseDetails();
+  }, [testId]);
+
+  // Retry function for failed API calls
+  const retryFetch = () => {
+    const loadCourseDetails = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await fetchCourseDetails(testId);
+        setTest(data);
+        setIsApiData(true);
+      } catch (err) {
+        console.error('Failed to fetch course details:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load course details';
+        setError(errorMessage);
+        setTest(practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0]);
+        setIsApiData(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCourseDetails();
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+          <h2 className="text-2xl font-bold mb-2">Loading Course Details</h2>
+          <p className="text-muted-foreground">Fetching the latest course information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error && !test) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Failed to Load Course Details</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <p className="text-sm text-muted-foreground mb-6">
+            Showing fallback data. Please check your connection and try again.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Button 
+              onClick={retryFetch} 
+              variant="outline"
+            >
+              Try Again
+            </Button>
+            <Button 
+              onClick={() => window.location.reload()} 
+              variant="default"
+            >
+              Reload Page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If no test data available, show error
+  if (!test) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Course Not Found</h2>
+          <p className="text-muted-foreground mb-4">The requested course could not be found.</p>
+          <Button onClick={() => window.history.back()}>
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -257,11 +287,60 @@ export default function PracticeTestDetails() {
               <p className="text-xl text-muted-foreground mb-6">
                 {test.description}
               </p>
+              
+              {/* API Status Banner */}
+              {error && (
+                <div className="mb-6">
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                    <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+                      <AlertCircle className="h-5 w-5" />
+                      <span className="text-sm font-medium">
+                        Using offline data. API connection failed: {error}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* API Success Banner */}
+              {isApiData && !error && (
+                <div className="mb-6">
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                    <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
+                      <CheckCircle className="h-5 w-5" />
+                      <span className="text-sm font-medium">
+                        ✓ Live data loaded from APIaseef
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Coming Soon Banner */}
+              {(test.status === 'coming soon' || test.status === 'coming_soon') && (
+                <div className="mb-6">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                      <Clock className="h-5 w-5" />
+                      <span className="text-sm font-medium">
+                        🚀 Coming Soon - This course is currently in development
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Debug info - remove in production */}
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mb-4 p-2 bg-gray-100 text-xs">
+                  Debug: Status = "{test.status}" (type: {typeof test.status})
+                </div>
+              )}
               <div className="flex flex-wrap gap-6 mb-6">
                 <div className="flex items-center text-muted-foreground">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500 mr-2" />
                   <span className="font-semibold text-foreground">{test.rating}</span>
-                  <span className="ml-1">({test.reviews} reviews)</span>
+                  <span className="ml-1">({test.reviews_count} reviews)</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
                   <BookOpen className="h-5 w-5 text-primary mr-2" />
@@ -290,14 +369,24 @@ export default function PracticeTestDetails() {
                     Save ${test.originalPrice - test.price}
                   </Badge>
                 </div>
+                {(test.status === 'coming soon' || test.status === 'coming_soon') ? (
+                  <Button
+                    className="w-full mb-4 py-6 text-lg font-semibold bg-gray-400 text-gray-600 cursor-not-allowed"
+                    disabled
+                  >
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Coming Soon
+                  </Button>
+                ) : (
                 <PurchaseButton
                   testId={test.id}
                   className="w-full bg-accent hover:bg-accent/90 text-accent-foreground mb-4 py-6 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
                   testIdAttr="button-purchase-main"
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
-                  Purchase Now
+                  Purchase Now asee
                 </PurchaseButton>
+                )}
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center text-sm text-muted-foreground">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
@@ -352,7 +441,7 @@ export default function PracticeTestDetails() {
                 <CardHeader>
                   <CardTitle className="text-2xl font-heading flex items-center">
                     <Zap className="h-6 w-6 text-accent mr-3" />
-                    What You'll Get
+                    What You'll Get11
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -530,7 +619,7 @@ export default function PracticeTestDetails() {
                       <Star className="h-6 w-6 text-yellow-500 fill-yellow-500" />
                       <span className="text-3xl font-bold ml-2">{test.rating}</span>
                     </div>
-                    <span className="text-muted-foreground">Based on {test.reviews} reviews</span>
+                    <span className="text-muted-foreground">Based on {test.reviews_count} reviews</span>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -571,11 +660,16 @@ export default function PracticeTestDetails() {
             Join thousands of successful candidates who used our practice tests
           </p>
           <Button 
-            className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-6 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+            className={`px-8 py-6 text-lg font-semibold transition-all duration-300 ${
+              (test.status === 'coming soon' || test.status === 'coming_soon')
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                : 'bg-accent hover:bg-accent/90 text-accent-foreground transform hover:scale-105'
+            }`}
             data-testid="button-purchase-bottom"
+            disabled={test.status === 'coming soon' || test.status === 'coming_soon'}
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            Get Started Now - ${test.price}
+            {(test.status === 'coming soon' || test.status === 'coming_soon') ? 'Coming Soon' : `Get Started Now - $${test.price}`}
           </Button>
         </div>
       </section>

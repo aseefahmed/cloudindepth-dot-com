@@ -46,6 +46,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import { practiceTestsData } from "../../../shared/practice-tests-data";
 
 interface PracticeTest {
   id: string;
@@ -55,15 +56,42 @@ interface PracticeTest {
   questions: number;
   duration: string;
   rating: number;
-  reviews_count: number;
+  reviews: number;
   difficulty: "Associate" | "Professional" | "Specialty";
   features: string[];
   popular?: boolean;
+  status?: string;
 }
+
+// Transform API data to match component expectations
+const transformApiData = (apiData: any): PracticeTest => {
+  console.log('Transforming API data for practice test:', apiData);
+  
+  return {
+    id: apiData.id || apiData.course_id || apiData.courseId,
+    title: apiData.title || apiData.name || apiData.course_title,
+    subtitle: apiData.subtitle || apiData.short_description || apiData.course_subtitle,
+    price: apiData.price || apiData.cost || apiData.course_price || 0,
+    questions: apiData.questions || apiData.total_questions || apiData.question_count || 0,
+    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "65 mins per test",
+    rating: apiData.rating || apiData.average_rating || apiData.star_rating || 4.5,
+    reviews: apiData.reviews_count || apiData.review_count || apiData.total_reviews || 0,
+    difficulty: apiData.difficulty || apiData.level || apiData.course_level || "Associate",
+    features: apiData.features || apiData.included_features || apiData.benefits || [
+      "Practice tests included",
+      "Detailed explanations",
+      "Performance tracking",
+      "Lifetime access"
+    ],
+    popular: apiData.popular || apiData.featured || apiData.is_popular || false,
+    status: apiData.status || apiData.course_status || "available"
+  };
+};
 
 // API function to fetch practice tests
 const fetchPracticeTests = async (): Promise<PracticeTest[]> => {
   try {
+    console.log('Fetching practice tests from API...');
     const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get-practice-test', {
       method: 'GET',
       headers: {
@@ -80,21 +108,28 @@ const fetchPracticeTests = async (): Promise<PracticeTest[]> => {
     }
     
     const data = await response.json();
+    console.log('API Response data:', data);
     
     // Handle different possible response formats
+    let testsData;
     if (Array.isArray(data)) {
-      return data;
+      testsData = data;
     } else if (data.practiceTests && Array.isArray(data.practiceTests)) {
-      return data.practiceTests;
+      testsData = data.practiceTests;
     } else if (data.tests && Array.isArray(data.tests)) {
-      return data.tests;
+      testsData = data.tests;
     } else if (data.data && Array.isArray(data.data)) {
-      return data.data;
+      testsData = data.data;
     } else if (data.message) {
       throw new Error(`API Error: ${data.message}`);
     } else {
       throw new Error('Invalid data format received from API');
     }
+    
+    // Transform each test data
+    const transformedTests = testsData.map(transformApiData);
+    console.log('Transformed tests:', transformedTests.length, 'tests');
+    return transformedTests;
   } catch (error) {
     console.error('Error fetching practice tests:', error);
     throw error;
@@ -128,6 +163,7 @@ export default function PracticeTests() {
   const [practiceTests, setPracticeTests] = useState<PracticeTest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isApiData, setIsApiData] = useState(false);
 
   // Fetch practice tests from API
   useEffect(() => {
@@ -139,13 +175,15 @@ export default function PracticeTests() {
         const data = await fetchPracticeTests();
         console.log('API data received:', data.length, 'tests');
         setPracticeTests(data);
+        setIsApiData(true);
       } catch (err) {
         console.error('Failed to fetch practice tests:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
         setError(errorMessage);
         // Fallback to static data
-        console.log('Using fallback data:', fallbackPracticeTests.length, 'tests');
-        setPracticeTests(fallbackPracticeTests);
+        console.log('Using fallback data:', practiceTestsData.length, 'tests');
+        setPracticeTests(practiceTestsData);
+        setIsApiData(false);
       } finally {
         setIsLoading(false);
       }
@@ -166,7 +204,7 @@ export default function PracticeTests() {
         console.error('Failed to fetch practice tests:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
         setError(errorMessage);
-        setPracticeTests(fallbackPracticeTests);
+        setPracticeTests(practiceTestsData);
       } finally {
         setIsLoading(false);
       }
@@ -561,7 +599,7 @@ export default function PracticeTests() {
                           <div className="flex items-center text-sm">
                             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 mr-1" />
                             <span className="font-semibold">{test.rating}</span>
-                            <span className="text-muted-foreground ml-1">({test.reviews_count})</span>
+                            <span className="text-muted-foreground ml-1">({test.reviews})</span>
                           </div>
                         </div>
                         <CardTitle className="text-xl font-heading mb-1">{test.title}</CardTitle>
@@ -605,19 +643,29 @@ export default function PracticeTests() {
                               View Details
                             </Button>
                           </Link>
-                          <PurchaseButton
-                            testId={test.id}
-                            popular={test.popular}
-                            className={`w-full ${
-                              test.popular 
-                                ? 'bg-accent hover:bg-accent/90 text-accent-foreground' 
-                                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                            } transition-all duration-300 transform hover:scale-105`}
-                            testIdAttr={`button-purchase-${test.id}`}
-                          >
-                            <ShoppingCart className="mr-2 h-4 w-4" />
-                            Purchase Now
-                          </PurchaseButton>
+                          {(test.status === 'coming soon' || test.status === 'coming_soon') ? (
+                            <Button
+                              className="w-full bg-gray-400 text-gray-600 cursor-not-allowed"
+                              disabled
+                            >
+                              <Clock className="mr-2 h-4 w-4" />
+                              Coming Soon
+                            </Button>
+                          ) : (
+                            <PurchaseButton
+                              testId={test.id}
+                              popular={test.popular}
+                              className={`w-full ${
+                                test.popular 
+                                  ? 'bg-accent hover:bg-accent/90 text-accent-foreground' 
+                                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                              } transition-all duration-300 transform hover:scale-105`}
+                              testIdAttr={`button-purchase-${test.id}`}
+                            >
+                              <ShoppingCart className="mr-2 h-4 w-4" />
+                              Purchase Now
+                            </PurchaseButton>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
