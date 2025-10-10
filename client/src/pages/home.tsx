@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import ChatWithMe from "@/components/ChatWithMe";
 import {
   Star,
   Award,
@@ -25,8 +27,6 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  const [showStickyCta, setShowStickyCta] = useState(false);
-
   useEffect(() => {
     // Fade in animation on scroll
     const observerOptions = {
@@ -46,19 +46,7 @@ export default function Home() {
       observer.observe(el);
     });
 
-    // Sticky CTA button
-    const handleScroll = () => {
-      const hero = document.getElementById("hero");
-      if (hero) {
-        const heroBottom = hero.offsetTop + hero.offsetHeight;
-        const scrollPosition = window.pageYOffset;
-        setShowStickyCta(scrollPosition > heroBottom);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       observer.disconnect();
     };
   }, []);
@@ -882,138 +870,14 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-xl font-heading font-bold mb-4">
-                AWS Expert Training
-              </h3>
-              <p className="text-background/80 mb-4">
-                Master AWS Solution Architecture with industry expert Aseef
-                Ahmed. Transform your career with comprehensive, hands-on
-                training.
-              </p>
-              <div className="flex space-x-4">
-                <a
-                  href="https://linkedin.com/in/aseefahmed"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-background/80 hover:text-background transition-colors"
-                  data-testid="link-linkedin"
-                >
-                  <i className="fab fa-linkedin text-xl"></i>
-                </a>
-                <a
-                  href="https://youtube.com/@cloudindepth"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-background/80 hover:text-background transition-colors"
-                  data-testid="link-youtube"
-                >
-                  <i className="fab fa-youtube text-xl"></i>
-                </a>
-                <a
-                  href="https://www.facebook.com/cloudacademy/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-background/80 hover:text-background transition-colors"
-                  data-testid="link-github"
-                >
-                  <i className="fab fa-facebook text-xl"></i>
-                </a>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li>
-                  <button
-                    onClick={() => scrollToSection("curriculum")}
-                    className="text-background/80 hover:text-background transition-colors"
-                    data-testid="footer-curriculum"
-                  >
-                    Curriculum
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => scrollToSection("benefits")}
-                    className="text-background/80 hover:text-background transition-colors"
-                    data-testid="footer-benefits"
-                  >
-                    Benefits
-                  </button>
-                </li>
+      <Footer scrollToSection={scrollToSection} />
 
-                <li>
-                  <button
-                    onClick={() => scrollToSection("pricing")}
-                    className="text-background/80 hover:text-background transition-colors"
-                    data-testid="footer-pricing"
-                  >
-                    Pricing
-                  </button>
-                </li>
-                <li>
-                  <a
-                    href="https://skillsprofile.skillbuilder.aws/user/aseefahmed"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <button
-                      className="text-background/80 hover:text-background transition-colors"
-                      data-testid="verify-creds"
-                    >
-                      Verify Credentials
-                    </button>
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-              <div className="space-y-3 text-background/80">
-                <div className="flex items-center">
-                  <i className="fas fa-envelope mr-3"></i>
-                  <span>aseefahmed@gmail.com</span>
-                </div>
-                <div className="flex items-center">
-                  <i className="fab fa-linkedin mr-3"></i>
-                  <span>linkedin.com/in/aseefahmed</span>
-                </div>
-                <div className="flex items-center">
-                  <i className="fab fa-whatsapp mr-3"></i>
-                  <span>+64 22 194 5611</span>
-                </div>
-                <div className="flex items-center">
-                  <i className="fas fa-globe mr-3"></i>
-                  <span>Available for Global Training</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* Sticky CTA Button */}
-      {showStickyCta && (
-        <div className="sticky-cta show">
-          <a
-            href="https://www.linkedin.com/in/aseefahmed/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button
-              className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-full shadow-2xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center"
-              data-testid="button-sticky-cta"
-            >
-              <LucideMessageCircle className="mr-2 h-4 w-4" />
-              Chat with Me
-            </Button>
-          </a>
-        </div>
-      )}
+      {/* Chat with Me Button */}
+      <ChatWithMe 
+        showOnScroll={true}
+        scrollThreshold={500}
+        position="bottom-right"
+      />
     </div>
   );
 }

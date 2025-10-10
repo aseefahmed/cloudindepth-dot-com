@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/select";
 import { Link } from "wouter";
 import { UserProfile, PurchaseButton } from "@/components/auth-components";
+import ChatWithMe from "@/components/ChatWithMe";
+import Footer from "@/components/Footer";
 import { 
   CheckCircle, 
   Star, 
@@ -47,7 +49,6 @@ import {
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { practiceTestsData } from "../../../shared/practice-tests-data";
-
 interface PracticeTest {
   id: string;
   title: string;
@@ -61,6 +62,7 @@ interface PracticeTest {
   features: string[];
   popular?: boolean;
   status?: string;
+  sort_number?: number;
 }
 
 // Transform API data to match component expectations
@@ -84,7 +86,8 @@ const transformApiData = (apiData: any): PracticeTest => {
       "Lifetime access"
     ],
     popular: apiData.popular || apiData.featured || apiData.is_popular || false,
-    status: apiData.status || apiData.course_status || "available"
+    status: apiData.status || apiData.course_status || "available",
+    sort_number: apiData.sort_number || apiData.sortNumber || apiData.order || 0
   };
 };
 
@@ -266,7 +269,15 @@ export default function PracticeTests() {
           return b.questions - a.questions;
         case "popular":
         default:
-          // Popular first, then by rating
+          // Sort by sort_number in ascending order, then by popularity, then by rating
+          const aSortNumber = a.sort_number || 0;
+          const bSortNumber = b.sort_number || 0;
+          
+          if (aSortNumber !== bSortNumber) {
+            return aSortNumber - bSortNumber;
+          }
+          
+          // If sort_number is the same, fall back to popularity and rating
           if (a.popular && !b.popular) return -1;
           if (!a.popular && b.popular) return 1;
           return b.rating - a.rating;
@@ -724,11 +735,14 @@ export default function PracticeTests() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-background/60">&copy; 2024 AWS Expert Training by Aseef Ahmed. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer scrollToSection={scrollToSection} />
+
+      {/* Chat with Me Button */}
+      <ChatWithMe 
+        showOnScroll={true}
+        scrollThreshold={300}
+        position="bottom-right"
+      />
     </div>
   );
 }

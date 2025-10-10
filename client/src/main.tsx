@@ -9,9 +9,9 @@ const clientId = "vmk2RaCIxYEOw16NnJfGr2GQomrz7o6W";
 const rootElement = document.getElementById("root")!;
 
 const onRedirectCallback = (appState?: any) => {
-  const returnTo = appState?.returnTo || '/dashboard';
-  // Use window.location to navigate to the student portal
-  window.location.pathname = returnTo;
+  // Let Auth0 handle the redirect naturally without forcing navigation
+  // This prevents the page refresh issue
+  return;
 };
 
 if (!domain || !clientId) {

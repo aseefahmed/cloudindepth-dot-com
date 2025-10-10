@@ -117,8 +117,7 @@ export default function StudentPortal() {
             <Link href="/practice-tests">
               <Button
                 size="lg"
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10"
+                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-600 hover:border-slate-700 font-semibold"
                 data-testid="button-browse-all"
               >
                 <BookOpen className="mr-2 h-5 w-5" />

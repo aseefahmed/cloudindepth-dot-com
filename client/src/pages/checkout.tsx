@@ -3,7 +3,6 @@ import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { useRoute, useLocation } from 'wouter';
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -152,6 +151,74 @@ export default function Checkout() {
 
   const testId = params?.testId || "";
 
+  const createPaymentIntent = async (testId: string, amount: number) => {
+    try {
+      console.log('Creating payment intent for:', { testId, amount });
+      
+      // Create payment intent using your existing API endpoint
+      const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          testId: testId,
+          amount: amount * 100, // Convert to cents for Stripe
+          currency: 'usd'
+        })
+      });
+      
+      console.log('Payment intent response status:', response.status);
+      console.log('Payment intent response headers:', response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Payment intent API error response:', errorText);
+        
+        // If the Lambda function isn't deployed yet, show a helpful message
+        if (response.status === 404 || response.status === 500) {
+          toast({
+            title: "Payment Service Unavailable",
+            description: "The payment service is currently being set up. Please try again later or contact support.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        throw new Error(`API Error: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('Payment intent response data:', data);
+      
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret);
+        console.log('Payment intent created successfully');
+      } else {
+        console.error('Missing clientSecret in response:', data);
+        throw new Error(data.error || data.message || 'Failed to create payment intent - no client secret received');
+      }
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      
+      // Check if it's a network error (Lambda not deployed)
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        toast({
+          title: "Payment Service Unavailable",
+          description: "Unable to connect to payment service. Please check your connection and try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Payment Setup Failed",
+          description: error instanceof Error ? error.message : "Unable to initialize payment. Please try again.",
+          variant: "destructive",
+        });
+      }
+      setClientSecret("");
+    }
+  };
+
   useEffect(() => {
     if (!testId) {
       toast({
@@ -163,28 +230,54 @@ export default function Checkout() {
       return;
     }
 
-    // Create PaymentIntent - backend will fetch test details securely
-    apiRequest("POST", "/api/create-payment-intent", { 
-      testId: testId
+    // Fetch course details from API
+    fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get_course_details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: testId })
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.clientSecret && data.test) {
-          setClientSecret(data.clientSecret);
-          setTestDetails({
-            title: data.test.title,
-            subtitle: data.test.subtitle,
-            price: data.test.price,
-            features: data.test.features
-          });
+        console.log('Course details API response:', data);
+        
+        // Handle different possible response formats
+        let courseData;
+        if (data.course) {
+          courseData = data.course;
+        } else if (data.data) {
+          courseData = data.data;
+        } else if (data.message) {
+          throw new Error(`API Error: ${data.message}`);
         } else {
-          throw new Error(data.message || "Failed to create payment intent");
+          courseData = data;
+        }
+
+        if (courseData) {
+          setTestDetails({
+            title: courseData.title || courseData.name || courseData.course_title || "Practice Test",
+            subtitle: courseData.subtitle || courseData.short_description || courseData.course_subtitle || "Comprehensive practice test",
+            price: courseData.price || courseData.cost || courseData.course_price || 0,
+            features: courseData.features || courseData.included_features || courseData.benefits || [
+              "Practice tests included",
+              "Detailed explanations",
+              "Performance tracking",
+              "Lifetime access"
+            ]
+          });
+          
+          // Create payment intent with the course details
+          createPaymentIntent(testId, courseData.price);
+        } else {
+          throw new Error("No course data received from API");
         }
       })
       .catch((error) => {
+        console.error('Error fetching course details:', error);
         toast({
-          title: "Payment Setup Failed",
-          description: error.message || "Unable to initialize payment. Please try again.",
+          title: "Course Details Failed",
+          description: error.message || "Unable to load course details. Please try again.",
           variant: "destructive",
         });
         setTimeout(() => setLocation("/practice-tests"), 2000);
@@ -213,12 +306,23 @@ export default function Checkout() {
     );
   }
 
-  if (!clientSecret || !testDetails) {
+  if (!testDetails) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
         <div className="text-center">
           <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-muted-foreground">Setting up your payment...</p>
+          <p className="text-muted-foreground">Loading course details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (testDetails && !clientSecret) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="text-center">
+          <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-muted-foreground">Setting up payment...</p>
         </div>
       </div>
     );

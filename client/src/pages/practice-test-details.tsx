@@ -7,13 +7,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { UserProfile, PurchaseButton } from "@/components/auth-components";
 import Navigation from "@/components/Navigation";
+import ChatWithMe from "@/components/ChatWithMe";
+import Footer from "@/components/Footer";
 import { 
   CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, 
   ArrowLeft, Shield, TrendingUp, Target, Zap, PlayCircle, 
   BarChart, Download, Video, FileText, MessageCircle, Loader2, AlertCircle
 } from "lucide-react";
 import { practiceTestsData } from "../../../shared/practice-tests-data";
-
 // Transform API data to match component expectations
 const transformApiData = (apiData: any): any => {
   console.log('Transforming API data:', apiData);
@@ -42,11 +43,12 @@ const transformApiData = (apiData: any): any => {
       "Performance tracking",
       "Lifetime access"
     ],
-    topics: apiData.topics || apiData.course_topics || apiData.subject_areas || [
+    topics: apiData.domains || [
       { name: "Core Concepts", percentage: 50 },
       { name: "Advanced Topics", percentage: 30 },
       { name: "Practical Applications", percentage: 20 }
     ],
+    domains: apiData.domains || apiData.exam_domains || apiData.subject_domains || [],
     sampleQuestions: apiData.sampleQuestions || apiData.sample_questions || apiData.preview_questions || [
       {
         question: "Sample question from the course",
@@ -60,7 +62,7 @@ const transformApiData = (apiData: any): any => {
         answer: "This course includes practice tests, detailed explanations, and performance tracking."
       }
     ],
-    testimonials: apiData.testimonials || apiData.review_count || apiData.student_feedback || [
+    testimonials: apiData.testimonials || apiData.reviews || apiData.student_reviews || apiData.student_feedback || [
       {
         name: "Student",
         role: "Learner",
@@ -284,7 +286,7 @@ export default function PracticeTestDetails() {
               <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-4">
                 {test.fullTitle}
               </h1>
-              <p className="text-xl text-muted-foreground mb-6">
+              <p className="text-xl text-muted-foreground mb-6 text-justify">
                 {test.description}
               </p>
               
@@ -302,19 +304,6 @@ export default function PracticeTestDetails() {
                 </div>
               )}
               
-              {/* API Success Banner */}
-              {isApiData && !error && (
-                <div className="mb-6">
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                    <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
-                      <CheckCircle className="h-5 w-5" />
-                      <span className="text-sm font-medium">
-                        ✓ Live data loaded from APIaseef
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
               
               {/* Coming Soon Banner */}
               {(test.status === 'coming soon' || test.status === 'coming_soon') && (
@@ -330,12 +319,7 @@ export default function PracticeTestDetails() {
                 </div>
               )}
               
-              {/* Debug info - remove in production */}
-              {process.env.NODE_ENV === 'development' && (
-                <div className="mb-4 p-2 bg-gray-100 text-xs">
-                  Debug: Status = "{test.status}" (type: {typeof test.status})
-                </div>
-              )}
+              
               <div className="flex flex-wrap gap-6 mb-6">
                 <div className="flex items-center text-muted-foreground">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500 mr-2" />
@@ -361,6 +345,8 @@ export default function PracticeTestDetails() {
             <Card className="sticky top-24 border-2 border-primary/20 shadow-xl">
               <CardContent className="p-6">
                 <div className="text-center mb-6">
+                  {/* Course Image */}
+                  
                   <div className="flex items-center justify-center gap-3 mb-2">
                     <span className="text-4xl font-bold text-primary">${test.price}</span>
                     <span className="text-2xl text-muted-foreground line-through">${test.originalPrice}</span>
@@ -384,7 +370,7 @@ export default function PracticeTestDetails() {
                   testIdAttr="button-purchase-main"
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
-                  Purchase Now asee
+                  Purchase Now
                 </PurchaseButton>
                 )}
                 <div className="space-y-3 mb-6">
@@ -429,10 +415,10 @@ export default function PracticeTestDetails() {
                 <FileText className="h-4 w-4 mr-2" />
                 Samples
               </TabsTrigger>
-              <TabsTrigger value="reviews" className="py-3" data-testid="tab-reviews">
+              {/* <TabsTrigger value="reviews" className="py-3" data-testid="tab-reviews">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Reviews
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
 
             {/* Overview Tab */}
@@ -501,20 +487,32 @@ export default function PracticeTestDetails() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {test.topics.map((topic: any, index: number) => (
-                      <div key={index}>
-                        <div className="flex justify-between mb-2">
-                          <span className="font-semibold">{topic.name}</span>
-                          <span className="text-muted-foreground">{topic.percentage}%</span>
+                    {test.domains && test.domains.length > 0 ? (
+                      test.domains.map((domain: any, index: number) => (
+                        <div key={index}>
+                          <div className="flex justify-between mb-2">
+                            <span className="font-semibold">{domain}</span>
+                         
+                          </div>
+                          
                         </div>
-                        <div className="w-full bg-muted rounded-full h-3">
-                          <div 
-                            className="bg-primary h-3 rounded-full transition-all duration-500"
-                            style={{ width: `${topic.percentage}%` }}
-                          ></div>
+                      ))
+                    ) : (
+                      test.topics.map((topic: any, index: number) => (
+                        <div key={index}>
+                          <div className="flex justify-between mb-2">
+                            <span className="font-semibold">{topic.name}</span>
+                            <span className="text-muted-foreground">{topic.percentage}%</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-3">
+                            <div 
+                              className="bg-primary h-3 rounded-full transition-all duration-500"
+                              style={{ width: `${topic.percentage}%` }}
+                            ></div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -610,7 +608,7 @@ export default function PracticeTestDetails() {
             </TabsContent>
 
             {/* Reviews Tab */}
-            <TabsContent value="reviews" className="space-y-6">
+            {/* <TabsContent value="reviews" className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-2xl font-heading">Student Reviews</CardTitle>
@@ -624,28 +622,63 @@ export default function PracticeTestDetails() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {test.testimonials?.map((review: any, index: number) => (
-                      <Card key={index} className="bg-muted/30">
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div>
-                              <h4 className="font-semibold">{review.name}</h4>
-                              <p className="text-sm text-muted-foreground">{review.role}</p>
+                    {test.testimonials && test.testimonials.length > 0 ? (
+                      test.testimonials.map((review: any, index: number) => (
+                        <Card key={index} className="bg-muted/30">
+                          <CardContent className="p-6">
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <h4 className="font-semibold">{review.name || review.student_name || review.user_name || "Anonymous"}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {review.role || review.title || review.position || "Student"}
+                                </p>
+                                {review.date && (
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {new Date(review.date).toLocaleDateString()}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star 
+                                    key={i} 
+                                    className={`h-4 w-4 ${
+                                      i < (review.rating || review.star_rating || 5) 
+                                        ? 'text-yellow-500 fill-yellow-500' 
+                                        : 'text-gray-300'
+                                    }`} 
+                                  />
+                                ))}
+                              </div>
                             </div>
-                            <div className="flex">
-                              {[...Array(review.rating)].map((_, i) => (
-                                <Star key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                              ))}
-                            </div>
-                          </div>
-                          <p className="text-muted-foreground">{review.comment}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
+                            <p className="text-muted-foreground">
+                              {review.comment || review.review_text || review.feedback || review.content || "Great course!"}
+                            </p>
+                            {review.helpful && (
+                              <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+                                <span>Was this review helpful?</span>
+                                <div className="flex gap-2">
+                                  <button className="hover:text-primary">👍 {review.helpful.helpful || 0}</button>
+                                  <button className="hover:text-primary">👎 {review.helpful.not_helpful || 0}</button>
+                                </div>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))
+                    ) : (
+                      <div className="text-center py-8">
+                        <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
+                        <p className="text-muted-foreground">
+                          Be the first to share your experience with this course!
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </div>
       </section>
@@ -675,11 +708,14 @@ export default function PracticeTestDetails() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-background/60">&copy; 2024 AWS Expert Training by Aseef Ahmed. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer scrollToSection={scrollToSection} />
+
+      {/* Chat with Me Button */}
+      <ChatWithMe 
+        showOnScroll={true}
+        scrollThreshold={300}
+        position="bottom-right"
+      />
     </div>
   );
 }
