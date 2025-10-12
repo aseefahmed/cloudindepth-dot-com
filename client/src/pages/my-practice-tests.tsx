@@ -220,6 +220,7 @@ export default function MyPracticeTests() {
           body: JSON.stringify({
             test_id: practiceTestId,
             user_id: userId,
+            type: "mock"
           }),
           keepalive: true,
         }

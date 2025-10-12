@@ -18,13 +18,22 @@ import {
   Settings,
   HelpCircle,
   Menu,
+  Download,
   X,
   LogOut,
   User,
   GraduationCap,
-  TrendingUp
+  TrendingUp,
+  Award,
+  Clock,
+  Star,
+  ChevronRight,
+  HomeIcon,
+  Rocket,
+  LogIn,
+  Map
 } from "lucide-react";
-
+import Navigation from "./Navigation";
 const isAuth0Configured = () => {
   return !!(import.meta.env.VITE_AUTH0_DOMAIN && import.meta.env.VITE_AUTH0_CLIENT_ID);
 };
@@ -50,12 +59,44 @@ interface StudentPortalLayoutProps {
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", testId: "nav-dashboard" },
-  { icon: BookOpen, label: "My Practice Tests", path: "/dashboard/practice-tests", testId: "nav-tests" },
-  { icon: TrendingUp, label: "Progress", path: "/dashboard/progress", testId: "nav-progress" },
-  { icon: Bookmark, label: "Bookmarks", path: "/dashboard/bookmarks", testId: "nav-bookmarks" },
-  { icon: Settings, label: "Settings", path: "/dashboard/settings", testId: "nav-settings" },
-  { icon: HelpCircle, label: "Support", path: "/dashboard/support", testId: "nav-support" },
+  { 
+    icon: LayoutDashboard, 
+    label: "Dashboard", 
+    path: "/dashboard", 
+    testId: "nav-dashboard",
+    description: "Overview & progress"
+  },
+  //bookmarks
+  { 
+    icon: Bookmark, 
+    label: "Bookmarks", 
+    path: "/dashboard/bookmarks", 
+    testId: "nav-bookmarks",
+    description: "Saved Items"
+  },
+  // Learning Paths
+  { 
+    icon: Map, 
+    label: "Learning Paths", 
+    path: "/dashboard/learning-paths", 
+    testId: "nav-learning-paths",
+    description: "DevOps roadmap"
+  },
+  // Downloads
+  { 
+    icon: Download, 
+    label: "Downloads", 
+    path: "/dashboard/downloads", 
+    testId: "nav-downloads",
+    description: "Saved Files"
+  },
+  { 
+    icon: HelpCircle, 
+    label: "Support", 
+    path: "/dashboard/support", 
+    testId: "nav-support",
+    description: "Get help & contact"
+  },
 ];
 
 export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
@@ -76,13 +117,16 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+      {/* Top Navigation Bar */}
+      <Navigation />
+
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-20 left-4 z-50">
         <Button
           variant="outline"
           size="icon"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-card/95 backdrop-blur-md"
+          className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-200"
           data-testid="button-mobile-menu"
         >
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -91,123 +135,72 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-72 bg-card/95 backdrop-blur-md border-r border-border shadow-2xl z-40 transition-transform duration-300 ${
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-80 bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-r border-slate-200 dark:border-slate-700 shadow-xl z-30 transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
-        {/* Logo & Brand */}
-        <div className="p-6 border-b border-border">
-          <Link href="/dashboard">
-            <div className="flex items-center gap-3 cursor-pointer group">
-              <div className="bg-gradient-to-br from-primary to-accent p-2 rounded-lg group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-heading font-bold text-foreground">Student Portal</h1>
-                <p className="text-xs text-muted-foreground">AWS Expert Training</p>
-              </div>
-            </div>
-          </Link>
-        </div>
-
-        {/* User Profile */}
-        <div className="p-6 border-b border-border">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-start hover:bg-primary/10"
-                data-testid="button-sidebar-user"
-              >
-                <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage src={user?.picture} alt={user?.name || "Student"} />
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-semibold text-foreground truncate">
-                    {user?.name || "Student"}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {user?.email || "student@example.com"}
-                  </p>
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem data-testid="menu-sidebar-profile">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() =>
-                  logout({
-                    logoutParams: { returnTo: window.location.origin },
-                  })
-                }
-                data-testid="button-sidebar-logout"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Log Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        
+      
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location === item.path;
+        <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <div className="mb-4">
             
-            return (
-              <Link key={item.path} href={item.path}>
-                <Button
-                  variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start ${
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-lg"
-                      : "hover:bg-primary/10"
-                  }`}
-                  data-testid={item.testId}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <Icon className="mr-3 h-5 w-5" />
-                  {item.label}
-                </Button>
-              </Link>
-            );
-          })}
-        </nav>
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location === item.path;
+                
+                return (
+                  <Link key={item.path} href={item.path}>
+                    <div
+                      className={`group flex items-center p-3 rounded-xl transition-all duration-200 cursor-pointer ${
+                        isActive
+                          ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
+                          : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                      }`}
+                      data-testid={item.testId}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <div className={`p-2 rounded-lg mr-3 ${
+                        isActive 
+                          ? "bg-white/20" 
+                          : "bg-slate-100 dark:bg-slate-700 group-hover:bg-slate-200 dark:group-hover:bg-slate-600"
+                      }`}>
+                        <Icon className={`h-5 w-5 ${
+                          isActive ? "text-white" : "text-slate-600 dark:text-slate-400"
+                        }`} />
+                      </div>
+                      <div className="flex-1">
+                        <p className={`font-medium ${
+                          isActive ? "text-white" : "text-slate-900 dark:text-white"
+                        }`}>
+                          {item.label}
+                        </p>
+                        <p className={`text-xs ${
+                          isActive ? "text-white/80" : "text-slate-500 dark:text-slate-400"
+                        }`}>
+                          {item.description}
+                        </p>
+                      </div>
+                      {isActive && (
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
-        {/* Bottom CTA */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-border">
-          <Link href="/practice-tests">
-            <Button
-              variant="outline"
-              className="w-full border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-              data-testid="button-browse-tests"
-            >
-              <BookOpen className="mr-2 h-4 w-4" />
-              Browse More Tests
-            </Button>
-          </Link>
         </div>
+
       </aside>
 
       {/* Main Content */}
-      <main className="lg:ml-72 min-h-screen">
-        {/* Top Bar - Mobile */}
-        <div className="lg:hidden h-16 bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-30 flex items-center justify-center">
-          <h1 className="text-lg font-heading font-bold text-primary">Student Portal</h1>
-        </div>
-
+      <main className="lg:ml-80 min-h-screen pt-16">
         {/* Content Area */}
-        <div className="p-6 lg:p-8">
+        <div className="p-6 lg:p-8 bg-slate-50/50 dark:bg-slate-900/50 min-h-screen">
           {children}
         </div>
       </main>
@@ -215,7 +208,7 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
       {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

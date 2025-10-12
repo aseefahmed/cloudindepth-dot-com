@@ -84,14 +84,14 @@ export default function Home() {
               experience at Amazon, Deloitte, and NZ Ministries & Banks.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Button
+              {/* <Button
                 onClick={() => scrollToSection("pricing")}
                 className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 data-testid="button-enroll-hero"
               >
                 <Rocket className="mr-2 h-5 w-5" />
                 Enroll Now
-              </Button>
+              </Button> */}
               <Button
                 onClick={() => scrollToSection("curriculum")}
                 className="bg-[#f2c617] text-black px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"

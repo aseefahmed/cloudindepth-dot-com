@@ -32,9 +32,11 @@ interface CheckoutFormProps {
   testTitle: string;
   price: number;
   practiceTestId: string;
+  questions: number;
+  flashcards: number;
 }
 
-const CheckoutForm = ({ testTitle, price, practiceTestId }: CheckoutFormProps) => {
+const CheckoutForm = ({ testTitle, price, practiceTestId, questions, flashcards }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -65,7 +67,8 @@ const CheckoutForm = ({ testTitle, price, practiceTestId }: CheckoutFormProps) =
       });
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       // Fire-and-forget recording of the purchase; do not block success UX
-      console.log(testTitle, price, practiceTestId)
+      console.log("__________________________")
+      console.log(testTitle, price, practiceTestId, questions, flashcards)
       const userId = (user && (user.sub || user.user_id)) || undefined;
       try {
         if (userId) {
@@ -78,7 +81,9 @@ const CheckoutForm = ({ testTitle, price, practiceTestId }: CheckoutFormProps) =
               user_id: userId,
               practice_test_id: practiceTestId,
               test_title: testTitle,
-              price: price
+              price: price,
+              questions: questions,
+              flashcards: flashcards
             }),
             keepalive: true,
           }).catch(() => {});
@@ -147,6 +152,8 @@ export default function Checkout() {
     subtitle: string;
     price: number;
     features: string[];
+    questions: number;
+    flashcards: number;
   } | null>(null);
 
   const testId = params?.testId || "";
@@ -253,12 +260,15 @@ export default function Checkout() {
         } else {
           courseData = data;
         }
-
+        console.log("__________________________")
+        console.log(courseData)
         if (courseData) {
           setTestDetails({
             title: courseData.title || courseData.name || courseData.course_title || "Practice Test",
             subtitle: courseData.subtitle || courseData.short_description || courseData.course_subtitle || "Comprehensive practice test",
             price: courseData.price || courseData.cost || courseData.course_price || 0,
+            questions: courseData.questions || 0,
+            flashcards: courseData.flashcards || 0,
             features: courseData.features || courseData.included_features || courseData.benefits || [
               "Practice tests included",
               "Detailed explanations",
@@ -334,7 +344,7 @@ export default function Checkout() {
         {/* Header */}
         <div className="mb-8">
           <Link href="/practice-tests">
-            <Button variant="ghost" className="gap-2 mb-4" data-testid="button-back">
+            <Button variant="ghost" className="gap-2 mb-4" data-testidfl="button-back">
               <ArrowLeft className="h-4 w-4" />
               Back to Practice Tests
             </Button>
@@ -412,7 +422,13 @@ export default function Checkout() {
               </CardHeader>
               <CardContent>
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <CheckoutForm testTitle={testDetails.title} price={testDetails.price} practiceTestId={testId} />
+                  <CheckoutForm 
+                    testTitle={testDetails.title} 
+                    price={testDetails.price} 
+                    practiceTestId={testId}
+                    questions={testDetails.questions}
+                    flashcards={testDetails.flashcards}
+                  />
                 </Elements>
               </CardContent>
             </Card>

@@ -77,13 +77,19 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
                   Practice Tests
                 </button>
               </Link>
-              <Button
+              
+              <Link href="/downloads">
+                <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-downloads">
+                  Downloads
+                </button>
+              </Link>
+              {/* <Button
                 onClick={() => scrollToSection("pricing")}
                 className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
               >
                 <Rocket className="mr-2 h-4 w-4" />
                 Enroll Now
-              </Button>
+              </Button> */}
               {isAuthenticated ? (
                 <UserProfile />
               ) : (
