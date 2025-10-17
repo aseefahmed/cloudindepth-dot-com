@@ -57,7 +57,7 @@ export default function ChatWithMe({
         className="block"
       >
         <Button
-          className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-full shadow-2xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center animate-pulse"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-full shadow-lg font-medium transition-all duration-200 flex items-center border border-blue-500/20"
           data-testid="button-chat-with-me"
         >
           <LucideMessageCircle className="mr-2 h-4 w-4" />

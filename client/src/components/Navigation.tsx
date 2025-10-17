@@ -10,6 +10,7 @@ import {
   Menu,
   LogIn,
   LogOut,
+  X,
 } from "lucide-react";
 
 const isAuth0Configured = () => {
@@ -83,6 +84,12 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
                   Downloads
                 </button>
               </Link>
+              
+              <Link href="/blog">
+                <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-blog">
+                  Blog
+                </button>
+              </Link>
               {/* <Button
                 onClick={() => scrollToSection("pricing")}
                 className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
@@ -132,11 +139,86 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              <Menu className="h-5 w-5 text-black" />
+              {isMenuOpen ? (
+                <X className="h-5 w-5 text-black" />
+              ) : (
+                <Menu className="h-5 w-5 text-black" />
+              )}
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <>
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          
+          {/* Mobile Menu Content */}
+          <div className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50 md:hidden">
+            <div className="px-4 py-4 space-y-4">
+              <Link href="/" onClick={() => setIsMenuOpen(false)}>
+                <button className="block w-full text-left text-black/90 hover:text-black hover:font-bold transition-colors py-2">
+                  Home
+                </button>
+              </Link>
+              
+              <Link href="/practice-tests" onClick={() => setIsMenuOpen(false)}>
+                <button className="block w-full text-left text-black/90 hover:text-black hover:font-bold transition-colors py-2">
+                  Practice Tests
+                </button>
+              </Link>
+              
+              <Link href="/downloads" onClick={() => setIsMenuOpen(false)}>
+                <button className="block w-full text-left text-black/90 hover:text-black hover:font-bold transition-colors py-2">
+                  Downloads
+                </button>
+              </Link>
+              
+              <Link href="/blog" onClick={() => setIsMenuOpen(false)}>
+                <button className="block w-full text-left text-black/90 hover:text-black hover:font-bold transition-colors py-2">
+                  Blog
+                </button>
+              </Link>
+
+              <div className="pt-4 border-t border-gray-200">
+                {isAuthenticated ? (
+                  <div className="space-y-2">
+                    <UserProfile />
+                    <Button
+                      onClick={() => {
+                        logout({ logoutParams: { returnTo: window.location.origin } });
+                        setIsMenuOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      loginWithRedirect();
+                      setIsMenuOpen(false);
+                    }}
+                    variant="default"
+                    className="w-full bg-primary hover:bg-primary/90"
+                  >
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Log In
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 }

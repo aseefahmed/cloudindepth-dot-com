@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -12,10 +13,56 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { LogIn, LogOut, User, AlertCircle, ShoppingCart } from "lucide-react";
+import { LogIn, LogOut, User, AlertCircle, ShoppingCart, CheckCircle } from "lucide-react";
 
 export const isAuth0Configured = () => {
   return !!(import.meta.env.VITE_AUTH0_DOMAIN && import.meta.env.VITE_AUTH0_CLIENT_ID);
+};
+
+// Custom hook to check if user has already purchased a course
+const useEnrollmentStatus = (testId: string, userId?: string) => {
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!userId || !testId) {
+      setIsEnrolled(false);
+      return;
+    }
+
+    setIsLoading(true);
+    const controller = new AbortController();
+
+    fetch(
+      "https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/my_orders",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+        signal: controller.signal,
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const purchasedTests = Array.isArray(data) ? data : (data?.items || []);
+        const hasEnrolled = purchasedTests.some((test: any) => 
+          test?.practice_test_id === testId || 
+          test?.course_id === testId || 
+          test?.id === testId
+        );
+        setIsEnrolled(hasEnrolled);
+      })
+      .catch(() => {
+        setIsEnrolled(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [testId, userId]);
+
+  return { isEnrolled, isLoading };
 };
 
 export function useAuth0Safe() {
@@ -148,6 +195,10 @@ interface PurchaseButtonProps {
   variant?: "default" | "outline" | "ghost" | "link" | "destructive" | "secondary";
   testIdAttr?: string;
   popular?: boolean;
+  price?: number;
+  testTitle?: string;
+  questions?: number;
+  flashcards?: number;
 }
 
 export function PurchaseButton({ 
@@ -156,12 +207,64 @@ export function PurchaseButton({
   children, 
   variant = "default",
   testIdAttr,
-  popular = false 
+  popular = false,
+  price = 0,
+  testTitle = "",
+  questions = 0,
+  flashcards = 0
 }: PurchaseButtonProps) {
-  const { isAuthenticated, loginWithRedirect } = useAuth0Safe();
+  const { isAuthenticated, loginWithRedirect, user } = useAuth0Safe();
   const [, setLocation] = useLocation();
+  const userId = (user && (user.sub || user.user_id)) || undefined;
+  const { isEnrolled, isLoading } = useEnrollmentStatus(testId, userId);
+
+  const handleFreeEnrollment = async () => {
+    if (!isAuthenticated) {
+      if (isAuth0Configured()) {
+        // Redirect to login, then to dashboard after authentication
+        loginWithRedirect({
+          appState: { 
+            returnTo: `/dashboard`
+          }
+        });
+      } else {
+        // Dev mode without Auth0: allow proceeding directly to dashboard
+        setLocation(`/dashboard`);
+      }
+    } else {
+      // Authenticated - record the free enrollment and redirect to dashboard
+      const userId = (user && (user.sub || user.user_id)) || undefined;
+      if (userId) {
+        try {
+          await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/record_purchase', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              practice_test_id: testId,
+              test_title: testTitle,
+              price: price,
+              questions: questions,
+              flashcards: flashcards
+            }),
+            keepalive: true,
+          });
+        } catch (error) {
+          console.error('Error recording free enrollment:', error);
+        }
+      }
+      setLocation(`/dashboard`);
+    }
+  };
 
   const handlePurchaseClick = () => {
+    if (price === 0) {
+      handleFreeEnrollment();
+      return;
+    }
+
     if (!isAuthenticated) {
       if (isAuth0Configured()) {
         // Redirect to login, then to checkout after authentication
@@ -179,6 +282,36 @@ export function PurchaseButton({
       setLocation(`/checkout/${testId}`);
     }
   };
+
+  // Show "Already Enrolled" if user has already purchased this course
+  if (isAuthenticated && isEnrolled) {
+    return (
+      <Button 
+        variant="secondary"
+        className={`${className} bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800`}
+        data-testid={testIdAttr}
+        disabled
+      >
+        <CheckCircle className="mr-2 h-4 w-4" />
+        Already Enrolled
+      </Button>
+    );
+  }
+
+  // Show loading state while checking enrollment
+  if (isAuthenticated && isLoading) {
+    return (
+      <Button 
+        variant={variant}
+        className={className}
+        data-testid={testIdAttr}
+        disabled
+      >
+        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        Checking...
+      </Button>
+    );
+  }
 
   return (
     <Button 

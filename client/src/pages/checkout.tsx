@@ -171,7 +171,9 @@ export default function Checkout() {
         body: JSON.stringify({
           testId: testId,
           amount: amount * 100, // Convert to cents for Stripe
-          currency: 'usd'
+          currency: 'usd',
+          // add node_env variable to the body
+          env: process.env.NODE_ENV
         })
       });
       

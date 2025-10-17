@@ -54,6 +54,9 @@ interface PracticeTest {
   title: string;
   subtitle: string;
   price: number;
+  retail_price?: number;
+  flashcards?: number;
+  offer_message?: string;
   questions: number;
   duration: string;
   rating: number;
@@ -74,8 +77,11 @@ const transformApiData = (apiData: any): PracticeTest => {
     title: apiData.title || apiData.name || apiData.course_title,
     subtitle: apiData.subtitle || apiData.short_description || apiData.course_subtitle,
     price: apiData.price || apiData.cost || apiData.course_price || 0,
+    retail_price: apiData.retail_price || apiData.original_price || apiData.price * 1.5,
+    offer_message: apiData.offer_message || apiData.offer_message || apiData.offer_message || "Limited Time Offer - Valid until Dec 31, 2024",
     questions: apiData.questions || apiData.total_questions || apiData.question_count || 0,
-    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "65 mins per test",
+    flashcards: apiData.flashcards || apiData.flashcard_count || apiData.flashcard_count || 0,
+    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "180 mins per test",
     rating: apiData.rating || apiData.average_rating || apiData.star_rating || 4.5,
     reviews: apiData.reviews_count || apiData.review_count || apiData.total_reviews || 0,
     difficulty: apiData.difficulty || apiData.level || apiData.course_level || "Associate",
@@ -619,9 +625,19 @@ export default function PracticeTests() {
 
                       <CardContent>
                         <div className="mb-4">
-                          <div className="text-3xl font-bold text-primary mb-2">
-                            ${test.price}
-                          </div>
+                        <div className="flex items-center justify-center gap-3 mb-2">
+                    {test.price === 0 ? (
+                      <>
+                        <span className="text-4xl font-bold text-green-600 dark:text-green-400">Free</span>
+                         <span className="text-2xl text-muted-foreground line-through">${test.retail_price || test.price * 1.5}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-primary">${test.price}</span>
+                         <span className="text-2xl text-muted-foreground line-through">${test.retail_price || test.price * 1.5}</span>
+                      </>
+                    )}
+                  </div>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                             <div className="flex items-center">
                               <BookOpen className="h-4 w-4 mr-1" />
@@ -629,7 +645,7 @@ export default function PracticeTests() {
                             </div>
                             <div className="flex items-center">
                               <Clock className="h-4 w-4 mr-1" />
-                              {test.duration}
+                              {test.flashcards} flashcards
                             </div>
                           </div>
                         </div>
@@ -665,6 +681,10 @@ export default function PracticeTests() {
                           ) : (
                             <PurchaseButton
                               testId={test.id}
+                              price={test.price}
+                              testTitle={test.title}
+                              questions={test.questions}
+                              flashcards={test.flashcards || 0}
                               popular={test.popular}
                               className={`w-full ${
                                 test.popular 
@@ -673,8 +693,17 @@ export default function PracticeTests() {
                               } transition-all duration-300 transform hover:scale-105`}
                               testIdAttr={`button-purchase-${test.id}`}
                             >
-                              <ShoppingCart className="mr-2 h-4 w-4" />
-                              Purchase Now
+                              {test.price === 0 ? (
+                                <>
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Enrol for Free
+                                </>
+                              ) : (
+                                <>
+                                  <ShoppingCart className="mr-2 h-4 w-4" />
+                                  Purchase Now
+                                </>
+                              )}
                             </PurchaseButton>
                           )}
                         </div>

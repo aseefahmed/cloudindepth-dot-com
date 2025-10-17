@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRoute, Link } from "wouter";
+import { useRoute, Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import Footer from "@/components/Footer";
 import { 
   CheckCircle, Star, Award, BookOpen, Clock, Users, ShoppingCart, 
   ArrowLeft, Shield, TrendingUp, Target, Zap, PlayCircle, 
-  BarChart, Download, Video, FileText, MessageCircle, Loader2, AlertCircle
+  BarChart, Download, Video, FileText, MessageCircle, Loader2, AlertCircle,
+  ChevronLeft, ChevronRight, Maximize2, X
 } from "lucide-react";
 import { practiceTestsData } from "../../../shared/practice-tests-data";
 // Transform API data to match component expectations
@@ -28,9 +29,11 @@ const transformApiData = (apiData: any): any => {
     fullTitle: apiData.fullTitle || apiData.full_title || apiData.course_name || apiData.title,
     price: apiData.price || apiData.cost || apiData.course_price || 0,
     originalPrice: apiData.originalPrice || apiData.original_price || apiData.retail_price || apiData.price * 1.5,
+    offer_message: apiData.offer_message || apiData.offer_message || apiData.offer_message || "Limited Time Offer - Valid until Dec 31, 2024",
     questions: apiData.questions || apiData.total_questions || apiData.question_count || 0,
+    flashcards: apiData.flashcards || apiData.flashcard_count || apiData.flashcard_count || 0,
     practiceTests: apiData.practiceTests || apiData.practice_tests || apiData.test_count || 0,
-    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "65 mins per test",
+    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "180 mins per test",
     rating: apiData.rating || apiData.average_rating || apiData.star_rating || 4.5,
     reviews: apiData.review_count || apiData.review_count || apiData.total_reviews || 0,
     difficulty: apiData.difficulty || apiData.level || apiData.course_level || "Associate",
@@ -43,12 +46,12 @@ const transformApiData = (apiData: any): any => {
       "Performance tracking",
       "Lifetime access"
     ],
-    topics: apiData.domains || [
+    topics: apiData.domains_details || apiData.domains || [
       { name: "Core Concepts", percentage: 50 },
       { name: "Advanced Topics", percentage: 30 },
       { name: "Practical Applications", percentage: 20 }
     ],
-    domains: apiData.domains || apiData.exam_domains || apiData.subject_domains || [],
+    domains: apiData.domains_details || apiData.domains || apiData.exam_domains || apiData.subject_domains || [],
     sampleQuestions: apiData.sampleQuestions || apiData.sample_questions || apiData.preview_questions || [
       {
         question: "Sample question from the course",
@@ -141,6 +144,7 @@ const getDifficultyColor = (difficulty: string) => {
 
 export default function PracticeTestDetails() {
   const [, params] = useRoute("/practice-tests/:id");
+  const [, setLocation] = useLocation();
   const testId = params?.id || "saa-c03";
   
   // State for API data
@@ -148,6 +152,16 @@ export default function PracticeTestDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isApiData, setIsApiData] = useState(false);
+  
+  // State for gallery
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  
+  const galleryImages = [
+    "/images/simulator-screenshot-1.png",
+    "/images/simulator-screenshot-2.png",
+    "/images/simulator-screenshot-3.png"
+  ];
 
   // Fetch course details from API
   useEffect(() => {
@@ -164,9 +178,18 @@ export default function PracticeTestDetails() {
         console.error('Failed to fetch course details:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load course details';
         setError(errorMessage);
+        
         // Fallback to static data
         console.log('Using fallback data for:', testId);
-        setTest(practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0]);
+        const fallbackTest = practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0];
+        
+        if (!fallbackTest) {
+          // No fallback data available, set test to null to show not found message
+          setTest(null);
+          return;
+        }
+        
+        setTest(fallbackTest);
         setIsApiData(false);
       } finally {
         setIsLoading(false);
@@ -174,7 +197,7 @@ export default function PracticeTestDetails() {
     };
 
     loadCourseDetails();
-  }, [testId]);
+  }, [testId, setLocation]);
 
   // Retry function for failed API calls
   const retryFetch = () => {
@@ -189,7 +212,16 @@ export default function PracticeTestDetails() {
         console.error('Failed to fetch course details:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load course details';
         setError(errorMessage);
-        setTest(practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0]);
+        
+        const fallbackTest = practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0];
+        
+        if (!fallbackTest) {
+          // No fallback data available, set test to null to show not found message
+          setTest(null);
+          return;
+        }
+        
+        setTest(fallbackTest);
         setIsApiData(false);
       } finally {
         setIsLoading(false);
@@ -242,22 +274,6 @@ export default function PracticeTestDetails() {
     );
   }
 
-  // If no test data available, show error
-  if (!test) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Course Not Found</h2>
-          <p className="text-muted-foreground mb-4">The requested course could not be found.</p>
-          <Button onClick={() => window.history.back()}>
-            Go Back
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -268,6 +284,111 @@ export default function PracticeTestDetails() {
       });
     }
   };
+
+  // Gallery functions
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+
+  const openFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const closeFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
+  // If no test data available, show not found message
+  if (!test.title) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+        <Navigation scrollToSection={scrollToSection} />
+        <div className="pt-20 flex items-center justify-center min-h-screen">
+          <div className="text-center max-w-2xl mx-auto p-8">
+            <div className="mb-8">
+              <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center">
+                <AlertCircle className="h-16 w-16 text-red-500" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Practice Test Not Found
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                The practice test you're looking for doesn't exist or may have been removed. 
+                This could be due to an incorrect URL or the test being temporarily unavailable.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">What you can do:</h3>
+              <div className="grid md:grid-cols-2 gap-4 text-left">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-semibold text-sm">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Check the URL</h4>
+                    <p className="text-gray-600 text-sm">Make sure the practice test ID in the URL is correct</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-semibold text-sm">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Browse Available Tests</h4>
+                    <p className="text-gray-600 text-sm">Explore our collection of practice tests</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-semibold text-sm">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Contact Support</h4>
+                    <p className="text-gray-600 text-sm">Get help from our support team</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-semibold text-sm">4</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Try Again Later</h4>
+                    <p className="text-gray-600 text-sm">The test might be temporarily unavailable</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={() => setLocation('/practice-tests')}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Browse Practice Tests
+              </Button>
+              <Button 
+                onClick={() => setLocation('/')}
+                variant="outline"
+                className="px-8 py-3 border-2 border-gray-300 hover:border-blue-500 hover:text-blue-500 font-semibold rounded-xl transition-all duration-300"
+              >
+                Go Home
+              </Button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -321,23 +442,27 @@ export default function PracticeTestDetails() {
               
               
               <div className="flex flex-wrap gap-6 mb-6">
-                <div className="flex items-center text-muted-foreground">
+                {/* <div className="flex items-center text-muted-foreground">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500 mr-2" />
                   <span className="font-semibold text-foreground">{test.rating}</span>
                   <span className="ml-1">({test.reviews_count} reviews)</span>
-                </div>
+                </div> */}
                 <div className="flex items-center text-muted-foreground">
                   <BookOpen className="h-5 w-5 text-primary mr-2" />
                   <span>{test.questions} Questions</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
+                  <BookOpen className="h-5 w-5 text-primary mr-2" />
+                  <span>{test.flashcards} flashcards</span>
+                </div>
+                <div className="flex items-center text-muted-foreground">
                   <Clock className="h-5 w-5 text-primary mr-2" />
                   <span>{test.duration}</span>
                 </div>
-                <div className="flex items-center text-muted-foreground">
+                {/* <div className="flex items-center text-muted-foreground">
                   <Target className="h-5 w-5 text-primary mr-2" />
                   <span>Passing: {test.passingScore}</span>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -348,12 +473,33 @@ export default function PracticeTestDetails() {
                   {/* Course Image */}
                   
                   <div className="flex items-center justify-center gap-3 mb-2">
-                    <span className="text-4xl font-bold text-primary">${test.price}</span>
-                    <span className="text-2xl text-muted-foreground line-through">${test.originalPrice}</span>
+                    {test.price === 0 ? (
+                      <>
+                        <span className="text-4xl font-bold text-green-600 dark:text-green-400">Free</span>
+                        <span className="text-2xl text-muted-foreground line-through">${test.originalPrice}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-primary">${test.price}</span>
+                        <span className="text-2xl text-muted-foreground line-through">${test.originalPrice}</span>
+                      </>
+                    )}
                   </div>
-                  <Badge className="bg-accent text-accent-foreground">
-                    Save ${test.originalPrice - test.price}
-                  </Badge>
+                  {test.price > 0 && (
+                    <Badge className="bg-accent text-accent-foreground">
+                      Save ${Math.round(test.originalPrice - test.price)}
+                    </Badge>
+                  )}
+                  {test.price === 0 && (
+                    <div className="space-y-2">
+                      <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                        🎉 Save ${test.originalPrice} - Completely Free
+                      </Badge>
+                      <div className="text-sm text-orange-600 dark:text-orange-400 font-medium">
+                        ⏰ ${test.offer_message}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {(test.status === 'coming soon' || test.status === 'coming_soon') ? (
                   <Button
@@ -366,21 +512,34 @@ export default function PracticeTestDetails() {
                 ) : (
                 <PurchaseButton
                   testId={test.id}
+                  price={test.price}
+                  testTitle={test.fullTitle}
+                  questions={test.questions}
+                  flashcards={test.flashcards}
                   className="w-full bg-accent hover:bg-accent/90 text-accent-foreground mb-4 py-6 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
                   testIdAttr="button-purchase-main"
                 >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Purchase Now
+                  {test.price === 0 ? (
+                    <>
+                      <CheckCircle className="mr-2 h-5 w-5" />
+                      Enrol for Free
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      Purchase Now
+                    </>
+                  )}
                 </PurchaseButton>
                 )}
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center text-sm text-muted-foreground">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                    30-day money-back guarantee
+                    7-day money-back guarantee
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                    Lifetime access to all tests
+                    1 Year access
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <CheckCircle className="h-4 w-4 text-primary mr-2" />
@@ -413,12 +572,12 @@ export default function PracticeTestDetails() {
               </TabsTrigger>
               <TabsTrigger value="samples" className="py-3" data-testid="tab-samples">
                 <FileText className="h-4 w-4 mr-2" />
-                Samples
+                Sample Questions
               </TabsTrigger>
-              {/* <TabsTrigger value="reviews" className="py-3" data-testid="tab-reviews">
+              <TabsTrigger value="faq" className="py-3" data-testid="tab-faq">
                 <MessageCircle className="h-4 w-4 mr-2" />
-                Reviews
-              </TabsTrigger> */}
+                FAQ
+              </TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
@@ -427,7 +586,7 @@ export default function PracticeTestDetails() {
                 <CardHeader>
                   <CardTitle className="text-2xl font-heading flex items-center">
                     <Zap className="h-6 w-6 text-accent mr-3" />
-                    What You'll Get11
+                    What You'll Get
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -491,10 +650,15 @@ export default function PracticeTestDetails() {
                       test.domains.map((domain: any, index: number) => (
                         <div key={index}>
                           <div className="flex justify-between mb-2">
-                            <span className="font-semibold">{domain}</span>
-                         
+                            <span className="font-semibold">{domain.name || domain}</span>
+                            <span className="text-muted-foreground">{domain.weight || 0}%</span>
                           </div>
-                          
+                          <div className="w-full bg-muted rounded-full h-3">
+                            <div 
+                              className="bg-primary h-3 rounded-full transition-all duration-500"
+                              style={{ width: `100%` }}
+                            ></div>
+                          </div>
                         </div>
                       ))
                     ) : (
@@ -502,12 +666,12 @@ export default function PracticeTestDetails() {
                         <div key={index}>
                           <div className="flex justify-between mb-2">
                             <span className="font-semibold">{topic.name}</span>
-                            <span className="text-muted-foreground">{topic.percentage}%</span>
+                            <span className="text-muted-foreground">{topic.weight}%</span>
                           </div>
                           <div className="w-full bg-muted rounded-full h-3">
                             <div 
                               className="bg-primary h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${topic.percentage}%` }}
+                              style={{ width: `${topic.weight}%` }}
                             ></div>
                           </div>
                         </div>
@@ -560,126 +724,242 @@ export default function PracticeTestDetails() {
             <TabsContent value="samples" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl font-heading">Sample Questions</CardTitle>
+                  <CardTitle className="text-2xl font-heading flex items-center">
+                    <FileText className="h-6 w-6 text-primary mr-3" />
+                    Sample Questions
+                  </CardTitle>
                   <p className="text-muted-foreground">Get a preview of the question quality and format</p>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-8">
-                    {test.sampleQuestions?.map((q: any, index: number) => (
-                      <div key={index} className="border-l-4 border-primary pl-6">
-                        <h4 className="font-semibold mb-4">Question {index + 1}:</h4>
-                        <p className="mb-4">{q.question}</p>
-                        <div className="space-y-2 mb-4">
-                          {q.options.map((opt: string, i: number) => (
-                            <div key={i} className="bg-muted/50 p-3 rounded-lg">
-                              {opt}
-                            </div>
-                          ))}
-                        </div>
-                        <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg">
-                          <p className="text-sm font-semibold text-primary mb-2">Explanation:</p>
-                          <p className="text-sm">{q.explanation}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl font-heading">Frequently Asked Questions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    {test.faqs?.map((faq: any, index: number) => (
-                      <AccordionItem key={index} value={`item-${index}`}>
-                        <AccordionTrigger className="text-left">
-                          {faq.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground">
-                          {faq.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Reviews Tab */}
-            {/* <TabsContent value="reviews" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl font-heading">Student Reviews</CardTitle>
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center">
-                      <Star className="h-6 w-6 text-yellow-500 fill-yellow-500" />
-                      <span className="text-3xl font-bold ml-2">{test.rating}</span>
-                    </div>
-                    <span className="text-muted-foreground">Based on {test.reviews_count} reviews</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {test.testimonials && test.testimonials.length > 0 ? (
-                      test.testimonials.map((review: any, index: number) => (
-                        <Card key={index} className="bg-muted/30">
-                          <CardContent className="p-6">
-                            <div className="flex items-start justify-between mb-4">
-                              <div>
-                                <h4 className="font-semibold">{review.name || review.student_name || review.user_name || "Anonymous"}</h4>
-                                <p className="text-sm text-muted-foreground">
-                                  {review.role || review.title || review.position || "Student"}
-                                </p>
-                                {review.date && (
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    {new Date(review.date).toLocaleDateString()}
-                                  </p>
-                                )}
-                              </div>
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star 
+                    {(test.sampleQuestions && test.sampleQuestions.length > 0) ? (
+                      test.sampleQuestions.map((q: any, index: number) => (
+                        <div key={index} className="border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-slate-50/50 dark:bg-slate-800/50">
+                          <div className="flex items-center gap-3 mb-4">
+                            <Badge className="bg-primary text-primary-foreground">Question {index + 1}</Badge>
+                            <Badge variant="outline">{q.difficulty || 'Medium'}</Badge>
+                            <Badge variant="outline">{q.domain || 'General'}</Badge>
+                          </div>
+                          
+                          <div className="mb-6">
+                            <h4 className="text-lg font-semibold text-foreground mb-4 leading-relaxed">
+                              <div dangerouslySetInnerHTML={{ __html: q.question }} />
+                            </h4>
+                            
+                            <div className="space-y-3 mb-6">
+                              {q.options.map((opt: string, i: number) => {
+                                const isCorrect = q.correctAnswer && q.correctAnswer.includes(i + 1);
+                                return (
+                                  <div 
                                     key={i} 
-                                    className={`h-4 w-4 ${
-                                      i < (review.rating || review.star_rating || 5) 
-                                        ? 'text-yellow-500 fill-yellow-500' 
-                                        : 'text-gray-300'
-                                    }`} 
-                                  />
-                                ))}
-                              </div>
+                                    className={`p-4 rounded-lg border transition-colors ${
+                                      isCorrect 
+                                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
+                                    }`}
+                                  >
+                                    <div className="flex items-start gap-3">
+                                      <span className={`font-semibold text-sm ${
+                                        isCorrect 
+                                          ? 'text-green-700 dark:text-green-300' 
+                                          : 'text-slate-600 dark:text-slate-400'
+                                      }`}>
+                                        {String.fromCharCode(65 + i)}.
+                                      </span>
+                                      <div 
+                                        className={`flex-1 ${
+                                          isCorrect 
+                                            ? 'text-green-800 dark:text-green-200' 
+                                            : 'text-slate-700 dark:text-slate-300'
+                                        }`}
+                                        dangerouslySetInnerHTML={{ __html: opt }}
+                                      />
+                                      {isCorrect && (
+                                        <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
-                            <p className="text-muted-foreground">
-                              {review.comment || review.review_text || review.feedback || review.content || "Great course!"}
-                            </p>
-                            {review.helpful && (
-                              <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                                <span>Was this review helpful?</span>
-                                <div className="flex gap-2">
-                                  <button className="hover:text-primary">👍 {review.helpful.helpful || 0}</button>
-                                  <button className="hover:text-primary">👎 {review.helpful.not_helpful || 0}</button>
-                                </div>
+                          </div>
+                          
+                          {q.explanation && (
+                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <BookOpen className="h-4 w-4 text-blue-600" />
+                                <p className="text-sm font-semibold text-blue-800 dark:text-blue-200">Explanation:</p>
                               </div>
-                            )}
-                          </CardContent>
-                        </Card>
+                              <div 
+                                className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed"
+                                dangerouslySetInnerHTML={{ __html: q.explanation }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       ))
                     ) : (
-                      <div className="text-center py-8">
-                        <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
-                        <p className="text-muted-foreground">
-                          Be the first to share your experience with this course!
+                      <div className="text-center py-12">
+                        <FileText className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+                        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">Sample Questions Coming Soon</h3>
+                        <p className="text-slate-600 dark:text-slate-400 mb-6">
+                          We're preparing high-quality sample questions to give you a preview of our practice tests.
                         </p>
+                        <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-6 max-w-md mx-auto">
+                          <h4 className="font-semibold text-foreground mb-2">What to expect:</h4>
+                          <ul className="text-sm text-muted-foreground space-y-1 text-left">
+                            <li>• Realistic exam-style questions</li>
+                            <li>• Detailed explanations for each answer</li>
+                            <li>• Multiple difficulty levels</li>
+                            <li>• Domain-specific content coverage</li>
+                          </ul>
+                        </div>
                       </div>
                     )}
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent> */}
+            </TabsContent>
+
+            {/* FAQ Tab */}
+            <TabsContent value="faq" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-heading flex items-center">
+                    <MessageCircle className="h-6 w-6 text-primary mr-3" />
+                    Frequently Asked Questions
+                  </CardTitle>
+                  <p className="text-muted-foreground">Find answers to common questions about this practice test</p>
+                </CardHeader>
+                <CardContent>
+                  <Accordion type="single" collapsible className="w-full">
+                    {/* Always show default FAQs for now */}
+                    {[
+                        {
+                          question: "How many questions are in this practice test?",
+                          answer: `This practice test contains ${test.questions || '65'} questions, designed to simulate the actual exam experience. Each question is carefully crafted to match the difficulty and format of the real certification exam.`
+                        },
+                        {
+                          question: "What's the passing score for the actual exam?",
+                          answer: `The passing score for the actual certification exam is typically ${test.passingScore || '720 out of 1000'} points. Our practice tests help you gauge your readiness and identify areas that need more study.`
+                        },
+                        {
+                          question: "How long does the practice test take?",
+                          answer: `The practice test is designed to be completed in approximately ${test.duration || '65 minutes'}, matching the time constraints of the actual exam. You can pause and resume at any time during your practice session.`
+                        },
+                        {
+                          question: "Can I retake the practice test?",
+                          answer: "Yes! You have unlimited access to retake the practice tests as many times as you need. Each attempt helps you improve your understanding and track your progress over time."
+                        },
+                        {
+                          question: "What topics are covered in this practice test?",
+                          answer: `This practice test covers all the key domains and topics outlined in the official exam guide. The questions are distributed across different areas to ensure comprehensive coverage of the ${test.difficulty || 'Associate'} level curriculum.`
+                        },
+                        {
+                          question: "Do I get explanations for the answers?",
+                          answer: "Yes! Each question includes detailed explanations that help you understand not just the correct answer, but also why other options are incorrect. This learning approach helps reinforce your knowledge."
+                        },
+                        {
+                          question: "Is this practice test updated regularly?",
+                          answer: "Absolutely! We regularly update our practice tests to reflect the latest exam changes, new services, and current best practices. You'll always have access to the most current content."
+                        },
+                        {
+                          question: "What if I'm not satisfied with the practice test?",
+                          answer: "We offer a 30-day money-back guarantee. If you're not completely satisfied with the quality of our practice tests, you can request a full refund within 30 days of purchase."
+                        }
+                      ].map((faq: any, index: number) => (
+                        <AccordionItem key={index} value={`default-item-${index}`}>
+                          <AccordionTrigger className="text-left hover:no-underline">
+                            <span className="font-medium">{faq.question}</span>
+                        </AccordionTrigger>
+                          <AccordionContent className="text-muted-foreground pt-2">
+                          {faq.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                      ))}
+                  </Accordion>
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
+        </div>
+      </section>
+
+      {/* Simulator Gallery Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Practice Test Simulator
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Experience our realistic exam simulator with the same interface and functionality as the actual AWS exam
+            </p>
+          </div>
+
+          {/* Gallery Container */}
+          <div className="relative max-w-5xl mx-auto">
+            {/* Main Image Display */}
+            <div className="relative bg-gray-100 rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                src={galleryImages[currentImageIndex]}
+                alt={`Simulator Screenshot ${currentImageIndex + 1}`}
+                className="w-full h-auto max-h-[600px] object-contain"
+              />
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              
+              <button
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+
+              {/* Fullscreen Button */}
+              <button
+                onClick={openFullscreen}
+                className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                aria-label="View fullscreen"
+              >
+                <Maximize2 className="h-5 w-5" />
+              </button>
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                {currentImageIndex + 1} / {galleryImages.length}
+              </div>
+            </div>
+
+            {/* Thumbnail Navigation */}
+            <div className="flex justify-center gap-4 mt-8">
+              {galleryImages.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToImage(index)}
+                  className={`relative overflow-hidden rounded-lg transition-all duration-300 ${
+                    index === currentImageIndex
+                      ? 'ring-4 ring-blue-500 scale-110'
+                      : 'hover:scale-105 opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="w-20 h-16 object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -687,23 +967,44 @@ export default function PracticeTestDetails() {
       <section className="py-16 bg-gradient-to-r from-primary/10 to-accent/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-heading font-bold mb-4">
+            
             Ready to Pass Your {test.fullTitle} Exam?
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
             Join thousands of successful candidates who used our practice tests
           </p>
-          <Button 
+          <PurchaseButton
+          testId={test.id}
+          price={test.price}
+          testTitle={test.fullTitle}
+          questions={test.questions}
+          flashcards={test.flashcards}
             className={`px-8 py-6 text-lg font-semibold transition-all duration-300 ${
               (test.status === 'coming soon' || test.status === 'coming_soon')
                 ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
                 : 'bg-accent hover:bg-accent/90 text-accent-foreground transform hover:scale-105'
             }`}
             data-testid="button-purchase-bottom"
-            disabled={test.status === 'coming soon' || test.status === 'coming_soon'}
           >
-            <ShoppingCart className="mr-2 h-5 w-5" />
-            {(test.status === 'coming soon' || test.status === 'coming_soon') ? 'Coming Soon' : `Get Started Now - $${test.price}`}
-          </Button>
+            {test.status === 'coming soon' || test.status === 'coming_soon' ? (
+              <>
+                <Clock className="mr-2 h-5 w-5" />
+                Coming Soon
+              </>
+            ) : test.price === 0 ? (
+              <>
+                <CheckCircle className="mr-2 h-5 w-5" />
+                Enrol for Free
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Get Started Now - ${test.price}
+              </>
+            )}
+          </PurchaseButton>
+
+          
         </div>
       </section>
 
@@ -716,6 +1017,72 @@ export default function PracticeTestDetails() {
         scrollThreshold={300}
         position="bottom-right"
       />
+
+      {/* Fullscreen Gallery Modal */}
+      {isFullscreen && (
+        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+          <div className="relative max-w-7xl max-h-full">
+            {/* Close Button */}
+            <button
+              onClick={closeFullscreen}
+              className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white rounded-full p-3 z-10 transition-all duration-300"
+              aria-label="Close fullscreen"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={prevImage}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full p-4 z-10 transition-all duration-300"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="h-8 w-8" />
+            </button>
+            
+            <button
+              onClick={nextImage}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full p-4 z-10 transition-all duration-300"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-8 w-8" />
+            </button>
+
+            {/* Fullscreen Image */}
+            <img
+              src={galleryImages[currentImageIndex]}
+              alt={`Simulator Screenshot ${currentImageIndex + 1}`}
+              className="max-w-full max-h-full object-contain"
+            />
+
+            {/* Image Counter */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-lg">
+              {currentImageIndex + 1} / {galleryImages.length}
+            </div>
+
+            {/* Thumbnail Navigation */}
+            <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex gap-3">
+              {galleryImages.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToImage(index)}
+                  className={`relative overflow-hidden rounded-lg transition-all duration-300 ${
+                    index === currentImageIndex
+                      ? 'ring-4 ring-white scale-110'
+                      : 'hover:scale-105 opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="w-16 h-12 object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

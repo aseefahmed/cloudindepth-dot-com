@@ -33,7 +33,8 @@ import {
   Target,
   Calendar,
   CreditCard,
-  FileText
+  FileText,
+  MoreVertical
 } from "lucide-react";
 
 const isAuth0Configured = () => {
@@ -313,7 +314,7 @@ export default function MyPracticeTests() {
               </div>
               <div>
                 <p className="text-2xl font-bold" data-testid="stat-in-progress">{totalQuestions}</p>
-                <p className="text-sm text-muted-foreground">In Progress</p>
+                <p className="text-sm text-muted-foreground">Total Questions</p>
               </div>
             </div>
           </CardContent>
@@ -402,9 +403,7 @@ export default function MyPracticeTests() {
                   <TableHead className="font-bold">Questions</TableHead>
                   <TableHead className="font-bold">Attempted</TableHead>
                   <TableHead className="font-bold">Last Accessed</TableHead>
-                  <TableHead className="font-bold text-center">Flashcards</TableHead>
-                  <TableHead className="font-bold text-center">Questions Bank</TableHead>
-                  <TableHead className="font-bold text-center">Action</TableHead>
+                  <TableHead className="font-bold text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -443,40 +442,47 @@ export default function MyPracticeTests() {
                   </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Link href={`/dashboard/flashcards/${test.practice_test_id || test.id}`}>
-                    <Button
-                          size="sm" 
-                      variant="outline"
-                          className="gap-2 border-primary/30 text-primary hover:bg-primary/10"
-                          data-testid={`button-flashcards-${test.id}`}
-                    >
-                          <CreditCard className="h-4 w-4" />
-                          Study
-                    </Button>
-                  </Link>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-2 border-green-500/30 text-green-600 hover:bg-green-500/10"
-                        data-testid={`button-questions-bank-${test.id}`}
-                        onClick={() => handleQuestionsBank(test)}
-                      >
-                        <FileText className="h-4 w-4" />
-                        View
-                      </Button>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Button 
-                        size="sm" 
-                        className="gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                        data-testid={`button-start-${test.id}`}
-                        onClick={() => handleStartTest(test)}
-                      >
-                        <PlayCircle className="h-4 w-4" />
-                        Start
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="gap-2"
+                            data-testid={`button-actions-${test.id}`}
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                            Actions
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={`/dashboard/flashcards/${test.practice_test_id || test.id}`}>
+                              <div className="flex items-center gap-2 cursor-pointer">
+                                <CreditCard className="h-4 w-4" />
+                                Study Flashcards
+                              </div>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleQuestionsBank(test)}
+                            className="cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4" />
+                              View Questions Bank
+                            </div>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStartTest(test)}
+                            className="cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              <PlayCircle className="h-4 w-4" />
+                              Start Practice Test
+                            </div>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

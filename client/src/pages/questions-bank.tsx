@@ -71,6 +71,7 @@ export default function QuestionsBank() {
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
   const [showAnswers, setShowAnswers] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<string>>(new Set());
+  const [allExpanded, setAllExpanded] = useState(false);
   const { toast } = useToast();
 
   // Fetch questions bank data
@@ -165,6 +166,26 @@ export default function QuestionsBank() {
       return newSet;
     });
   };
+
+  const toggleExpandAll = () => {
+    if (allExpanded) {
+      // Collapse all
+      setExpandedQuestions(new Set());
+      setAllExpanded(false);
+    } else {
+      // Expand all
+      const allQuestionIds = new Set(filteredQuestions.map(q => q.id));
+      setExpandedQuestions(allQuestionIds);
+      setAllExpanded(true);
+    }
+  };
+
+  // Update allExpanded state when individual questions are toggled
+  useEffect(() => {
+    const totalFilteredQuestions = filteredQuestions.length;
+    const expandedCount = expandedQuestions.size;
+    setAllExpanded(totalFilteredQuestions > 0 && expandedCount === totalFilteredQuestions);
+  }, [expandedQuestions, filteredQuestions.length]);
 
   const getDifficultyColor = (difficulty: string) => {
     if (!difficulty) return "bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300";
@@ -315,7 +336,18 @@ export default function QuestionsBank() {
         {/* Filters */}
         <Card className="border-0 shadow-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm mb-8">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Filters & Search</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Filters & Search</CardTitle>
+              <Button
+                variant="outline"
+                onClick={toggleExpandAll}
+                className="gap-2"
+                disabled={filteredQuestions.length === 0}
+              >
+                {allExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {allExpanded ? "Collapse All" : "Expand All"}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

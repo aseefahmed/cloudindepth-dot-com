@@ -23,6 +23,8 @@ import Downloads from "@/pages/downloads";
 import DashboardDownloads from "@/pages/dashboard-downloads";
 import Flashcards from "@/pages/flashcards";
 import QuestionsBank from "@/pages/questions-bank";
+import Blog from "@/pages/blog";
+import BlogDetails from "@/pages/blog-details";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -32,6 +34,8 @@ function Router() {
       <Route path="/practice-tests" component={PracticeTests} />
       <Route path="/practice-tests/:id" component={PracticeTestDetails} />
       <Route path="/downloads" component={Downloads} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/blog/:id" component={BlogDetails} />
       <Route path="/checkout/:testId" component={Checkout} />
       <Route path="/dashboard">
         {() => (
@@ -157,6 +161,7 @@ function Router() {
           </AuthenticatedRoute>
         )}
       </Route>
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );

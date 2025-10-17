@@ -68,12 +68,14 @@ interface FlashcardSet {
 // Helper function to transform API response to our flashcard format
 const transformApiResponse = (apiData: any, testId: string): FlashcardSet => {
   // Handle the nested structure where testId is a key in the response
+  console.log("AA")
+  console.log(apiData)
   let flashcardData = null;
   
   if (apiData && typeof apiData === 'object') {
     // Check if the response has the testId as a key
-    if (apiData[testId]) {
-      flashcardData = apiData[testId];
+    if (apiData['response']) {
+      flashcardData = apiData['response'];
     } else if (apiData.flashcards) {
       // Fallback: check if flashcards are directly in the response
       flashcardData = apiData;

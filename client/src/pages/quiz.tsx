@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRoute, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,21 +45,160 @@ export default function Quiz() {
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [showResults, setShowResults] = useState(false);
   const [isReviewMode, setIsReviewMode] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(180 * 60); // 180 minutes in seconds
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiResults, setApiResults] = useState<{
     right_answers: number;
     wrong_answers: number;
     unanswered: number;
   } | null>(null);
+  const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [showRefreshWarning, setShowRefreshWarning] = useState(false);
+  const [pendingRefresh, setPendingRefresh] = useState(false);
+
+  const handleSubmit = useCallback(async () => {
+    // Prevent double submission
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    // Calculate total questions from originalQuestions
+    const totalQuestionsCount = originalQuestions.length;
+    
+    // Prepare the quiz data with chosen options
+    const quizDataWithChoices = originalQuestions.map((question: any, index: number) => {
+      const chosenOptions = selectedAnswers[index] || [];
+      
+      return {
+        ...question,
+        choosen_options: chosenOptions
+      };
+    });
+    
+    console.log('Submitting quiz data with chosen options:', quizDataWithChoices);
+    
+    // Make API call to check answers
+    try {
+      const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/check-answers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          practice_test_id: testId,
+          questions: quizDataWithChoices
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Check answers result:', result);
+        // Store the API results for display
+        setApiResults(result);
+      } else {
+        console.error('Failed to check answers:', response.statusText);
+        // Set default results if API fails
+        setApiResults({
+          right_answers: 0,
+          wrong_answers: 0,
+          unanswered: totalQuestionsCount
+        });
+      }
+    } catch (error) {
+      console.error('Error checking answers:', error);
+      // Set default results if API call fails
+      setApiResults({
+        right_answers: 0,
+        wrong_answers: 0,
+        unanswered: totalQuestionsCount
+      });
+    }
+    
+    setShowResults(true);
+  }, [isSubmitting, originalQuestions, selectedAnswers, userId, testId]);
 
   useEffect(() => {
-    if (showResults) return;
+    if (showResults || isSubmitting) return;
+    
     const timer = setInterval(() => {
-      setTimeElapsed(prev => prev + 1);
+      setTimeRemaining(prev => {
+        const newTime = prev - 1;
+        
+        // Show warning when 5 minutes or 1 minute remaining
+        if (newTime === 300 || newTime === 60) { // 5 minutes or 1 minute
+          setShowTimeWarning(true);
+          setTimeout(() => setShowTimeWarning(false), 5000); // Hide warning after 5 seconds
+        }
+        
+        // Auto-submit when time reaches 0
+        if (newTime <= 0) {
+          handleSubmit();
+          return 0;
+        }
+        
+        return newTime;
+      });
     }, 1000);
+    
     return () => clearInterval(timer);
-  }, [showResults]);
+  }, [showResults, isSubmitting, handleSubmit]);
+
+
+  // Add comprehensive event listeners to detect refresh attempts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only show warning if quiz is active (not in results or review mode)
+      if (!showResults && !isReviewMode) {
+        // Detect F5 or Ctrl+R (refresh)
+        if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
+          console.log('Refresh attempt detected via keyboard');
+          event.preventDefault();
+          event.stopPropagation();
+          setShowRefreshWarning(true);
+        }
+      }
+    };
+
+    const handleContextMenu = (event: MouseEvent) => {
+      // Prevent right-click context menu during quiz
+      if (!showResults && !isReviewMode) {
+        event.preventDefault();
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      // Detect when user tries to navigate away or close tab
+      if (!showResults && !isReviewMode && document.hidden) {
+        console.log('Page visibility changed - user may be navigating away');
+        // Note: We can't prevent navigation here, but we can log it
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup function to remove the event listeners
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [showResults, isReviewMode]);
+
+  // Handle refresh confirmation
+  const handleRefreshConfirm = () => {
+    setShowRefreshWarning(false);
+    // Allow the page to refresh
+    window.location.reload();
+  };
+
+  const handleRefreshCancel = () => {
+    setShowRefreshWarning(false);
+  };
 
   useEffect(() => {
     if (!testId || !userId) {
@@ -178,8 +317,13 @@ export default function Quiz() {
   }
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
@@ -243,68 +387,15 @@ export default function Quiz() {
     });
   };
 
-  const handleSubmit = async () => {
-    // Prepare the quiz data with chosen options
-    const quizDataWithChoices = originalQuestions.map((question: any, index: number) => {
-      const chosenOptions = selectedAnswers[index] || [];
-      
-      return {
-        ...question,
-        choosen_options: chosenOptions
-      };
-    });
-    
-    console.log('Submitting quiz data with chosen options:', quizDataWithChoices);
-    
-    // Make API call to check answers
-    try {
-      const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/check-answers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          practice_test_id: testId,
-          questions: quizDataWithChoices
-        })
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Check answers result:', result);
-        // Store the API results for display
-        setApiResults(result);
-      } else {
-        console.error('Failed to check answers:', response.statusText);
-        // Set default results if API fails
-        setApiResults({
-          right_answers: 0,
-          wrong_answers: 0,
-          unanswered: totalQuestions
-        });
-      }
-    } catch (error) {
-      console.error('Error checking answers:', error);
-      // Set default results if API call fails
-      setApiResults({
-        right_answers: 0,
-        wrong_answers: 0,
-        unanswered: totalQuestions
-      });
-    }
-    
-    setShowResults(true);
-  };
-
   const calculateScore = () => {
     let correct = 0;
+    const totalQuestionsCount = originalQuestions.length;
     originalQuestions.forEach((question: any, index: number) => {
       if (arraysEqual(selectedAnswers[index] || [], question.correctAnswer)) {
         correct++;
       }
     });
-    return Math.round((correct / totalQuestions) * 100);
+    return Math.round((correct / totalQuestionsCount) * 100);
   };
 
   if (showResults) {
@@ -357,7 +448,7 @@ export default function Quiz() {
               <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Time: {formatTime(timeElapsed)}
+                  Time Remaining: {formatTime(timeRemaining)}
                 </div>
                 <div>•</div>
                 <div className="flex items-center gap-2">
@@ -417,8 +508,8 @@ export default function Quiz() {
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="font-mono font-semibold" data-testid="text-timer">
-                  {formatTime(timeElapsed)}
+                <span className={`font-mono font-semibold ${timeRemaining <= 300 ? 'text-red-500' : ''}`} data-testid="text-timer">
+                  {formatTime(timeRemaining)}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-sm">
@@ -433,13 +524,29 @@ export default function Quiz() {
                 onClick={() => setShowExitDialog(true)}
                 data-testid="button-exit-quiz"
               >
-                Exit Quiz
+                Exit Exam
               </Button>
             </div>
           </div>
           <Progress value={progress} className="mt-3 h-2" />
         </div>
       </div>
+
+      {/* Time Warning Notification */}
+      {showTimeWarning && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
+          <Card className="bg-red-500 text-white border-red-600 shadow-lg">
+            <CardContent className="p-4 text-center">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                <span className="font-semibold">
+                  {timeRemaining <= 60 ? '1 minute remaining!' : '5 minutes remaining!'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -693,11 +800,21 @@ export default function Quiz() {
                   ) : currentQuestionIndex === totalQuestions - 1 ? (
                     <Button
                       onClick={handleSubmit}
+                      disabled={isSubmitting}
                       className="gap-2 bg-gradient-to-r from-primary to-accent"
                       data-testid="button-submit"
                     >
-                      <CheckCircle className="h-4 w-4" />
-                      Submit Quiz
+                      {isSubmitting ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4" />
+                          Submit Quiz
+                        </>
+                      )}
                     </Button>
                   ) : (
                     <Button
@@ -719,7 +836,7 @@ export default function Quiz() {
       <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Exit Quiz?</AlertDialogTitle>
+            <AlertDialogTitle>Exit Exam?</AlertDialogTitle>
             <AlertDialogDescription>
               Your progress will be lost if you exit now. Are you sure you want to leave?
             </AlertDialogDescription>
@@ -730,7 +847,30 @@ export default function Quiz() {
               onClick={() => setLocation("/dashboard")}
               data-testid="button-confirm-exit"
             >
-              Exit Quiz
+              Exit Exam
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Refresh Warning Dialog */}
+      <AlertDialog open={showRefreshWarning} onOpenChange={setShowRefreshWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Exit Exam?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your progress will be lost if you exit now. Are you sure you want to leave?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleRefreshCancel} data-testid="button-cancel-refresh">
+              Continue Exam
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRefreshConfirm}
+              data-testid="button-confirm-refresh"
+            >
+              Exit Exam
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

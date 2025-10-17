@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
   Download,
-  Search,
-  Filter,
   FileText,
   Calendar,
   User,
@@ -16,12 +13,8 @@ import {
   Tag,
   BookOpen,
   Award,
-  ChevronDown,
-  ChevronUp,
   Grid,
   List,
-  SortAsc,
-  SortDesc,
   File,
   Archive,
   Globe,
@@ -40,7 +33,6 @@ import {
   GitBranch,
   Target,
   CheckCircle,
-  TrendingUp,
   Users,
   Bookmark,
   Share2,
@@ -50,39 +42,10 @@ import { useToast } from "@/hooks/use-toast";
 import { mockDownloads, type DownloadableFile } from "@/components/mockDownloads";
 
 
-const categories = ["All", ...Array.from(new Set(mockDownloads.map(d => d.category)))];
-
 export default function DashboardDownloads() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [sortBy, setSortBy] = useState<"popular" | "newest" | "rating" | "downloads">("popular");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [expandedFilters, setExpandedFilters] = useState(false);
   const { toast } = useToast();
 
-  const filteredDownloads = mockDownloads
-    .filter(download => {
-      const matchesSearch = 
-        download.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        download.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        download.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesCategory = selectedCategory === "All" || download.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "popular":
-          return b.downloadCount - a.downloadCount;
-        case "newest":
-          return new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime();
-        case "rating":
-          return b.rating - a.rating;
-        case "downloads":
-          return b.downloadCount - a.downloadCount;
-        default:
-          return 0;
-      }
-    });
 
   const handleDownload = (file: DownloadableFile) => {
     toast({
@@ -110,10 +73,6 @@ export default function DashboardDownloads() {
     }, 1000);
   };
 
-  const getCategoryCount = (category: string) => {
-    if (category === "All") return mockDownloads.length;
-    return mockDownloads.filter(d => d.category === category).length;
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -180,121 +139,23 @@ export default function DashboardDownloads() {
             <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-full w-fit mx-auto mb-3">
               <Tag className="h-6 w-6 text-orange-600" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{categories.length - 1}</h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{new Set(mockDownloads.map(d => d.category)).size}</h3>
             <p className="text-slate-600 dark:text-slate-400">Categories</p>
           </Card>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-6">
-          {/* Sidebar - Filters */}
-          <div className="lg:col-span-1 space-y-4">
-            <Card className="border-0 shadow-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Filter className="h-5 w-5 text-blue-600" />
-                  Filters
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setExpandedFilters(!expandedFilters)}
-                  className="lg:hidden"
-                >
-                  {expandedFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </Button>
-              </div>
-
-              <div className={`space-y-4 ${expandedFilters ? 'block' : 'hidden lg:block'}`}>
-                {/* Search */}
-                <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-                    Search Resources
-                  </label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                      type="text"
-                      placeholder="Search downloads..."
-                      className="pl-10 border-slate-200 dark:border-slate-700"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* Categories */}
-                <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-                    Categories
-                  </label>
-                  <div className="space-y-2">
-                    {categories.map((category) => (
-                      <Button
-                        key={category}
-                        variant="ghost"
-                        className={`w-full justify-between text-left ${
-                          selectedCategory === category
-                            ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold"
-                            : "hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
-                        }`}
-                        onClick={() => setSelectedCategory(category)}
-                      >
-                        <span>{category}</span>
-                        <Badge variant="secondary" className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                          {getCategoryCount(category)}
-                        </Badge>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sort Options */}
-                <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-                    Sort By
-                  </label>
-                  <div className="space-y-2">
-                    {[
-                      { value: "popular", label: "Most Popular", icon: TrendingUp },
-                      { value: "newest", label: "Newest First", icon: Calendar },
-                      { value: "rating", label: "Highest Rated", icon: Star },
-                      { value: "downloads", label: "Most Downloaded", icon: Download }
-                    ].map((option) => {
-                      const IconComponent = option.icon;
-                      return (
-                        <Button
-                          key={option.value}
-                          variant="ghost"
-                          className={`w-full justify-start text-left ${
-                            sortBy === option.value
-                              ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold"
-                              : "hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
-                          }`}
-                          onClick={() => setSortBy(option.value as any)}
-                        >
-                          <IconComponent className="h-4 w-4 mr-2" />
-                          {option.label}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-
+        <div className="space-y-6">
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="space-y-6">
             {/* View Controls */}
             <Card className="border-0 shadow-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm p-6">
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                    {filteredDownloads.length} Resources Found
+                    {mockDownloads.length} Resources Available
                   </h2>
                   <p className="text-slate-600 dark:text-slate-400">
-                    {selectedCategory !== "All" && `in ${selectedCategory}`}
-                    {searchTerm && ` matching "${searchTerm}"`}
+                    All downloadable resources for your practice tests
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -319,9 +180,9 @@ export default function DashboardDownloads() {
             </Card>
 
             {/* Downloads Grid/List */}
-            {filteredDownloads.length > 0 ? (
+            {mockDownloads.length > 0 ? (
               <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "space-y-4"}>
-                {filteredDownloads.map((download) => {
+                {mockDownloads.map((download) => {
                   const IconComponent = download.icon;
                   return (
                     <Card
@@ -445,13 +306,10 @@ export default function DashboardDownloads() {
             ) : (
               <Card className="border-0 shadow-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm p-12 text-center">
                 <Download className="h-16 w-16 text-slate-400 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">No Resources Found</h3>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">No Resources Available</h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-6">
-                  Try adjusting your search or filters to find what you're looking for.
+                  There are currently no downloadable resources available.
                 </p>
-                <Button onClick={() => { setSearchTerm(""); setSelectedCategory("All"); }}>
-                  Clear Filters
-                </Button>
               </Card>
             )}
           </div>

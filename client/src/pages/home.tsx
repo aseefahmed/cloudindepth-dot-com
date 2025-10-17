@@ -130,7 +130,7 @@ export default function Home() {
             <div className="fade-in">
               <div className="relative">
                 <img
-                  src="/images/aseefahmed.png"
+                  src="/images/profile/aseefahmed.png"
                   alt="Aseef Ahmed - AWS Solution Architect Expert"
                   className="rounded-2xl shadow-2xl w-full max-w-md mx-auto"
                 />
@@ -396,6 +396,166 @@ export default function Home() {
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
                     Interview Preparation
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-containers"
+            >
+              <CardContent className="p-6">
+                <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <Server className="text-indigo-600 h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Containers & Orchestration
+                </h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Docker & ECS
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Kubernetes on AWS
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Container Security
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Microservices Patterns
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-monitoring"
+            >
+              <CardContent className="p-6">
+                <div className="bg-orange-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <TrendingUp className="text-orange-600 h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Monitoring & Logging
+                </h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    CloudWatch & X-Ray
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Log Aggregation
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Performance Metrics
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Alerting Strategies
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-serverless"
+            >
+              <CardContent className="p-6">
+                <div className="bg-teal-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <Rocket className="text-teal-600 h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Serverless Architecture
+                </h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    AWS Lambda Functions
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    API Gateway & DynamoDB
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Event-Driven Patterns
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Cost Optimization
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-devops"
+            >
+              <CardContent className="p-6">
+                <div className="bg-cyan-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <Building className="text-cyan-600 h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  DevOps & CI/CD
+                </h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    CodePipeline & CodeBuild
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Infrastructure as Code
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Deployment Strategies
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Automation Best Practices
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="fade-in hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+              data-testid="card-advanced-services"
+            >
+              <CardContent className="p-6">
+                <div className="bg-rose-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <Award className="text-rose-600 h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-heading font-semibold mb-3">
+                  Advanced AWS Services
+                </h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Machine Learning Services
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Data Analytics & Kinesis
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    IoT & Edge Computing
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    Advanced Networking
                   </li>
                 </ul>
               </CardContent>

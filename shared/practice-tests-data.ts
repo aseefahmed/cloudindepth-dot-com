@@ -10,6 +10,10 @@ export interface PracticeTest {
   difficulty: "Associate" | "Professional" | "Specialty";
   features: string[];
   popular?: boolean;
+  domains_details?: {
+    name: string;
+    percentage: number;
+  }[];
 }
 
 export const practiceTestsData: PracticeTest[] = [
@@ -19,7 +23,7 @@ export const practiceTestsData: PracticeTest[] = [
     subtitle: "Associate (SAA-C03)",
     price: 49,
     questions: 390,
-    duration: "65 mins per test",
+    duration: "180 mins per test",
     rating: 4.8,
     reviews: 1250,
     difficulty: "Associate",
@@ -29,7 +33,13 @@ export const practiceTestsData: PracticeTest[] = [
       "Performance tracking dashboard",
       "Mobile-friendly interface"
     ],
-    popular: true
+    popular: true,
+    domains_details: [
+      { name: "Design Secure Architectures", percentage: 30 },
+      { name: "Design Resilient Architectures", percentage: 26 },
+      { name: "Design High-Performing Architectures", percentage: 24 },
+      { name: "Design Cost-Optimized Architectures", percentage: 20 }
+    ]
   },
   {
     id: "sap-c02",

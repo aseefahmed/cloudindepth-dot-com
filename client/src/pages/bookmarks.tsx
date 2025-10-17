@@ -549,103 +549,90 @@ export default function Bookmarks() {
         {/* Filters and Search */}
         <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm mb-8">
           <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search */}
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <Input
-                    placeholder="Search bookmarks..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-slate-200 dark:border-slate-700"
-                  />
+            <div className="space-y-4">
+              {/* Search and View Controls */}
+              <div className="flex flex-col lg:flex-row gap-4">
+                {/* Search */}
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      placeholder="Search bookmarks..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 border-slate-200 dark:border-slate-700"
+                    />
+                  </div>
+                </div>
+
+                {/* View Controls */}
+                <div className="flex gap-2 flex-wrap">
+                  <Button
+                    variant={showFavoritesOnly ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                    className="border-slate-200 dark:border-slate-700"
+                  >
+                    <Heart className="mr-2 h-4 w-4" />
+                    Favorites
+                  </Button>
+                  <Button
+                    variant={showPopularOnly ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowPopularOnly(!showPopularOnly)}
+                    className="border-slate-200 dark:border-slate-700"
+                  >
+                    <Star className="mr-2 h-4 w-4" />
+                    Popular
+                  </Button>
+                  <div className="flex border border-slate-200 dark:border-slate-700 rounded-md">
+                    <Button
+                      variant={viewMode === "grid" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setViewMode("grid")}
+                      className="rounded-r-none"
+                    >
+                      <Grid className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === "list" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setViewMode("list")}
+                      className="rounded-l-none"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
-              {/* Filters */}
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  variant={showFavoritesOnly ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  className="border-slate-200 dark:border-slate-700"
-                >
-                  <Heart className="mr-2 h-4 w-4" />
-                  Favorites
-                </Button>
-                <Button
-                  variant={showPopularOnly ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowPopularOnly(!showPopularOnly)}
-                  className="border-slate-200 dark:border-slate-700"
-                >
-                  <Star className="mr-2 h-4 w-4" />
-                  Popular
-                </Button>
-                <div className="flex border border-slate-200 dark:border-slate-700 rounded-md">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className="rounded-r-none"
-                  >
-                    <Grid className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="rounded-l-none"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
+              {/* Categories */}
+              <div className="flex flex-wrap gap-2">
+                {categoriesWithCounts.map((category) => {
+                  const IconComponent = category.icon;
+                  return (
+                    <Button
+                      key={category.id}
+                      variant={selectedCategory === category.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedCategory(category.id)}
+                      className="border-slate-200 dark:border-slate-700"
+                    >
+                      <IconComponent className="mr-2 h-4 w-4" />
+                      {category.name}
+                      <Badge variant="secondary" className="ml-2 text-xs">
+                        {category.count}
+                      </Badge>
+                    </Button>
+                  );
+                })}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Categories Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
-            <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">Categories</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="space-y-1">
-                  {categoriesWithCounts.map((category) => {
-                    const IconComponent = category.icon;
-                    return (
-                      <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full flex items-center justify-between p-3 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors ${
-                          selectedCategory === category.id
-                            ? "bg-blue-50 dark:bg-blue-900/50 border-r-2 border-blue-500"
-                            : ""
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <IconComponent className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-                          <span className="text-sm font-medium text-slate-900 dark:text-white">
-                            {category.name}
-                          </span>
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          {category.count}
-                        </Badge>
-                      </button>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Bookmarks Grid/List */}
-          <div className="flex-1">
+        {/* Bookmarks Grid/List */}
+        <div className="w-full">
             {filteredBookmarks.length === 0 ? (
               <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm">
                 <CardContent className="p-12 text-center">
@@ -746,7 +733,6 @@ export default function Bookmarks() {
                 })}
               </div>
             )}
-          </div>
         </div>
       </div>
     </div>
