@@ -496,7 +496,7 @@ export default function PracticeTestDetails() {
                         🎉 Save ${test.originalPrice} - Completely Free
                       </Badge>
                       <div className="text-sm text-orange-600 dark:text-orange-400 font-medium">
-                        ⏰ ${test.offer_message}
+                        ⏰ {test.offer_message}
                       </div>
                     </div>
                   )}

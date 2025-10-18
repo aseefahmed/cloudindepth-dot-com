@@ -754,7 +754,7 @@ export default function Quiz() {
                       <div>
                         <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Explanation</h4>
                         <div 
-                          className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed"
+                          className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed text-justify"
                           dangerouslySetInnerHTML={{ __html: currentQuestion.explanation }}
                         />
                       </div>

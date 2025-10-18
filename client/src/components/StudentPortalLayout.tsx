@@ -31,7 +31,8 @@ import {
   HomeIcon,
   Rocket,
   LogIn,
-  Map
+  Map,
+  MessageCircle
 } from "lucide-react";
 import Navigation from "./Navigation";
 const isAuth0Configured = () => {
@@ -193,6 +194,23 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
             </nav>
           </div>
 
+        </div>
+
+        {/* Give Feedback Button - Bottom of Sidebar */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+            <Button
+              variant="outline"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              onClick={() => {
+                // You can customize this action - could open a modal, redirect to feedback form, etc.
+                window.open('https://www.linkedin.com/in/aseefahmed/', '_blank');
+              }}
+              data-testid="button-give-feedback"
+            >
+              <MessageCircle className="mr-2 h-4 w-4" />
+              Give Feedback
+            </Button>
+          
         </div>
 
       </aside>

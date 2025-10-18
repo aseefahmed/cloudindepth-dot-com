@@ -105,8 +105,8 @@ def generate_seo_friendly_id(title: str):
         st.error(f"Error generating SEO-friendly ID: {e}")
         return f"blog-post-{int(time.time())}"
 
-def generate_image_prompt_from_title(title: str):
-    """Generate an image prompt using OpenAI based on the blog title"""
+def generate_blog_content_with_openai(title: str):
+    """Generate complete blog post content using OpenAI based on the blog title"""
     try:
         # Initialize OpenAI client
         client = OpenAI(api_key="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")
@@ -115,8 +115,64 @@ def generate_image_prompt_from_title(title: str):
             st.error("❌ OpenAI API key not found. Please set OPENAI_API_KEY environment variable.")
             return None
         
+        # Generate blog content using GPT
+        with st.spinner(f"🤖 Generating blog content for '{title}'..."):
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """You are an expert technical writer specializing in cloud computing, AWS, and technology topics. Create comprehensive, well-structured blog posts that are informative, engaging, and professional.
+
+Requirements:
+1. Write a complete and detailed blog post based on the given title
+2. Include HTML tags and CSS styling to make it visually appealing and professional
+3. Do NOT include <html>, <head>, <meta>, <title>, or <body> tags
+4. Use proper HTML structure with headings, paragraphs, lists, code blocks, etc.
+5. Include inline CSS styling for visual appeal
+6. Make the content comprehensive and valuable (aim for 5000 words)
+7. Include practical examples, code snippets, or use cases where relevant
+8. Structure the content with clear sections and subsections
+9. Use professional tone but keep it accessible
+10. include colorful html tables if necessary to make the content more engaging and readable
+11. include bullet points if necessary to make the content more engaging and readable
+12. include images if necessary to make the content more engaging and readable
+13. include links if necessary to make the content more engaging and readable
+14. include quotes if necessary to make the content more engaging and readable
+15. include callouts if necessary to make the content more engaging and readable
+16. include warnings if necessary to make the content more engaging and readable
+17. include tips if necessary to make the content more engaging and readable
+
+Format the content with proper HTML tags and inline CSS for styling."""
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Create a comprehensive blog post about: '{title}'. Make it informative, well-structured, and visually appealing with HTML and CSS styling."
+                    }
+                ],
+                max_tokens=3000,
+                temperature=0.7
+            )
+        
+        generated_content = response.choices[0].message.content.strip()
+        return generated_content
+        
+    except Exception as e:
+        st.error(f"❌ Error generating blog content: {e}")
+        return None
+
+def generate_image_prompt_from_title(title: str):
+    """Generate an image prompt using OpenAI based on the blog title"""
+    try:
+        # Initialize OpenAI client
+        client = OpenAI(api_key="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")
+        
+        if not client.api_key:
+            st.error("❌ OpenAI API key not found. Please set OPENAI_API_KEY environment variable.")
+            return None
+        
         # Generate image prompt using GPT
-        with st.spinner("🤖 Generating image prompt with title '{title}'..."):
+        with st.spinner(f"🤖 Generating image prompt for '{title}'..."):
             response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
@@ -247,6 +303,7 @@ elif menu_option == "S3 Folder Browser":
 
 elif menu_option == "Create Blog Post":
     st.title("📝 Create Blog Post")
+    st.markdown("**AI-Powered Blog Creation** - Just enter a title and let AI generate everything else!")
 
     key = "blogs/articles.json"
     articles = read_json_from_s3(bucket_name, key)
@@ -255,79 +312,65 @@ elif menu_option == "Create Blog Post":
     elif not isinstance(articles, list):
         articles = []
 
-    # Blog form fields outside of form for auto-prompt generation
-    title = st.text_input("Title", value="My New Blog Post", placeholder="Enter blog post title", key="blog_title")
-    author = st.text_input("Author", value="Admin", placeholder="Enter author name", key="blog_author")
-    content = st.text_area("Content", value="Write your blog content here...\n\nThis is where you can share your thoughts, insights, and knowledge with your readers.", placeholder="Write your blog content here...", height=200, key="blog_content")
-    tags = st.text_input("Tags (comma-separated)", value="blog, tutorial, guide", key="blog_tags")
-    
-    # Store current title in session state for auto-prompt generation
-    st.session_state.current_title = title
+    # Simplified blog form - only title and author
+    title = st.text_input("Blog Title", placeholder="Enter your blog post title", key="blog_title")
+    author = st.text_input("Author", value="Aseef Ahmed", placeholder="Enter author name", key="blog_author")
     
     # Show SEO-friendly ID preview
-    if title and title != "My New Blog Post":
+    if title:
         seo_preview = generate_seo_friendly_id(title)
         st.info(f"🔗 SEO-friendly URL: `/blog/{seo_preview}`")
     
-    # Image generation section
-    st.markdown("### 🎨 Blog Image Generation")
-    generate_image = st.checkbox("Generate image with DALL-E 3", value=True, key="generate_image_checkbox")
-    
-    # Initialize session state for image prompt
-    if 'image_prompt' not in st.session_state:
-        st.session_state.image_prompt = f"Professional blog header image for '{title}' - modern, clean design with relevant visual elements"
-    
-    if generate_image:
-        # Auto-generate prompt button (outside form)
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            st.markdown("**Image Prompt:**")
-        with col2:
-            if st.button("🤖 Auto-Generate Prompt", key="auto_prompt_btn"):
-                current_title = st.session_state.current_title
-                if current_title and current_title != "My New Blog Post":
-                    generated_prompt = generate_image_prompt_from_title(current_title)
-                    if generated_prompt:
-                        st.session_state.image_prompt = generated_prompt
-                        st.success("✅ Prompt generated successfully!")
-                    else:
-                        st.error("Failed to generate prompt. Please try again.")
-                else:
-                    st.warning("Please enter a meaningful blog title first.")
-        
-        # Display the prompt text area
-        image_prompt = st.text_area(
-            "Image Prompt", 
-            value=st.session_state.image_prompt,
-            placeholder="Describe the image you want to generate...",
-            height=100,
-            key="image_prompt_area"
-        )
-        
-        # Update session state when user types
-        st.session_state.image_prompt = image_prompt
+    # Information about what will be generated
+    if title:
+        st.markdown("### 🤖 What will be generated:")
+        st.markdown("""
+        - **📝 Complete Blog Content**: AI-generated comprehensive blog post with HTML/CSS styling
+        - **🎨 Image Prompt**: AI-generated prompt based on your title
+        - **🖼️ Featured Image**: DALL-E 3 generated image uploaded to S3
+        - **🏷️ Auto Tags**: Relevant tags extracted from content
+        """)
     
     # Submit button
-    submit = st.button("Submit Blog Post", key="submit_blog_btn", type="primary")
+    submit = st.button("🚀 Generate Blog Post", key="submit_blog_btn", type="primary")
 
     if submit:
-        if not title or not content:
-            st.error("❌ Title and Content are required!")
+        if not title:
+            st.error("❌ Blog title is required!")
         else:
-            # Generate image if requested
-            image_url = None
-            if generate_image:
-                # Auto-generate prompt if not provided or is default
-                final_prompt = title
-                # if not final_prompt or final_prompt == f"Professional blog header image for '{title}' - modern, clean design with relevant visual elements":
-                #     st.info("🤖 Auto-generating image prompt from blog title...")
-                #     final_prompt = generate_image_prompt_from_title(title)
-                #     if not final_prompt:
-                #         st.warning("⚠️ Could not generate prompt automatically. Using default prompt.")
-                #         final_prompt = f"Professional blog header image for '{title}' - modern, clean design with relevant visual elements"
+            # Show progress
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            # Step 1: Generate blog content
+            status_text.text("🤖 Generating blog content...")
+            progress_bar.progress(25)
+            
+            generated_content = generate_blog_content_with_openai(title)
+            if not generated_content:
+                st.error("❌ Failed to generate blog content. Please try again.")
+                st.stop()
+            
+            # Step 2: Generate image prompt
+            status_text.text("🎨 Generating image prompt...")
+            progress_bar.progress(50)
+            
+            image_prompt = generate_image_prompt_from_title(title)
+            if not image_prompt:
+                st.warning("⚠️ Could not generate image prompt. Skipping image generation.")
+                image_url = None
+            else:
+                # Step 3: Generate and upload image
+                status_text.text("🖼️ Generating and uploading image...")
+                progress_bar.progress(75)
                 
-                if final_prompt:
-                    image_url = generate_image_with_dalle(final_prompt, title)
+                image_url = generate_image_with_dalle(image_prompt, title)
+                if not image_url:
+                    st.warning("⚠️ Could not generate image. Blog will be created without image.")
+            
+            # Step 4: Save blog post
+            status_text.text("💾 Saving blog post...")
+            progress_bar.progress(100)
             
             # Generate SEO-friendly ID from title
             seo_id = generate_seo_friendly_id(title)
@@ -340,27 +383,52 @@ elif menu_option == "Create Blog Post":
                 seo_id = f"{original_seo_id}-{counter}"
                 counter += 1
             
+            # Extract tags from content (simple keyword extraction)
+            content_lower = generated_content.lower()
+            potential_tags = []
+            tech_keywords = ['aws', 'cloud', 'docker', 'kubernetes', 'python', 'javascript', 'react', 'node', 'api', 'database', 'security', 'devops', 'microservices', 'serverless', 'lambda', 's3', 'ec2', 'rds', 'vpc', 'iam']
+            for keyword in tech_keywords:
+                if keyword in content_lower:
+                    potential_tags.append(keyword)
+            
+            # Add some default tags if none found
+            if not potential_tags:
+                potential_tags = ['technology', 'blog', 'tutorial']
+            
             new_article = {
                 "id": seo_id,
                 "title": title,
                 "author": author,
-                "content": content,
-                "tags": [t.strip() for t in tags.split(",") if t.strip()],
+                "content": generated_content,
+                "tags": potential_tags[:5],  # Limit to 5 tags
                 "image_url": image_url,
                 "created_at": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             articles.append(new_article)
             write_json_to_s3(bucket_name, key, articles)
             
-            if image_url:
-                st.success(f"✅ Blog post '{title}' created successfully with generated image!")
-                st.info(f"🔗 Blog URL: `/blog/{seo_id}`")
-                st.image(image_url, caption=f"Generated image for: {title}", use_column_width=True)
-            else:
-                st.success(f"✅ Blog post '{title}' created successfully!")
-                st.info(f"🔗 Blog URL: `/blog/{seo_id}`")
+            # Success message
+            status_text.text("✅ Blog post created successfully!")
+            progress_bar.empty()
             
-            time.sleep(5)
+            st.success(f"🎉 Blog post '{title}' created successfully!")
+            st.info(f"🔗 Blog URL: `/blog/{seo_id}`")
+            
+            # Show generated content preview
+            with st.expander("📖 Preview Generated Content", expanded=True):
+                st.markdown(generated_content, unsafe_allow_html=True)
+            
+            # Show generated image if available
+            if image_url:
+                st.markdown("### 🖼️ Generated Image")
+                st.image(image_url, caption=f"AI Generated Image for: {title}", use_column_width=True)
+            
+            # Show generated tags
+            st.markdown("### 🏷️ Generated Tags")
+            tags_display = " ".join([f"`{tag}`" for tag in potential_tags[:5]])
+            st.markdown(tags_display)
+            
+            time.sleep(3)
             st.rerun()
 
 elif menu_option == "View Blog Posts":

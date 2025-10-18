@@ -441,7 +441,7 @@ export default function QuestionsBank() {
                         <h4 className="text-md font-semibold text-slate-900 dark:text-white mb-2">Options:</h4>
                         <div className="space-y-2">
                           {question.options.map((option, optionIndex) => {
-                            const isCorrect = question.correctAnswer.includes(optionIndex + 1);
+                            const isCorrect = question.correctAnswer.includes(optionIndex);
                             return (
                               <div
                                 key={optionIndex}
@@ -481,7 +481,7 @@ export default function QuestionsBank() {
                       {question.explanation && (
                         <div>
                           <h4 className="text-md font-semibold text-slate-900 dark:text-white mb-2">Explanation:</h4>
-                          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg text-justify">
                             <div 
                               className="text-slate-700 dark:text-slate-300"
                               dangerouslySetInnerHTML={{ __html: question.explanation }}
