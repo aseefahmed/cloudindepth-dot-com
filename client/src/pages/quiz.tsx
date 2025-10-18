@@ -56,6 +56,7 @@ export default function Quiz() {
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const [showRefreshWarning, setShowRefreshWarning] = useState(false);
   const [pendingRefresh, setPendingRefresh] = useState(false);
+  const [showProtectionDialog, setShowProtectionDialog] = useState(false);
 
   const handleSubmit = useCallback(async () => {
     // Prevent double submission
@@ -149,6 +150,18 @@ export default function Quiz() {
   // Add comprehensive event listeners to detect refresh attempts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+S
+      if (event.ctrlKey && ['a', 'c', 'v', 'x', 's'].includes(event.key.toLowerCase())) {
+        event.preventDefault();
+        setShowProtectionDialog(true);
+        return;
+      }
+      // Prevent F12 (developer tools)
+      if (event.key === 'F12') {
+        event.preventDefault();
+        setShowProtectionDialog(true);
+        return;
+      }
       // Only show warning if quiz is active (not in results or review mode)
       if (!showResults && !isReviewMode) {
         // Detect F5 or Ctrl+R (refresh)
@@ -162,10 +175,34 @@ export default function Quiz() {
     };
 
     const handleContextMenu = (event: MouseEvent) => {
-      // Prevent right-click context menu during quiz
-      if (!showResults && !isReviewMode) {
+      // Prevent right-click context menu at all times
+      event.preventDefault();
+      setShowProtectionDialog(true);
+    };
+
+    const handleSelectStart = (event: Event) => {
+      // Prevent text selection
+      event.preventDefault();
+      setShowProtectionDialog(true);
+    };
+
+    const handleMouseDown = (event: MouseEvent) => {
+      // Prevent text selection on mouse down
+      if (event.detail > 1) {
         event.preventDefault();
+        setShowProtectionDialog(true);
       }
+    };
+
+    const handleMouseUp = (event: MouseEvent) => {
+      // Clear any text selection
+      window.getSelection()?.removeAllRanges();
+    };
+
+
+    const handleDragStart = (event: Event) => {
+      // Prevent drag and drop
+      event.preventDefault();
     };
 
     const handleVisibilityChange = () => {
@@ -179,12 +216,20 @@ export default function Quiz() {
     // Add event listeners
     document.addEventListener('keydown', handleKeyDown, true);
     document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('selectstart', handleSelectStart);
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('dragstart', handleDragStart);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Cleanup function to remove the event listeners
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('selectstart', handleSelectStart);
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('dragstart', handleDragStart);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [showResults, isReviewMode]);
@@ -486,7 +531,17 @@ export default function Quiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5"
+      style={{
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitTapHighlightColor: 'transparent'
+      }}
+    >
       {/* Top Bar */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -871,6 +926,26 @@ export default function Quiz() {
               data-testid="button-confirm-refresh"
             >
               Exit Exam
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Protection Dialog */}
+      <AlertDialog open={showProtectionDialog} onOpenChange={setShowProtectionDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <XCircle className="h-5 w-5 text-red-500" />
+              Content Protection Active
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Right-click and text selection are disabled to protect exam content. Please focus on answering the questions.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowProtectionDialog(false)}>
+              I Understand
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
