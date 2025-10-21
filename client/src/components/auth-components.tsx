@@ -183,6 +183,12 @@ export function UserProfile() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <LogoutButton />
+        <DropdownMenuSeparator />
+        <div className="px-2 py-1.5">
+          <p className="text-xs text-muted-foreground text-center">
+            v2.1.0
+          </p>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -217,69 +223,89 @@ export function PurchaseButton({
   const [, setLocation] = useLocation();
   const userId = (user && (user.sub || user.user_id)) || undefined;
   const { isEnrolled, isLoading } = useEnrollmentStatus(testId, userId);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFreeEnrollment = async () => {
-    if (!isAuthenticated) {
-      if (isAuth0Configured()) {
-        // Redirect to login, then to dashboard after authentication
-        loginWithRedirect({
-          appState: { 
-            returnTo: `/dashboard`
-          }
-        });
+    if (isProcessing) return; // Prevent double-clicking
+    
+    setIsProcessing(true);
+    
+    try {
+      if (!isAuthenticated) {
+        if (isAuth0Configured()) {
+          // Redirect to login, then to dashboard after authentication
+          loginWithRedirect({
+            appState: { 
+              returnTo: `/dashboard`
+            }
+          });
+        } else {
+          // Dev mode without Auth0: allow proceeding directly to dashboard
+          setLocation(`/dashboard`);
+        }
       } else {
-        // Dev mode without Auth0: allow proceeding directly to dashboard
+        // Authenticated - record the free enrollment and redirect to dashboard
+        const userId = (user && (user.sub || user.user_id)) || undefined;
+        if (userId) {
+          try {
+            await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/record_purchase', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: userId,
+                practice_test_id: testId,
+                test_title: testTitle,
+                price: price,
+                questions: questions,
+                flashcards: flashcards,
+                email: user?.email
+              }),
+              keepalive: true,
+            });
+          } catch (error) {
+            console.error('Error recording free enrollment:', error);
+          }
+        }
         setLocation(`/dashboard`);
       }
-    } else {
-      // Authenticated - record the free enrollment and redirect to dashboard
-      const userId = (user && (user.sub || user.user_id)) || undefined;
-      if (userId) {
-        try {
-          await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/record_purchase', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              user_id: userId,
-              practice_test_id: testId,
-              test_title: testTitle,
-              price: price,
-              questions: questions,
-              flashcards: flashcards
-            }),
-            keepalive: true,
-          });
-        } catch (error) {
-          console.error('Error recording free enrollment:', error);
-        }
-      }
-      setLocation(`/dashboard`);
+    } finally {
+      // Reset processing state after a short delay to allow navigation
+      setTimeout(() => setIsProcessing(false), 1000);
     }
   };
 
   const handlePurchaseClick = () => {
+    if (isProcessing) return; // Prevent double-clicking
+    
     if (price === 0) {
       handleFreeEnrollment();
       return;
     }
 
-    if (!isAuthenticated) {
-      if (isAuth0Configured()) {
-        // Redirect to login, then to checkout after authentication
-        loginWithRedirect({
-          appState: { 
-            returnTo: `/checkout/${testId}`
-          }
-        });
+    setIsProcessing(true);
+    
+    try {
+      if (!isAuthenticated) {
+        if (isAuth0Configured()) {
+          // Redirect to login, then to checkout after authentication
+          loginWithRedirect({
+            appState: { 
+              returnTo: `/checkout/${testId}`
+            }
+          });
+        } else {
+          // Dev mode without Auth0: allow proceeding directly to checkout
+          setLocation(`/checkout/${testId}`);
+        }
       } else {
-        // Dev mode without Auth0: allow proceeding directly to checkout
+        // Authenticated - go directly to checkout (test details fetched securely from backend)
         setLocation(`/checkout/${testId}`);
       }
-    } else {
-      // Authenticated - go directly to checkout (test details fetched securely from backend)
-      setLocation(`/checkout/${testId}`);
+    } finally {
+      // Reset processing state after a short delay to allow navigation
+      setTimeout(() => setIsProcessing(false), 1000);
     }
   };
 
@@ -319,12 +345,20 @@ export function PurchaseButton({
       variant={variant}
       className={className}
       data-testid={testIdAttr}
+      disabled={isProcessing}
     >
-      {children || (
+      {isProcessing ? (
         <>
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          Purchase Now
+          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          {price === 0 ? "Enrolling..." : "Processing..."}
         </>
+      ) : (
+        children || (
+          <>
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Purchase Now
+          </>
+        )
       )}
     </Button>
   );

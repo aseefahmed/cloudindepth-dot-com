@@ -1,0 +1,9 @@
+Release
+
+#Next Release:
+- disable right click in the simulator and questions bank
+- implement email functionality once enrolled to course/practice test
+- Purchase Now button enhanced with loading effect
+- release version now displayed in the user dropdown
+- added study notes 
+- replaced api call with static json response

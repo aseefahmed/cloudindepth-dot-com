@@ -1,0 +1,882 @@
+[
+  {
+    "id": "saa",
+    "sort_number": 1,
+    "title": "AWS Certified Solutions Architect (Associate)",
+    "subtitle": "Associate (SAA-C03)",
+    "price": 0,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Oct 25",
+    "questions": 987,
+    "flashcards": 100,
+    "duration": "180 mins per test",
+    "study_notes": "800",
+    "rating": 4.8,
+    "reviews_count": 1250,
+    "difficulty": "Associate",
+    "features": [
+      "Study notes included",
+      "Scenario based practice tests",
+      "Detailed explanations for all answers",
+      "Mimicking real exam questions"
+    ],
+    "popular": true,
+    "status": "Active",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "This SAA-C03 practice test series is designed to help learners master core AWS architectural concepts through real exam-style scenarios. You\u2019ll gain deep insights into designing resilient, fault-tolerant, and highly available systems on AWS. The course covers crucial domains such as security and compliance, cost-optimized architectures, operational excellence, and performance efficiency. Each question is accompanied by clear explanations and service comparisons, helping you understand the 'why' behind each answer. This is ideal for cloud engineers, developers, and architects preparing for the Associate-level exam.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          3
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Amit Sharma",
+        "comments": "Excellent practice tests! Helped me identify weak areas and feel confident on exam day.",
+        "star": 5,
+        "date": "2025-08-12"
+      },
+      {
+        "name": "Sophia Lee",
+        "comments": "Very realistic questions. Some explanations could be more detailed, but overall great value.",
+        "star": 4,
+        "date": "2025-07-03"
+      }
+    ]
+  },
+  {
+    "id": "sap",
+    "sort_number": 2,
+    "title": "AWS Certified Solutions Architect (Professional)",
+    "subtitle": "Professional (SAP-C02)",
+    "price": 69,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 450,
+    "flashcards": 100,
+    "duration": "75 mins per test",
+    "study_notes": "800",
+    "rating": 4.9,
+    "reviews_count": 890,
+    "difficulty": "Professional",
+    "features": [
+      "900+ questions",
+      "Randomly generated full-length mock tests",
+      "Advanced scenario-based questions",
+      "Exam tips and strategies",
+      "1 year access to updates"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "The SAP-C02 practice test series pushes your AWS architectural skills to a professional level. It emphasizes advanced, multi-layered scenarios including hybrid architectures, migration strategies, multi-account governance, cost optimization, and security best practices. These tests are designed to mirror the real complexity of the exam \u2014 including time pressure and scenario depth. Each question includes comprehensive reasoning and architectural diagrams to reinforce conceptual understanding. Ideal for experienced AWS practitioners looking to earn the highest-level architecture certification.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Daniel Wu",
+        "comments": "These questions are tough but spot-on. Great for building confidence before the real exam.",
+        "star": 5,
+        "date": "2025-06-18"
+      },
+      {
+        "name": "Maria Gonzalez",
+        "comments": "Loved the detailed explanations and scenario coverage. Worth every penny!",
+        "star": 5,
+        "date": "2025-05-27"
+      }
+    ]
+  },
+  {
+    "id": "dva",
+    "sort_number": 3,
+    "title": "AWS Certified Developer (Associate)",
+    "subtitle": "Associate (DVA-C02)",
+    "price": 45,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 450,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.7,
+    "reviews_count": 1100,
+    "difficulty": "Associate",
+    "features": [
+      "5 full-length practice tests",
+      "Code-based questions included",
+      "Video explanations available",
+      "Practice mode & timed mode"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "This DVA-C02 practice course focuses on real-world cloud application development on AWS. It includes developer-centric scenarios covering Lambda functions, API Gateway integrations, DynamoDB, event-driven architectures, CI/CD pipelines, and secure application deployment. Each question is crafted to reinforce best practices, SDK usage, and service interaction patterns. Timed modes simulate the actual exam, while practice modes allow you to learn at your own pace.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Liam Johnson",
+        "comments": "Great mix of coding and theory questions. Helped me pass on the first attempt!",
+        "star": 5,
+        "date": "2025-04-09"
+      },
+      {
+        "name": "Nora Patel",
+        "comments": "Some questions were repeated across tests, but overall good coverage.",
+        "star": 4,
+        "date": "2025-07-22"
+      }
+    ]
+  },
+  {
+    "id": "soa",
+    "sort_number": 4,
+    "title": "AWS Certified SysOps Administrator (Associate)",
+    "subtitle": "Associate (SOA-C02)",
+    "price": 45,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 450,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.6,
+    "reviews_count": 780,
+    "difficulty": "Associate",
+    "features": [
+      "5 full-length practice tests",
+      "Hands-on lab scenarios",
+      "Performance analytics",
+      "Study mode available"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "SOA-C02 practice exams are tailored for administrators and operations teams managing AWS environments. The questions focus on monitoring and logging, security, automation with CloudFormation and Systems Manager, troubleshooting, backup strategies, and operational best practices. Many scenarios mirror real-world operations issues to help build problem-solving confidence for the actual exam.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Ethan Brown",
+        "comments": "Challenging questions that mirror the real exam environment closely.",
+        "star": 5,
+        "date": "2025-06-01"
+      },
+      {
+        "name": "Olivia Kim",
+        "comments": "Good content, but could include more explanations for lab scenarios.",
+        "star": 4,
+        "date": "2025-05-15"
+      }
+    ]
+  },
+  {
+    "id": "dop",
+    "sort_number": 5,
+    "title": "AWS Certified DevOps Engineer (Professional)",
+    "subtitle": "Professional (DOP-C02)",
+    "price": 69,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 450,
+    "flashcards": 100,
+    "duration": "75 mins per test",
+    "study_notes": "800",
+    "rating": 4.8,
+    "reviews_count": 650,
+    "difficulty": "Professional",
+    "features": [
+      "6 full-length practice tests",
+      "CI/CD scenario questions",
+      "Infrastructure as Code focus",
+      "Expert-level explanations"
+    ],
+    "popular": true,
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "This DOP-C02 course dives deep into DevOps on AWS, with challenging scenario-based questions covering CI/CD automation, infrastructure as code, monitoring, incident response, and security automation. It emphasizes practical DevOps strategies, integrating services like CodePipeline, CloudFormation, ECS/EKS, and monitoring stacks. Ideal for experienced professionals aiming to scale DevOps maturity in production workloads.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Rajesh Nair",
+        "comments": "Fantastic DevOps scenarios! Helped me understand IaC and pipelines better.",
+        "star": 5,
+        "date": "2025-03-11"
+      },
+      {
+        "name": "Emily Carter",
+        "comments": "Highly technical but incredibly helpful for real-world AWS DevOps practice.",
+        "star": 5,
+        "date": "2025-06-30"
+      }
+    ]
+  },
+  {
+    "id": "ans",
+    "sort_number": 6,
+    "title": "AWS Certified Advanced Networking (Specialty)",
+    "subtitle": "Specialty (ANS-C01)",
+    "price": 59,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 325,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.7,
+    "reviews_count": 420,
+    "difficulty": "Specialty",
+    "features": [
+      "5 full-length practice tests",
+      "Network architecture scenarios",
+      "Hybrid connectivity questions",
+      "VPC deep-dive questions"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "ANS-C01 practice tests are crafted for network engineers and cloud architects specializing in AWS networking. Topics include VPC design, routing, hybrid connectivity using Direct Connect and VPN, network security, traffic inspection, and scaling strategies. These scenarios help you master both fundamental and advanced networking patterns in cloud and hybrid architectures.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Chris Martin",
+        "comments": "Excellent coverage of VPC and hybrid networking. Helped solidify my understanding.",
+        "star": 5,
+        "date": "2025-07-08"
+      },
+      {
+        "name": "Fatima Noor",
+        "comments": "Great material, though a few typos in the questions.",
+        "star": 4,
+        "date": "2025-08-01"
+      }
+    ]
+  },
+  {
+    "id": "scs",
+    "sort_number": 7,
+    "title": "AWS Certified Security (Specialty)",
+    "subtitle": "Specialty (SCS-C02)",
+    "price": 59,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 325,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.9,
+    "reviews_count": 580,
+    "difficulty": "Specialty",
+    "features": [
+      "5 full-length practice tests",
+      "Security best practices focus",
+      "Compliance scenarios included",
+      "IAM & encryption deep-dive"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "This security specialty course is built for security engineers, architects, and compliance officers. It covers identity and access management, encryption strategies, threat detection, incident response, network security, and compliance frameworks. Each question is mapped to real-world AWS security challenges, helping learners build both certification readiness and practical security expertise.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Hiro Tanaka",
+        "comments": "Security coverage is top-notch. Excellent for IAM and encryption mastery.",
+        "star": 5,
+        "date": "2025-07-25"
+      },
+      {
+        "name": "Laura Bennett",
+        "comments": "Perfect for anyone serious about AWS Security. Explanations are spot on.",
+        "star": 5,
+        "date": "2025-09-02"
+      }
+    ]
+  },
+  {
+    "id": "dbs",
+    "sort_number": 8,
+    "title": "AWS Certified Database (Specialty)",
+    "subtitle": "Specialty (DBS-C01)",
+    "price": 59,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 325,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.6,
+    "reviews_count": 390,
+    "difficulty": "Specialty",
+    "features": [
+      "5 full-length practice tests",
+      "Database migration scenarios",
+      "Performance optimization focus",
+      "Multi-DB service coverage"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "DBS-C01 practice tests are designed for database administrators and architects who manage or migrate databases on AWS. The course focuses on RDS, Aurora, DynamoDB, Redshift, migration strategies, performance optimization, security, and cost-effective designs. Scenarios emphasize decision-making between database engines based on workload characteristics.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "George Li",
+        "comments": "Covers RDS, DynamoDB, and Aurora really well. Helped with real project tasks too!",
+        "star": 5,
+        "date": "2025-06-12"
+      },
+      {
+        "name": "Sara Lopez",
+        "comments": "Good test bank but could add more analytical query examples.",
+        "star": 4,
+        "date": "2025-07-10"
+      }
+    ]
+  },
+  {
+    "id": "mls",
+    "sort_number": 9,
+    "title": "AWS Certified Machine Learning (Specialty)",
+    "subtitle": "Specialty (MLS-C01)",
+    "price": 59,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 325,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.8,
+    "reviews_count": 510,
+    "difficulty": "Specialty",
+    "features": [
+      "5 full-length practice tests",
+      "ML algorithms & frameworks",
+      "SageMaker deep-dive",
+      "Real-world ML scenarios"
+    ],
+    "popular": true,
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "MLS-C01 is designed for ML practitioners who want to validate their ability to build, train, tune, and deploy ML models on AWS. The practice tests cover ML workflow design, data engineering, feature engineering, SageMaker, security, and model monitoring. Real-world case studies help you bridge the gap between theory and implementation.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Priya Deshmukh",
+        "comments": "Loved the ML scenarios and SageMaker coverage. Very practical approach.",
+        "star": 5,
+        "date": "2025-08-05"
+      },
+      {
+        "name": "Jacob Miller",
+        "comments": "Comprehensive tests, though a bit tough for beginners.",
+        "star": 4,
+        "date": "2025-05-14"
+      }
+    ]
+  },
+  {
+    "id": "das",
+    "sort_number": 10,
+    "title": "AWS Certified Data Analytics (Specialty)",
+    "subtitle": "Specialty (DAS-C01)",
+    "price": 59,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 325,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.7,
+    "reviews_count": 460,
+    "difficulty": "Specialty",
+    "features": [
+      "5 full-length practice tests",
+      "Big data architecture focus",
+      "Analytics service coverage",
+      "ETL pipeline scenarios"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "DAS-C01 practice exams cover end-to-end data analytics on AWS, including ingestion, transformation, storage, and visualization. Topics include Kinesis, Glue, Athena, Redshift, QuickSight, data governance, and security. These scenario-driven tests help data professionals strengthen their architecture and service integration skills for real-world data platforms.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Michael Green",
+        "comments": "Solid coverage of Kinesis, Glue, and Redshift. Perfect for exam prep.",
+        "star": 5,
+        "date": "2025-06-05"
+      },
+      {
+        "name": "Isabella Rossi",
+        "comments": "Good mix of theory and practical analytics. Some questions could be harder.",
+        "star": 4,
+        "date": "2025-07-21"
+      }
+    ]
+  },
+  {
+    "id": "sap-bundle",
+    "sort_number": 11,
+    "title": "Solutions Architect Bundle (Professional)",
+    "subtitle": "Associate + Professional",
+    "price": 99,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 840,
+    "flashcards": 100,
+    "duration": "Multiple tests",
+    "study_notes": "800",
+    "rating": 4.9,
+    "reviews_count": 320,
+    "difficulty": "Professional",
+    "features": [
+      "Both SAA-C03 & SAP-C02 tests",
+      "Save $19 on bundle",
+      "Complete learning path",
+      "Priority email support"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "This bundle combines both Associate (SAA-C03) and Professional (SAP-C02) practice tests into a structured certification journey. Start with foundational architectural principles, then advance to complex multi-account, hybrid cloud solutions. Ideal for those planning a complete certification path without purchasing separately.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Emma Wilson",
+        "comments": "Best deal for AWS Architect certifications! Saved me a ton of time and money.",
+        "star": 5,
+        "date": "2025-08-19"
+      },
+      {
+        "name": "Noah Evans",
+        "comments": "Both exams covered comprehensively. Highly recommend for serious learners.",
+        "star": 5,
+        "date": "2025-07-09"
+      }
+    ]
+  },
+  {
+    "id": "cloud-practitioner",
+    "sort_number": 12,
+    "title": "AWS Certified Cloud Practitioner (Associate)",
+    "subtitle": "Foundational (CLF-C02)",
+    "price": 35,
+    "retail_price": 44.45,
+    "offer_message": "Limited Time Offer - Valid until Dec 31, 2024",
+    "questions": 260,
+    "flashcards": 100,
+    "duration": "65 mins per test",
+    "study_notes": "800",
+    "rating": 4.8,
+    "reviews_count": 1850,
+    "difficulty": "Associate",
+    "features": [
+      "4 full-length practice tests",
+      "Perfect for beginners",
+      "Cloud concepts explained",
+      "AWS service overview"
+    ],
+    "status": "coming soon",
+    "type": "practice_test",
+    "domains_details": [
+      {
+        "name": "Domain 1:  Design Secure Architectures",
+        "weight": "30"
+      },
+      {
+        "name": "Domain 2: Design Resilient Architectures",
+        "weight": "26"
+      },
+      {
+        "name": "Domain 3: Design High-Performing Architectures",
+        "weight": "24"
+      },
+      {
+        "name": "Domain 4: Design Cost-Optimized Architectures",
+        "weight": "20"
+      }
+    ],
+    "description": "CLF-C02 is the perfect starting point for individuals new to cloud computing. This beginner-friendly practice test series covers core AWS services, pricing and billing, security basics, shared responsibility model, and cloud value proposition. Ideal for both technical and non-technical roles.",
+    "sample_questions": [
+      {
+        "question": "<p style=\"padding-top: 5px;\">An ecommerce company is migrating its on-premises workload to the AWS Cloud. The workload currently consists of a web application and a backend Microsoft SQL database for storage. The company expects a high volume of customers during a promotional event. The new infrastructure in the AWS Cloud must be highly available and scalable.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements with the LEAST administrative overhead?</p>",
+        "options": [
+          "Migrate the web application to two Amazon EC2 instances across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS for Microsoft SQL Server with read replicas in both Availability Zones.",
+          "Migrate the web application to an Amazon EC2 instance that runs in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to two EC2 instances across separate AWS Regions with database replication.",
+          "Migrate the web application to Amazon EC2 instances that run in an Auto Scaling group across two Availability Zones behind an Application Load Balancer. Migrate the database to Amazon RDS with Multi-AZ deployment.",
+          "Migrate the web application to three Amazon EC2 instances across three Availability Zones behind an Application Load Balancer. Migrate the database to three EC2 instances across three Availability Zones."
+        ],
+        "correctAnswer": [
+          2
+        ],
+        "explanation": "<p style=\"padding-top: 5px;\"><strong>The correct answer is C</strong></p>. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option A (INCORRECT):</strong> Migrate the web application to two EC2 instances across two AZs behind an ALB and use RDS for SQL Server with read replicas in both AZs. Read replicas are intended for read-scaling and are not promoted automatically on primary failure\u2014manual promotion adds administrative overhead. This setup does not provide automated failover for writes; you\u2019d still have a single primary instance that could become a single point of failure. Maintaining read replicas across AZs increases complexity compared to a managed Multi-AZ deployment. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option B (INCORRECT):</strong> Use an Auto Scaling group across two AZs for the web app and run two EC2 instances in separate AWS Regions with database replication. Cross-region replication increases network latency and costs, and adds complexity to failover processes. Managing SQL Server on EC2 instances requires patching, backups, monitoring and failover orchestration\u2014high administrative overhead. This does not leverage RDS managed failover or scaling capabilities. <p style=\"padding-top: 5px;\"><strong style=\"color: #dc3545;\">Option D (INCORRECT):</strong> Deploy three EC2 instances across three AZs for the app and three EC2 instances across three AZs for the database. Running SQL Server on EC2 means you must handle OS and database maintenance, backups, replication and failure recovery yourself. Provisioning and managing three database servers is complex and deviates from the \u201cleast administrative overhead\u201d requirement. This approach ignores managed services like RDS that streamline HA and failover. <p style=\"padding-top: 5px;\"><strong style=\"color: #28a745;\">Option C (CORRECT):</strong> Migrate the web application to EC2 instances in an Auto Scaling group across two AZs behind an <strong>Application Load Balancer</strong>, and migrate the database to <strong>Amazon RDS</strong> with Multi-AZ deployment. Auto Scaling plus ALB provides automatic scaling and distribution of traffic for the web tier without manual intervention. RDS Multi-AZ ensures synchronous data replication, automatic failover, and managed backups\u2014minimizing administrative tasks. This design meets high availability and scalability requirements while leveraging AWS managed services for the least overhead. <p style=\"padding-top: 5px;\"><strong>Summary:</strong> We evaluated four architectures and determined that only Option C leverages AWS managed services (Auto Scaling, ALB, RDS Multi-AZ) to provide high availability, scalability, and minimal administrative overhead.</p>",
+        "domain": "Domain 2: Design Resilient Architectures"
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Jessica Thomas",
+        "comments": "Super helpful for beginners! Great explanations and easy to follow.",
+        "star": 5,
+        "date": "2025-09-10"
+      },
+      {
+        "name": "Ahmed Khan",
+        "comments": "Simple yet effective prep material. Helped me pass in one go.",
+        "star": 5,
+        "date": "2025-08-02"
+      }
+    ]
+  }
+]

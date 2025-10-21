@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 interface FooterProps {
   scrollToSection?: (sectionId: string) => void;
@@ -51,32 +52,16 @@ export default function Footer({ scrollToSection }: FooterProps) {
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
+              
               <li>
-                <button
-                  onClick={() => scrollToSection?.("curriculum")}
-                  className="text-background/80 hover:text-background transition-colors"
-                  data-testid="footer-curriculum"
-                >
-                  Curriculum
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => scrollToSection?.("benefits")}
-                  className="text-background/80 hover:text-background transition-colors"
-                  data-testid="footer-benefits"
-                >
-                  Benefits
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => scrollToSection?.("pricing")}
-                  className="text-background/80 hover:text-background transition-colors"
-                  data-testid="footer-pricing"
-                >
-                  Pricing
-                </button>
+                <Link href="/blog" className="text-background/80 hover:text-background transition-colors" data-testid="footer-study-notes">
+                  <button
+                    className="text-background/80 hover:text-background transition-colors"
+                    data-testid="footer-study-notes"
+                  >
+                    Blog
+                  </button>
+                </Link>
               </li>
               <li>
                 <a

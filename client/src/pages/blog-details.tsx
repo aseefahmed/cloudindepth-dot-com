@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import articlesData from "../data/articles.json";
 import {
   ArrowLeft,
   Calendar,
@@ -36,31 +37,21 @@ interface Author {
   bio: string;
 }
 
-interface BlogPost {
-  id: string | number;
+interface Article {
+  id: string;
   title: string;
-  excerpt?: string;
+  author: string;
   content: string;
-  author: Author | string;
-  publishDate?: string;
-  readTime?: string;
-  category?: string;
   tags: string[];
-  image: string;
-  image_url?: string;
-  featured?: boolean;
-  trending?: boolean;
-  views?: number;
-  likes?: number;
-  comments?: number;
-  created_at?: string;
+  image_url: string | null;
+  created_at: string;
 }
 
 
 export default function BlogDetails() {
   const [, params] = useRoute("/blog/:id");
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [post, setPost] = useState<Article | null>(null);
+  const [allPosts, setAllPosts] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -78,77 +69,29 @@ export default function BlogDetails() {
   };
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setIsLoading(true);
-        const postId = params?.id;
+    const loadPost = () => {
+      console.log('Loading article from local JSON data...');
+      const postId = params?.id;
+      
+      if (postId) {
+        console.log('Local data loaded:', articlesData.length, 'articles');
         
-        if (postId) {
-          // Fetch all blog posts from API
-          const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get-articles');
-          console.log("bbb")
-          console.log(response);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          
-          const data = await response.json();
-          
-          // The API returns an array of blog posts directly
-          const blogPosts = Array.isArray(data) ? data : data.posts || [];
-          
-          // Filter out any invalid entries
-          const validPosts = blogPosts.filter((post: any) => 
-            post && 
-            post.id && 
-            post.title && 
-            post.content
-          );
-          
-          // Transform API data to match BlogPost interface
-          const transformedPosts = validPosts.map((apiPost: any) => ({
-            id: apiPost.id,
-            title: apiPost.title,
-            excerpt: apiPost.excerpt || apiPost.title, // Use title as excerpt if not provided
-            content: apiPost.content,
-            author: typeof apiPost.author === 'string' ? {
-              name: apiPost.author,
-              title: "Admin",
-              avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-              bio: "Experienced professional with expertise in cloud technologies and DevOps practices."
-            } : apiPost.author,
-            publishDate: apiPost.created_at || apiPost.publishDate || new Date().toISOString(),
-            readTime: apiPost.readTime || "5 min read",
-            category: apiPost.category || "Cloud Architecture",
-            tags: apiPost.tags || [],
-            image: apiPost.image_url || apiPost.image || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=400&fit=crop",
-            featured: apiPost.featured || false,
-            trending: apiPost.trending || false,
-            views: apiPost.views || Math.floor(Math.random() * 1000) + 100,
-            likes: apiPost.likes || Math.floor(Math.random() * 100) + 10,
-            comments: apiPost.comments || Math.floor(Math.random() * 50) + 5
-          }));
-          
-          setAllPosts(transformedPosts);
-          
-          // Find the specific post by ID (convert both to string for comparison)
-          const foundPost = transformedPosts.find((p: BlogPost) => String(p.id) === String(postId));
-          console.log("Found post:", foundPost);
-          if (foundPost) {
-            setPost(foundPost);
-            setLikeCount(foundPost.likes || 0);
-          } else {
-            console.error('Post not found for ID:', postId);
-          }
+        setAllPosts(articlesData);
+        
+        // Find the specific article by ID (convert both to string for comparison)
+        const foundPost = articlesData.find((p: Article) => String(p.id) === String(postId));
+        console.log("Found article:", foundPost);
+        if (foundPost) {
+          setPost(foundPost);
+          setLikeCount(0); // Articles don't have likes in the current structure
+        } else {
+          console.error('Article not found for ID:', postId);
         }
-      } catch (error) {
-        console.error('Error fetching blog post:', error);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
-    fetchPost();
+    loadPost();
   }, [params?.id]);
 
   const getCategoryIcon = (category: string) => {
@@ -185,7 +128,7 @@ export default function BlogDetails() {
     
     const url = window.location.href;
     const title = post.title || '';
-    const description = post.excerpt || post.title || '';
+    const description = post.title || '';
     const hashtags = post.tags ? post.tags.slice(0, 3).join(',') : 'cloud,devops,aws';
     
     try {
@@ -287,7 +230,7 @@ export default function BlogDetails() {
     );
   }
 
-  const CategoryIcon = getCategoryIcon(post.category || "Cloud Architecture");
+  const CategoryIcon = getCategoryIcon("Cloud Architecture");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
@@ -297,7 +240,7 @@ export default function BlogDetails() {
       <div className="pt-20">
         <div className="relative h-[600px] overflow-hidden">
           <img
-            src={post.image}
+            src={post.image_url || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop"}
             alt={post.title}
             className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
           />
@@ -305,21 +248,9 @@ export default function BlogDetails() {
           <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center gap-3 mb-8">
-                {post.featured && (
-                  <Badge className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 text-sm font-semibold shadow-lg">
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Featured
-                  </Badge>
-                )}
-                {post.trending && (
-                  <Badge className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 text-sm font-semibold shadow-lg">
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Trending
-                  </Badge>
-                )}
-                <Badge className={`${getCategoryColor(post.category || "Cloud Architecture")} px-4 py-2 text-sm font-semibold shadow-lg`}>
+                <Badge className={`${getCategoryColor("Cloud Architecture")} px-4 py-2 text-sm font-semibold shadow-lg`}>
                   <CategoryIcon className="h-4 w-4 mr-2" />
-                  {post.category || "Cloud Architecture"}
+                  Cloud Architecture
                 </Badge>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight tracking-tight">
@@ -329,8 +260,8 @@ export default function BlogDetails() {
               <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8 text-white/90">
                 <div className="flex items-center gap-3">
                   <img
-                    src={typeof post.author === 'string' ? "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" : post.author.avatar}
-                    alt={typeof post.author === 'string' ? post.author : post.author.name}
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
+                    alt={post.author}
                     className="w-12 h-12 rounded-full object-cover border-2 border-white/20 shadow-lg"
                   />
                   
@@ -338,15 +269,15 @@ export default function BlogDetails() {
                 <div className="flex items-center gap-6 text-sm lg:text-base">
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
                     <Calendar className="h-4 w-4" />
-                    <span className="font-medium">{post.publishDate ? new Date(post.publishDate).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+                    <span className="font-medium">{new Date(post.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
                     <Clock className="h-4 w-4" />
-                    <span className="font-medium">{post.readTime || "5 min read"}</span>
+                    <span className="font-medium">5 min read</span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
                     <Eye className="h-4 w-4" />
-                    <span className="font-medium">{(post.views || 0).toLocaleString()} views</span>
+                    <span className="font-medium">0 views</span>
                   </div>
                 </div>
               </div>
@@ -419,7 +350,7 @@ export default function BlogDetails() {
                         className="flex items-center gap-3 px-8 py-4 rounded-xl font-semibold border-2 border-gray-200 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all duration-300"
                       >
                         <MessageCircle className="h-5 w-5" />
-                        <span>{post.comments || 0}</span>
+                        <span>0</span>
                       </Button>
                     </div> */}
 
@@ -475,16 +406,16 @@ export default function BlogDetails() {
                   <div className="text-center">
                     <div className="relative mb-6">
                       <img
-                        src={typeof post.author === 'string' ? "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" : post.author.avatar}
-                        alt={typeof post.author === 'string' ? post.author : post.author.name}
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
+                        alt={post.author}
                         className="w-28 h-28 rounded-full object-cover mx-auto border-4 border-white shadow-2xl"
                       />
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg"></div>
                     </div>
-                    <h3 className="font-bold text-2xl mb-2 text-foreground">{typeof post.author === 'string' ? post.author : post.author.name}</h3>
-                    <p className="text-sm text-primary mb-4 font-semibold">{typeof post.author === 'string' ? "Admin" : post.author.title}</p>
+                    <h3 className="font-bold text-2xl mb-2 text-foreground">{post.author}</h3>
+                    <p className="text-sm text-primary mb-4 font-semibold">Admin</p>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                      {typeof post.author === 'string' ? "Experienced professional with expertise in cloud technologies and DevOps practices." : post.author.bio}
+                      Experienced professional with expertise in cloud technologies and DevOps practices.
                     </p>
                     <div className="flex justify-center gap-4">
                       <Button variant="outline" size="sm" className="rounded-full px-6 py-2 hover:bg-primary hover:text-white transition-all duration-300">

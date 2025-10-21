@@ -270,6 +270,14 @@ export default function MyPracticeTests() {
     }
   };
 
+  const handleStudyNotes = (test: any) => {
+    const practiceTestId = test?.practice_test_id || test?.id;
+    if (!practiceTestId) {
+      return;
+    }
+    setLocation(`/dashboard/study-notes/${practiceTestId}`);
+  };
+
   return (
     <div className="space-y-8 p-6 md:p-8">
       {/* Header Section with Gradient */}
@@ -455,6 +463,25 @@ export default function MyPracticeTests() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          
+                          <DropdownMenuItem 
+                            onClick={() => handleStartTest(test)}
+                            className="cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              <PlayCircle className="h-4 w-4" />
+                              Start Practice Test
+                            </div>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStudyNotes(test)}
+                            className="cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              <BookOpen className="h-4 w-4" />
+                              Study Notes
+                            </div>
+                          </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <Link href={`/dashboard/flashcards/${test.practice_test_id || test.id}`}>
                               <div className="flex items-center gap-2 cursor-pointer">
@@ -470,15 +497,6 @@ export default function MyPracticeTests() {
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4" />
                               View Questions Bank
-                            </div>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleStartTest(test)}
-                            className="cursor-pointer"
-                          >
-                            <div className="flex items-center gap-2">
-                              <PlayCircle className="h-4 w-4" />
-                              Start Practice Test
                             </div>
                           </DropdownMenuItem>
                         </DropdownMenuContent>

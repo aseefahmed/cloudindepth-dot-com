@@ -19,6 +19,20 @@ st.set_page_config(
     layout="wide",
 )
 
+#fetch secret from secret manager
+session = boto3.session.Session()
+
+secret_name = "openai/prod"
+secret_client = session.client(
+        service_name='secretsmanager',
+        region_name="ap-southeast-6"
+    )
+get_secret_value_response = secret_client.get_secret_value(
+            SecretId=secret_name
+        )
+print(get_secret_value_response['SecretString'])
+open_ai_key = json.loads(get_secret_value_response['SecretString'])["key"]
+
 # -------------------------
 # Sidebar Menu
 # -------------------------
@@ -109,8 +123,7 @@ def generate_blog_content_with_openai(title: str):
     """Generate complete blog post content using OpenAI based on the blog title"""
     try:
         # Initialize OpenAI client
-        client = OpenAI(api_key="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")
-        
+        client = OpenAI(api_key=open_ai_key)
         if not client.api_key:
             st.error("❌ OpenAI API key not found. Please set OPENAI_API_KEY environment variable.")
             return None
@@ -165,8 +178,8 @@ def generate_image_prompt_from_title(title: str):
     """Generate an image prompt using OpenAI based on the blog title"""
     try:
         # Initialize OpenAI client
-        client = OpenAI(api_key="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")
-        
+        client = OpenAI(api_key=open_ai_key)
+
         if not client.api_key:
             st.error("❌ OpenAI API key not found. Please set OPENAI_API_KEY environment variable.")
             return None
@@ -200,8 +213,7 @@ def generate_image_with_dalle(prompt: str, title: str):
     """Generate an image using DALL-E 3 and upload to S3"""
     try:
         # Initialize OpenAI client
-        client = OpenAI(api_key="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")
-        
+        client = OpenAI(api_key=open_ai_key)
         if not client.api_key:
             st.error("❌ OpenAI API key not found. Please set OPENAI_API_KEY environment variable.")
             return None

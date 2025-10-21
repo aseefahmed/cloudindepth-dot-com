@@ -1,0 +1,1 @@
+aws secretsmanager get-secret-value --profile cloudindepth --region ap-southeast-6 --secret-id openai/prod --output text --query SecretString

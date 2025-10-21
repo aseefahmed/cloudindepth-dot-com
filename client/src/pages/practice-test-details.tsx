@@ -15,118 +15,40 @@ import {
   BarChart, Download, Video, FileText, MessageCircle, Loader2, AlertCircle,
   ChevronLeft, ChevronRight, Maximize2, X
 } from "lucide-react";
-import { practiceTestsData } from "../../../shared/practice-tests-data";
-// Transform API data to match component expectations
-const transformApiData = (apiData: any): any => {
-  console.log('Transforming API data:', apiData);
-  console.log("__________________________")
-  
-  // Map API fields to component expected fields
+import practiceTestsData from "../data/practice-tests.json";
+// Transform local JSON data to match component expectations
+const transformLocalData = (localData: any): any => {
   return {
-    id: apiData.id || apiData.course_id || apiData.courseId,
-    title: apiData.title || apiData.name || apiData.course_title,
-    subtitle: apiData.subtitle || apiData.short_description || apiData.course_subtitle,
-    fullTitle: apiData.fullTitle || apiData.full_title || apiData.course_name || apiData.title,
-    price: apiData.price || apiData.cost || apiData.course_price || 0,
-    originalPrice: apiData.originalPrice || apiData.original_price || apiData.retail_price || apiData.price * 1.5,
-    offer_message: apiData.offer_message || apiData.offer_message || apiData.offer_message || "Limited Time Offer - Valid until Dec 31, 2024",
-    questions: apiData.questions || apiData.total_questions || apiData.question_count || 0,
-    flashcards: apiData.flashcards || apiData.flashcard_count || apiData.flashcard_count || 0,
-    practiceTests: apiData.practiceTests || apiData.practice_tests || apiData.test_count || 0,
-    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "180 mins per test",
-    rating: apiData.rating || apiData.average_rating || apiData.star_rating || 4.5,
-    reviews: apiData.review_count || apiData.review_count || apiData.total_reviews || 0,
-    difficulty: apiData.difficulty || apiData.level || apiData.course_level || "Associate",
-    passingScore: apiData.passingScore || apiData.passing_score || apiData.minimum_score || "720/1000",
-    description: apiData.description || apiData.course_description || apiData.overview || "Course description not available",
-    status: apiData.status,
-    whatYouGet: apiData.whatYouGet || apiData.features || apiData.included_features || apiData.benefits || [
-      "Practice tests included",
-      "Detailed explanations",
-      "Performance tracking",
-      "Lifetime access"
-    ],
-    topics: apiData.domains_details || apiData.domains || [
+    id: localData.id,
+    title: localData.title,
+    subtitle: localData.subtitle,
+    fullTitle: localData.title, // Use title as fullTitle
+    price: localData.price,
+    originalPrice: localData.retail_price,
+    offer_message: localData.offer_message,
+    questions: localData.questions,
+    flashcards: localData.flashcards,
+    practiceTests: 1, // Default to 1 practice test
+    duration: localData.duration,
+    study_notes: localData.study_notes,
+    rating: localData.rating,
+    reviews: localData.reviews_count,
+    difficulty: localData.difficulty,
+    passingScore: "720/1000", // Default passing score
+    description: localData.description,
+    status: localData.status,
+    whatYouGet: localData.features,
+    topics: localData.domains_details || [
       { name: "Core Concepts", percentage: 50 },
       { name: "Advanced Topics", percentage: 30 },
       { name: "Practical Applications", percentage: 20 }
     ],
-    domains: apiData.domains_details || apiData.domains || apiData.exam_domains || apiData.subject_domains || [],
-    sampleQuestions: apiData.sampleQuestions || apiData.sample_questions || apiData.preview_questions || [
-      {
-        question: "Sample question from the course",
-        options: ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"],
-        explanation: "This is a sample explanation for the question."
-      }
-    ],
-    faqs: apiData.faqs || apiData.frequently_asked_questions || apiData.common_questions || [
-      {
-        question: "What is included in this course?",
-        answer: "This course includes practice tests, detailed explanations, and performance tracking."
-      }
-    ],
-    testimonials: apiData.testimonials || apiData.reviews || apiData.student_reviews || apiData.student_feedback || [
-      {
-        name: "Student",
-        role: "Learner",
-        rating: 5,
-        comment: "Great course with excellent content!"
-      }
-    ]
+    domains: localData.domains_details || [],
+    sampleQuestions: localData.sample_questions || [],
+    faqs: [], // Will use default FAQs in component
+    testimonials: localData.reviews || []
   };
 };
-
-// API function to fetch course details
-const fetchCourseDetails = async (courseId: string): Promise<any> => {
-  try {
-    console.log('Fetching course details for ID:', courseId);
-    const response = await fetch(`https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get_course_details`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({ id: courseId }),
-    });
-    
-    console.log('API Response status:', response.status);
-    
-    if (!response.ok) {
-      if (response.status === 403) {
-        throw new Error('API requires authentication. Please check API configuration.');
-      }
-      if (response.status === 404) {
-        throw new Error('Course not found. Please check the course ID.');
-      }
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log('API Response data:', data);
-    
-    // Handle different possible response formats
-    let courseData;
-    if (data.course) {
-      courseData = data.course;
-    } else if (data.data) {
-      courseData = data.data;
-    } else if (data.message) {
-      throw new Error(`API Error: ${data.message}`);
-    } else {
-      courseData = data;
-    }
-    
-    // Transform the API data to match component expectations
-    const transformedData = transformApiData(courseData);
-    console.log('Transformed data for component:', transformedData);
-    return transformedData;
-  } catch (error) {
-    console.error('Error fetching course details:', error);
-    throw error;
-  }
-};
-
-// Static fallback data in case API fails
 
 
 const getDifficultyColor = (difficulty: string) => {
@@ -147,11 +69,9 @@ export default function PracticeTestDetails() {
   const [, setLocation] = useLocation();
   const testId = params?.id || "saa-c03";
   
-  // State for API data
+  // State for local data
   const [test, setTest] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isApiData, setIsApiData] = useState(false);
   
   // State for gallery
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -160,76 +80,32 @@ export default function PracticeTestDetails() {
   const galleryImages = [
     "/images/simulator-screenshot-1.png",
     "/images/simulator-screenshot-2.png",
-    "/images/simulator-screenshot-3.png"
+    "/images/simulator-screenshot-3.png",
+    "/images/simulator-screenshot-4.png",
+    "/images/simulator-screenshot-5.png"
   ];
 
   // Fetch course details from API
   useEffect(() => {
-    const loadCourseDetails = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        console.log('Fetching course details for:', testId);
-        const data = await fetchCourseDetails(testId);
-        console.log('API data received:', data);
-        setTest(data);
-        setIsApiData(true);
-      } catch (err) {
-        console.error('Failed to fetch course details:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load course details';
-        setError(errorMessage);
-        
-        // Fallback to static data
-        console.log('Using fallback data for:', testId);
-        const fallbackTest = practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0];
-        
-        if (!fallbackTest) {
-          // No fallback data available, set test to null to show not found message
-          setTest(null);
-          return;
-        }
-        
-        setTest(fallbackTest);
-        setIsApiData(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    console.log('Loading course details from local JSON data for:', testId);
+    const localTest = practiceTestsData.find(t => t.id === testId);
+    
+    if (localTest) {
+      const transformedTest = transformLocalData(localTest);
+      console.log('Local data loaded:', transformedTest);
+      setTest(transformedTest);
+    } else {
+      console.log('Test not found for ID:', testId);
+      setTest(null);
+    }
+    setIsLoading(false);
+  }, [testId]);
 
-    loadCourseDetails();
-  }, [testId, setLocation]);
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  // Retry function for failed API calls
-  const retryFetch = () => {
-    const loadCourseDetails = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await fetchCourseDetails(testId);
-        setTest(data);
-        setIsApiData(true);
-      } catch (err) {
-        console.error('Failed to fetch course details:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load course details';
-        setError(errorMessage);
-        
-        const fallbackTest = practiceTestsData.find(t => t.id === testId) || practiceTestsData.find(t => t.id === "saa-c03") || practiceTestsData[0];
-        
-        if (!fallbackTest) {
-          // No fallback data available, set test to null to show not found message
-          setTest(null);
-          return;
-        }
-        
-        setTest(fallbackTest);
-        setIsApiData(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadCourseDetails();
-  };
 
   // Loading state
   if (isLoading) {
@@ -244,35 +120,6 @@ export default function PracticeTestDetails() {
     );
   }
 
-  // Error state
-  if (error && !test) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Failed to Load Course Details</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <p className="text-sm text-muted-foreground mb-6">
-            Showing fallback data. Please check your connection and try again.
-          </p>
-          <div className="flex gap-2 justify-center">
-            <Button 
-              onClick={retryFetch} 
-              variant="outline"
-            >
-              Try Again
-            </Button>
-            <Button 
-              onClick={() => window.location.reload()} 
-              variant="default"
-            >
-              Reload Page
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -411,19 +258,6 @@ export default function PracticeTestDetails() {
                 {test.description}
               </p>
               
-              {/* API Status Banner */}
-              {error && (
-                <div className="mb-6">
-                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                    <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
-                      <AlertCircle className="h-5 w-5" />
-                      <span className="text-sm font-medium">
-                        Using offline data. API connection failed: {error}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
               
               
               {/* Coming Soon Banner */}
@@ -457,7 +291,7 @@ export default function PracticeTestDetails() {
                 </div>
                 <div className="flex items-center text-muted-foreground">
                   <Clock className="h-5 w-5 text-primary mr-2" />
-                  <span>{test.duration}</span>
+                  <span>{test.study_notes} study notes</span>
                 </div>
                 {/* <div className="flex items-center text-muted-foreground">
                   <Target className="h-5 w-5 text-primary mr-2" />

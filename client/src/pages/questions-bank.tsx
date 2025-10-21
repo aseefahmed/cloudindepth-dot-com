@@ -23,6 +23,15 @@ import {
   ChevronDown,
   ChevronUp
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
 const isAuth0Configured = () => {
@@ -72,7 +81,71 @@ export default function QuestionsBank() {
   const [showAnswers, setShowAnswers] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<string>>(new Set());
   const [allExpanded, setAllExpanded] = useState(false);
+  const [showProtectionDialog, setShowProtectionDialog] = useState(false);
   const { toast } = useToast();
+
+  // Disable right-click, text selection, and drag
+  useEffect(() => {
+    const handleContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+      setShowProtectionDialog(true);
+    };
+
+    const handleSelectStart = (event: Event) => {
+      event.preventDefault();
+      setShowProtectionDialog(true);
+    };
+
+    const handleMouseDown = (event: MouseEvent) => {
+      // Prevent text selection on mouse down
+      if (event.detail > 1) {
+        event.preventDefault();
+        setShowProtectionDialog(true);
+      }
+    };
+
+    const handleMouseUp = (event: MouseEvent) => {
+      // Clear any text selection
+      window.getSelection()?.removeAllRanges();
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+S
+      if (event.ctrlKey && ['a', 'c', 'v', 'x', 's'].includes(event.key.toLowerCase())) {
+        event.preventDefault();
+        setShowProtectionDialog(true);
+        return;
+      }
+      // Prevent F12 (developer tools)
+      if (event.key === 'F12') {
+        event.preventDefault();
+        setShowProtectionDialog(true);
+        return;
+      }
+    };
+
+    const handleDragStart = (event: Event) => {
+      event.preventDefault();
+    };
+
+    // Add event listeners
+    document.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('selectstart', handleSelectStart);
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('dragstart', handleDragStart);
+
+    // Cleanup function to remove the event listeners
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('selectstart', handleSelectStart);
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('dragstart', handleDragStart);
+    };
+  }, []);
 
   // Fetch questions bank data
   useEffect(() => {
@@ -269,7 +342,17 @@ export default function QuestionsBank() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+      style={{
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitTapHighlightColor: 'transparent'
+      }}
+    >
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -525,6 +608,26 @@ export default function QuestionsBank() {
           </Card>
         )}
       </div>
+
+      {/* Protection Dialog */}
+      <AlertDialog open={showProtectionDialog} onOpenChange={setShowProtectionDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <XCircle className="h-5 w-5 text-red-500" />
+              Content Protection Active
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Right-click and text selection are disabled to protect exam content. Please focus on studying the questions.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowProtectionDialog(false)}>
+              I Understand
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

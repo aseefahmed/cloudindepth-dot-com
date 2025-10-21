@@ -1,6 +1,5 @@
 // Blueprint: javascript_stripe - Checkout page for one-time payments
 import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import { useToast } from "@/hooks/use-toast";
@@ -18,15 +17,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth0Safe } from "@/components/auth-components";
-
-// Make sure to call `loadStripe` outside of a component's render to avoid
-// recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  console.error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY 
-  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
-  : null;
+import { initializeStripe } from "@/utils/stripe-config";
 
 interface CheckoutFormProps {
   testTitle: string;
@@ -83,7 +74,8 @@ const CheckoutForm = ({ testTitle, price, practiceTestId, questions, flashcards 
               test_title: testTitle,
               price: price,
               questions: questions,
-              flashcards: flashcards
+              flashcards: flashcards,
+              email: user?.email
             }),
             keepalive: true,
           }).catch(() => {});
@@ -147,6 +139,7 @@ export default function Checkout() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [clientSecret, setClientSecret] = useState("");
+  const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
   const [testDetails, setTestDetails] = useState<{
     title: string;
     subtitle: string;
@@ -157,6 +150,33 @@ export default function Checkout() {
   } | null>(null);
 
   const testId = params?.testId || "";
+
+  // Initialize Stripe on component mount
+  useEffect(() => {
+    const initStripe = async () => {
+      try {
+        const stripe = await initializeStripe();
+        if (stripe) {
+          setStripePromise(Promise.resolve(stripe));
+        } else {
+          toast({
+            title: "Payment Configuration Error",
+            description: "Unable to initialize payment system. Please try again later.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Failed to initialize Stripe:', error);
+        toast({
+          title: "Payment Configuration Error",
+          description: "Unable to initialize payment system. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    initStripe();
+  }, [toast]);
 
   const createPaymentIntent = async (testId: string, amount: number) => {
     try {

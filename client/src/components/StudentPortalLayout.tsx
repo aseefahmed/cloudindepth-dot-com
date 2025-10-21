@@ -197,7 +197,7 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
         </div>
 
         {/* Give Feedback Button - Bottom of Sidebar */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
             <Button
               variant="outline"
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -210,7 +210,7 @@ export function StudentPortalLayout({ children }: StudentPortalLayoutProps) {
               <MessageCircle className="mr-2 h-4 w-4" />
               Give Feedback
             </Button>
-          
+            
         </div>
 
       </aside>

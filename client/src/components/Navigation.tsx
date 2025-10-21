@@ -62,7 +62,10 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
+            <Link href="/">
             <img src="/images/logo.png" width="70%" />
+            </Link>
+            
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-8">
@@ -85,11 +88,6 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
                 </button>
               </Link>
               
-              <Link href="/blog">
-                <button className="text-black/90 hover:text-black-300 hover:font-bold transition-colors" data-testid="nav-blog">
-                  Blog
-                </button>
-              </Link>
               {/* <Button
                 onClick={() => scrollToSection("pricing")}
                 className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
@@ -179,12 +177,6 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
                 </button>
               </Link>
               
-              <Link href="/blog" onClick={() => setIsMenuOpen(false)}>
-                <button className="block w-full text-left text-black/90 hover:text-black hover:font-bold transition-colors py-2">
-                  Blog
-                </button>
-              </Link>
-
               <div className="pt-4 border-t border-gray-200">
                 {isAuthenticated ? (
                   <div className="space-y-2">

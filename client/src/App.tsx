@@ -23,6 +23,7 @@ import Downloads from "@/pages/downloads";
 import DashboardDownloads from "@/pages/dashboard-downloads";
 import Flashcards from "@/pages/flashcards";
 import QuestionsBank from "@/pages/questions-bank";
+import StudyNotes from "@/pages/dashboard/study-notes/[testId]";
 import Blog from "@/pages/blog";
 import BlogDetails from "@/pages/blog-details";
 import NotFound from "@/pages/not-found";
@@ -148,6 +149,15 @@ function Router() {
                  <AuthenticatedRoute>
                    <StudentPortalLayout>
                      <QuestionsBank />
+                   </StudentPortalLayout>
+                 </AuthenticatedRoute>
+               )}
+             </Route>
+             <Route path="/dashboard/study-notes/:testId">
+               {() => (
+                 <AuthenticatedRoute>
+                   <StudentPortalLayout>
+                     <StudyNotes />
                    </StudentPortalLayout>
                  </AuthenticatedRoute>
                )}

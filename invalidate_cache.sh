@@ -6,6 +6,3 @@ aws cloudfront create-invalidation \
     --distribution-id "E2BUFULQFK8VAN" \
     --paths "/index.html" \
     --profile cloudindepth
-
-echo "____"
-echo $STRIPE_SECRET_KEY

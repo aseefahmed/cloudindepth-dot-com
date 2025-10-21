@@ -3,22 +3,61 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import { getPracticeTestById } from "@shared/practice-tests-data";
+import { getStripeSecrets } from "./secrets";
 
-// Initialize Stripe - blueprint: javascript_stripe
-process.env.STRIPE_SECRET_KEY="sk_test_51RVWjSRbKxwer5oNY9KLLXlMJlF6Qzzot1vIxlx6QdHW3FNYAujSEM3F60etIRnynT1NJS1ulkKxB8aQInN0Szv000oy3yhl1x"
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('Warning: STRIPE_SECRET_KEY not set. Payment functionality will be disabled.');
-}
+// Initialize Stripe with secrets from AWS Secrets Manager
+let stripe: Stripe | null = null;
 
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+// Initialize Stripe asynchronously
+async function initializeStripe() {
+  try {
+    const secrets = await getStripeSecrets();
+    
+    if (!secrets.STRIPE_SECRET_KEY) {
+      console.warn('Warning: STRIPE_SECRET_KEY not found in secrets. Payment functionality will be disabled.');
+      return null;
+    }
+
+    stripe = new Stripe(secrets.STRIPE_SECRET_KEY, {
       // Increase network timeout and allow automatic retries for transient issues
       timeout: 60000,
       maxNetworkRetries: 2,
-    })
-  : null;
+    });
+
+    console.log('Stripe initialized successfully with secrets from AWS Secrets Manager');
+    return stripe;
+  } catch (error) {
+    console.error('Failed to initialize Stripe:', error);
+    return null;
+  }
+}
+
+// Initialize Stripe on module load
+initializeStripe();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Get Stripe public key for client-side configuration
+  app.get("/api/stripe-public-key", async (req, res) => {
+    try {
+      const secrets = await getStripeSecrets();
+      
+      if (!secrets.STRIPE_PUBLIC_KEY) {
+        return res.status(503).json({ 
+          message: "Stripe public key not available" 
+        });
+      }
+
+      res.json({ 
+        publicKey: secrets.STRIPE_PUBLIC_KEY 
+      });
+    } catch (error) {
+      console.error("Error fetching Stripe public key:", error);
+      res.status(500).json({ 
+        message: "Error fetching Stripe public key" 
+      });
+    }
+  });
+
   // Get practice test details by ID - secure endpoint for checkout
   app.get("/api/practice-test/:testId", async (req, res) => {
     try {
@@ -39,10 +78,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment route for one-time payments - blueprint: javascript_stripe
   // Security: Price is retrieved server-side to prevent tampering
   app.post("/api/create-payment-intent", async (req, res) => {
+    // Ensure Stripe is initialized
     if (!stripe) {
-      return res.status(503).json({ 
-        message: "Payment processing is currently unavailable. Please contact support." 
-      });
+      try {
+        await initializeStripe();
+        if (!stripe) {
+          return res.status(503).json({ 
+            message: "Payment processing is currently unavailable. Please contact support." 
+          });
+        }
+      } catch (error) {
+        console.error("Failed to initialize Stripe for payment intent:", error);
+        return res.status(503).json({ 
+          message: "Payment processing is currently unavailable. Please contact support." 
+        });
+      }
     }
 
     try {

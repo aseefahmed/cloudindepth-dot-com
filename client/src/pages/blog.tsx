@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Navigation from "@/components/Navigation";
+import blogPostsData from "../data/articles.json";
 
 import {
   Search,
@@ -42,7 +43,7 @@ interface BlogPost {
   readTime: string;
   category: string;
   tags: string[];
-  image: string;
+  image_url: string;
   featured: boolean;
   trending: boolean;
   views: number;
@@ -79,46 +80,19 @@ export default function Blog() {
     }
   };
 
-  // Load blog posts from API
+  // Load blog posts from local JSON data
   useEffect(() => {
-    const loadBlogPosts = async () => {
-      try {
-        setIsLoading(true);
-         
-        // Fetch blog posts from API
-        const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get-articles');
-        
+    console.log('Loading blog posts from local JSON data...');
+    const blogPosts = blogPostsData;
+    console.log('Local data loaded:', blogPosts.length, 'posts');
+    setPosts(blogPosts);
+    setFilteredPosts(blogPosts);
+    setIsLoading(false);
+  }, []);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        // The API returns an array of blog posts directly
-        const blogPosts = Array.isArray(data) ? data : data.posts || [];
-        
-        console.log("aaa")
-        console.log(blogPosts);
-        // Filter out any invalid entries (like the test entry with id: 2)
-        const validPosts = blogPosts.filter((post: any) => 
-          post && 
-          post.id && 
-          post.title && 
-          post.content
-          
-        );
-        
-        setPosts(validPosts);
-        setFilteredPosts(validPosts);
-      } catch (error) {
-        console.error('Error loading blog posts:', error);
-        // You could set an error state here if needed
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadBlogPosts();
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
@@ -161,6 +135,8 @@ export default function Blog() {
   };
 
   if (isLoading) {
+    console.log('Loading blog posts...');
+    console.log('Blog posts:', blogPostsData.posts);
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
         <Navigation scrollToSection={scrollToSection} />
@@ -258,7 +234,7 @@ export default function Blog() {
               <Card key={post.id} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg overflow-hidden">
                 <div className="relative">
                   <img
-                    src={post.image_url}
+                    src={post.image_url} 
                     alt={post.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />

@@ -1,13 +1,11 @@
 /**
  * Practice Tests Page
  * 
- * This component fetches practice tests from the API endpoint:
- * https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod
+ * This component loads practice tests from local JSON data:
+ * client/src/data/practice-tests.json
  * 
  * Features:
- * - API integration with fallback to static data
- * - Loading and error states
- * - Retry mechanism for failed requests
+ * - Local JSON data integration
  * - Filtering and sorting capabilities
  * - Responsive design
  */
@@ -43,12 +41,10 @@ import {
   Filter,
   X,
   Sparkles,
-  TrendingUp,
-  Loader2,
-  AlertCircle
+  TrendingUp
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
-import { practiceTestsData } from "../../../shared/practice-tests-data";
+import practiceTestsData from "../data/practice-tests.json";
 interface PracticeTest {
   id: string;
   title: string;
@@ -68,84 +64,27 @@ interface PracticeTest {
   sort_number?: number;
 }
 
-// Transform API data to match component expectations
-const transformApiData = (apiData: any): PracticeTest => {
-  console.log('Transforming API data for practice test:', apiData);
-  
+// Transform local JSON data to match component expectations
+const transformLocalData = (localData: any): PracticeTest => {
   return {
-    id: apiData.id || apiData.course_id || apiData.courseId,
-    title: apiData.title || apiData.name || apiData.course_title,
-    subtitle: apiData.subtitle || apiData.short_description || apiData.course_subtitle,
-    price: apiData.price || apiData.cost || apiData.course_price || 0,
-    retail_price: apiData.retail_price || apiData.original_price || apiData.price * 1.5,
-    offer_message: apiData.offer_message || apiData.offer_message || apiData.offer_message || "Limited Time Offer - Valid until Dec 31, 2024",
-    questions: apiData.questions || apiData.total_questions || apiData.question_count || 0,
-    flashcards: apiData.flashcards || apiData.flashcard_count || apiData.flashcard_count || 0,
-    duration: apiData.duration || apiData.time_limit || apiData.exam_duration || "180 mins per test",
-    rating: apiData.rating || apiData.average_rating || apiData.star_rating || 4.5,
-    reviews: apiData.reviews_count || apiData.review_count || apiData.total_reviews || 0,
-    difficulty: apiData.difficulty || apiData.level || apiData.course_level || "Associate",
-    features: apiData.features || apiData.included_features || apiData.benefits || [
-      "Practice tests included",
-      "Detailed explanations",
-      "Performance tracking",
-      "Lifetime access"
-    ],
-    popular: apiData.popular || apiData.featured || apiData.is_popular || false,
-    status: apiData.status || apiData.course_status || "available",
-    sort_number: apiData.sort_number || apiData.sortNumber || apiData.order || 0
+    id: localData.id,
+    title: localData.title,
+    subtitle: localData.subtitle,
+    price: localData.price,
+    retail_price: localData.retail_price,
+    offer_message: localData.offer_message,
+    questions: localData.questions,
+    flashcards: localData.flashcards,
+    duration: localData.duration,
+    rating: localData.rating,
+    reviews: localData.reviews_count,
+    difficulty: localData.difficulty,
+    features: localData.features,
+    popular: localData.popular,
+    status: localData.status,
+    sort_number: localData.sort_number
   };
 };
-
-// API function to fetch practice tests
-const fetchPracticeTests = async (): Promise<PracticeTest[]> => {
-  try {
-    console.log('Fetching practice tests from API...');
-    const response = await fetch('https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/get-practice-test', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    });
-    
-    if (!response.ok) {
-      if (response.status === 403) {
-        throw new Error('API requires authentication. Please check API configuration.');
-      }
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log('API Response data:', data);
-    
-    // Handle different possible response formats
-    let testsData;
-    if (Array.isArray(data)) {
-      testsData = data;
-    } else if (data.practiceTests && Array.isArray(data.practiceTests)) {
-      testsData = data.practiceTests;
-    } else if (data.tests && Array.isArray(data.tests)) {
-      testsData = data.tests;
-    } else if (data.data && Array.isArray(data.data)) {
-      testsData = data.data;
-    } else if (data.message) {
-      throw new Error(`API Error: ${data.message}`);
-    } else {
-      throw new Error('Invalid data format received from API');
-    }
-    
-    // Transform each test data
-    const transformedTests = testsData.map(transformApiData);
-    console.log('Transformed tests:', transformedTests.length, 'tests');
-    return transformedTests;
-  } catch (error) {
-    console.error('Error fetching practice tests:', error);
-    throw error;
-  }
-};
-
-// Static fallback data in case API fails
 
 
 const getDifficultyColor = (difficulty: string) => {
@@ -168,59 +107,22 @@ export default function PracticeTests() {
   const [showPopularOnly, setShowPopularOnly] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
   
-  // API state management
+  // Local data state management
   const [practiceTests, setPracticeTests] = useState<PracticeTest[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isApiData, setIsApiData] = useState(false);
 
-  // Fetch practice tests from API
+  // Load practice tests from local JSON data
   useEffect(() => {
-    const loadPracticeTests = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        console.log('Fetching practice tests from API...');
-        const data = await fetchPracticeTests();
-        console.log('API data received:', data.length, 'tests');
-        setPracticeTests(data);
-        setIsApiData(true);
-      } catch (err) {
-        console.error('Failed to fetch practice tests:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
-        setError(errorMessage);
-        // Fallback to static data
-        console.log('Using fallback data:', practiceTestsData.length, 'tests');
-        setPracticeTests(practiceTestsData);
-        setIsApiData(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadPracticeTests();
+    console.log('Loading practice tests from local JSON data...');
+    const transformedTests = practiceTestsData.map(transformLocalData);
+    console.log('Local data loaded:', transformedTests.length, 'tests');
+    setPracticeTests(transformedTests);
   }, []);
 
-  // Retry function for failed API calls
-  const retryFetch = () => {
-    const loadPracticeTests = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await fetchPracticeTests();
-        setPracticeTests(data);
-      } catch (err) {
-        console.error('Failed to fetch practice tests:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load practice tests';
-        setError(errorMessage);
-        setPracticeTests(practiceTestsData);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-    loadPracticeTests();
-  };
 
   const filteredAndSortedTests = useMemo(() => {
     console.log('Filtering tests:', {
@@ -315,48 +217,6 @@ export default function PracticeTests() {
     minRating > 0 || 
     showPopularOnly;
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-          <h2 className="text-2xl font-bold mb-2">Loading Practice Tests</h2>
-          <p className="text-muted-foreground">Fetching the latest practice tests...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Failed to Load Practice Tests</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <p className="text-sm text-muted-foreground mb-6">
-            Showing fallback data. Please check your connection and try again.
-          </p>
-          <div className="flex gap-2 justify-center">
-            <Button 
-              onClick={retryFetch} 
-              variant="outline"
-            >
-              Try Again
-            </Button>
-            <Button 
-              onClick={() => window.location.reload()} 
-              variant="default"
-            >
-              Reload Page
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -386,19 +246,6 @@ export default function PracticeTests() {
               Realistic questions, detailed explanations, and performance tracking.
             </p>
             
-            {/* API Status Banner */}
-            {error && (
-              <div className="mt-6 max-w-2xl mx-auto">
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                  <div className="flex items-center justify-center gap-2 text-yellow-800 dark:text-yellow-200">
-                    <AlertCircle className="h-5 w-5" />
-                    <span className="text-sm font-medium">
-                      Using offline data. API connection failed: {error}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
             <div className="flex flex-wrap justify-center items-center gap-8 mt-8 text-muted-foreground">
               <div className="flex items-center">
                 <Award className="h-5 w-5 text-accent mr-2" />
