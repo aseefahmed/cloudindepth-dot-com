@@ -34,7 +34,9 @@ import {
   Calendar,
   CreditCard,
   FileText,
-  MoreVertical
+  MoreVertical,
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 
 const isAuth0Configured = () => {
@@ -153,6 +155,7 @@ export default function MyPracticeTests() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [purchasedTests, setPurchasedTests] = useState<any[]>([]);
+  const [questionsBankLoading, setQuestionsBankLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user?.sub) {
@@ -242,6 +245,9 @@ export default function MyPracticeTests() {
       return;
     }
 
+    // Set loading state for this specific test
+    setQuestionsBankLoading(practiceTestId);
+
     try {
       const response = await fetch(
         "https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/generate_mock_test",
@@ -264,9 +270,11 @@ export default function MyPracticeTests() {
         setLocation(`/dashboard/questions-bank/${practiceTestId}`);
       } else {
         console.error('Failed to fetch questions bank');
+        setQuestionsBankLoading(null); // Clear loading state on error
       }
     } catch (error) {
       console.error('Error fetching questions bank:', error);
+      setQuestionsBankLoading(null); // Clear loading state on error
     }
   };
 
@@ -423,7 +431,14 @@ export default function MyPracticeTests() {
                   >
                     <TableCell className="font-medium">
                       <div>
-                        <p className="font-semibold text-foreground">{test.test_title || test.name}</p>
+                        <p className="font-semibold text-foreground">
+                          {test.test_title || test.name} <br />
+                          <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                            Expiry: {test.expiry.substring(0, 12) ||  "N/A"}
+                          </Badge>
+                          
+                          
+                          </p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -443,11 +458,12 @@ export default function MyPracticeTests() {
                         {/* <Progress value={Number(test.no_of_attempt ?? 0)} className="h-2" /> */}
                   </div>
                     </TableCell>
+                    
                     <TableCell>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        {test.last_attempted ||  "N/A"}
-                  </div>
+                            <Clock className="h-4 w-4" />
+                            {test.last_attempted ||  "N/A"}
+                      </div>
                     </TableCell>
                     <TableCell className="text-center">
                       <DropdownMenu>
@@ -493,10 +509,20 @@ export default function MyPracticeTests() {
                           <DropdownMenuItem 
                             onClick={() => handleQuestionsBank(test)}
                             className="cursor-pointer"
+                            disabled={questionsBankLoading === (test.practice_test_id || test.id)}
                           >
                             <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4" />
-                              View Questions Bank
+                              {questionsBankLoading === (test.practice_test_id || test.id) ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                  Loading Questions Bank...
+                                </>
+                              ) : (
+                                <>
+                                  <FileText className="h-4 w-4" />
+                                  View Questions Bank
+                                </>
+                              )}
                             </div>
                           </DropdownMenuItem>
                         </DropdownMenuContent>

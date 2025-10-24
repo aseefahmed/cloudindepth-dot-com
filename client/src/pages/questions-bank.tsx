@@ -147,10 +147,41 @@ export default function QuestionsBank() {
     };
   }, []);
 
-  // Fetch questions bank data
+  // Dynamic import function for questions data
+  const loadQuestionsData = async (testId: string) => {
+    try {
+      // Dynamic import based on testId
+      const module = await import(`../data/questions/${testId}/full/questions.json`);
+      return module.default;
+    } catch (error) {
+      console.error(`Failed to load questions for testId: ${testId}`, error);
+      throw new Error(`Questions data not found for test: ${testId}`);
+    }
+  };
+
+  // Get test title based on testId
+  const getTestTitle = (testId: string) => {
+    const titles: { [key: string]: string } = {
+      'saa': 'AWS Certified Solutions Architect - Associate (SAA-C03) Questions Bank',
+      'sap': 'AWS Certified Solutions Architect - Professional (SAP-C02) Questions Bank',
+      'dva': 'AWS Certified Developer - Associate (DVA-C02) Questions Bank',
+      'dop': 'AWS Certified DevOps Engineer - Professional (DOP-C02) Questions Bank',
+      'scs': 'AWS Certified Security - Specialty (SCS-C02) Questions Bank',
+      'mls': 'AWS Certified Machine Learning - Specialty (MLS-C01) Questions Bank',
+      'dbs': 'AWS Certified Database - Specialty (DBS-C01) Questions Bank',
+      'ans': 'AWS Certified Advanced Networking - Specialty (ANS-C01) Questions Bank',
+      'das': 'AWS Certified Data Analytics - Specialty (DAS-C01) Questions Bank',
+      'pas': 'AWS Certified SAP on AWS - Specialty (PAS-C01) Questions Bank',
+      'cls': 'AWS Certified Cloud Practitioner (CLF-C02) Questions Bank',
+      'sys': 'AWS Certified SysOps Administrator - Associate (SOA-C02) Questions Bank'
+    };
+    return titles[testId] || `${testId.toUpperCase()} Questions Bank`;
+  };
+
+  // Load questions bank data from local JSON
   useEffect(() => {
-    const fetchQuestionsBank = async () => {
-      if (!testId || !user?.sub) {
+    const loadQuestionsBank = async () => {
+      if (!testId) {
         setLoading(false);
         return;
       }
@@ -159,44 +190,31 @@ export default function QuestionsBank() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(
-          "https://9s5z6fbk84.execute-api.ap-southeast-6.amazonaws.com/prod/generate_mock_test",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_id: user.sub,
-              test_id: testId,
-              type: "question_bank"
-            }),
-          }
-        );
+        console.log(`Loading questions for testId: ${testId}`);
+        
+        // Dynamically import the questions data
+        const questionsData = await loadQuestionsData(testId);
+        console.log(`Loaded questions data for ${testId}:`, questionsData);
 
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const data = await response.json(); 
-        console.log("Questions Bank API response:", data);
-
-        // Transform the API response to our format
+        // Transform the local JSON data to our format
         const transformedData: QuestionsBankData = {
           testId: testId,
-          testTitle: data.test_title || "Practice Test Questions",
-          totalQuestions: data.length || 0,
-          questions: data || []
+          testTitle: getTestTitle(testId),
+          totalQuestions: questionsData.length,
+          questions: questionsData.map((q: any) => ({
+            ...q,
+            difficulty: "medium" // Add default difficulty since it's not in the JSON
+          }))
         };
 
         setQuestionsData(transformedData);
-        console.log("__________________________")
-        console.log(transformedData)
+        console.log("Transformed data:", transformedData);
+        
         if (transformedData.questions.length === 0) {
           setError("No questions available for this exam.");
         }
       } catch (err) {
-        console.error("Error fetching questions bank:", err);
+        console.error("Error loading questions bank:", err);
         setError(err instanceof Error ? err.message : "Failed to load questions bank");
         toast({
           title: "Error Loading Questions Bank",
@@ -208,8 +226,8 @@ export default function QuestionsBank() {
       }
     };
 
-    fetchQuestionsBank();
-  }, [testId, user?.sub, toast]);
+    loadQuestionsBank();
+  }, [testId, toast]);
 
   // Filter questions based on search and filters
   const filteredQuestions = questionsData?.questions.filter(question => {

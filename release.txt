@@ -7,3 +7,4 @@ Release
 - release version now displayed in the user dropdown
 - added study notes 
 - replaced api call with static json response
+- store order and user information for analytics purpose

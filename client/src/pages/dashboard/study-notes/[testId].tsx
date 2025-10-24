@@ -332,7 +332,7 @@ export default function StudyNotes() {
                                 dangerouslySetInnerHTML={{ 
                                   __html: tip.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                                 }}
-                              />
+                              />1
                             </div>
                           ))}
                         </div>
@@ -408,3 +408,5 @@ export default function StudyNotes() {
     </div>
   );
 }
+
+

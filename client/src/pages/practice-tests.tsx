@@ -40,8 +40,7 @@ import {
   ArrowLeft,
   Filter,
   X,
-  Sparkles,
-  TrendingUp
+  Sparkles
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import practiceTestsData from "../data/practice-tests.json";
@@ -103,9 +102,7 @@ const getDifficultyColor = (difficulty: string) => {
 export default function PracticeTests() {
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(["Associate", "Professional", "Specialty"]);
   const [priceRange, setPriceRange] = useState([0, 100]);
-  const [minRating, setMinRating] = useState(0);
   const [showPopularOnly, setShowPopularOnly] = useState(false);
-  const [sortBy, setSortBy] = useState("popular");
   
   // Local data state management
   const [practiceTests, setPracticeTests] = useState<PracticeTest[]>([]);
@@ -129,9 +126,7 @@ export default function PracticeTests() {
       totalTests: practiceTests.length,
       selectedDifficulties,
       priceRange,
-      minRating,
-      showPopularOnly,
-      sortBy
+      showPopularOnly
     });
     
     let filtered = practiceTests.filter((test) => {
@@ -147,12 +142,6 @@ export default function PracticeTests() {
         return false;
       }
 
-      // Rating filter
-      if (test.rating < minRating) {
-        console.log('Filtered out by rating:', test.title, test.rating, minRating);
-        return false;
-      }
-
       // Popular filter
       if (showPopularOnly && !test.popular) {
         console.log('Filtered out by popular:', test.title, test.popular);
@@ -164,20 +153,8 @@ export default function PracticeTests() {
     
     console.log('Filtered results:', filtered.length, 'out of', practiceTests.length);
 
-    // Sorting
+    // Sorting - always sort by sort_number, then by popularity, then by rating
     filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "rating":
-          return b.rating - a.rating;
-        case "questions":
-          return b.questions - a.questions;
-        case "popular":
-        default:
-          // Sort by sort_number in ascending order, then by popularity, then by rating
           const aSortNumber = a.sort_number || 0;
           const bSortNumber = b.sort_number || 0;
           
@@ -189,32 +166,20 @@ export default function PracticeTests() {
           if (a.popular && !b.popular) return -1;
           if (!a.popular && b.popular) return 1;
           return b.rating - a.rating;
-      }
     });
 
     return filtered;
-  }, [practiceTests, selectedDifficulties, priceRange, minRating, showPopularOnly, sortBy]);
-
-  const handleDifficultyToggle = (difficulty: string) => {
-    setSelectedDifficulties(prev =>
-      prev.includes(difficulty)
-        ? prev.filter(d => d !== difficulty)
-        : [...prev, difficulty]
-    );
-  };
+  }, [practiceTests, selectedDifficulties, priceRange, showPopularOnly]);
 
   const resetFilters = () => {
     setSelectedDifficulties(["Associate", "Professional", "Specialty"]);
     setPriceRange([0, 100]);
-    setMinRating(0);
     setShowPopularOnly(false);
-    setSortBy("popular");
   };
 
   const hasActiveFilters = selectedDifficulties.length !== 3 || 
     priceRange[0] !== 0 || 
     priceRange[1] !== 100 || 
-    minRating > 0 || 
     showPopularOnly;
 
 
@@ -236,7 +201,7 @@ export default function PracticeTests() {
 
       {/* Header Section */}
       <section className="pt-28 pb-12 bg-gradient-to-br from-primary/10 to-accent/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-4">
               AWS Certification <span className="text-primary">Practice Tests</span>
@@ -266,7 +231,7 @@ export default function PracticeTests() {
 
       {/* Main Content with Sidebar */}
       <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Sidebar - Filters */}
             <aside className="lg:w-80 flex-shrink-0">
@@ -293,49 +258,26 @@ export default function PracticeTests() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {/* Sort By */}
-                    <div>
-                      <Label className="text-sm font-semibold mb-3 flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-primary" />
-                        Sort By
-                      </Label>
-                      <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="w-full" data-testid="select-sort">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="popular">Most Popular</SelectItem>
-                          <SelectItem value="rating">Highest Rated</SelectItem>
-                          <SelectItem value="price-low">Price: Low to High</SelectItem>
-                          <SelectItem value="price-high">Price: High to Low</SelectItem>
-                          <SelectItem value="questions">Most Questions</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Separator />
-
                     {/* Difficulty Level */}
                     <div>
                       <Label className="text-sm font-semibold mb-3 block">Difficulty Level</Label>
-                      <div className="space-y-3">
-                        {["Associate", "Professional", "Specialty"].map((difficulty) => (
-                          <div key={difficulty} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`diff-${difficulty}`}
-                              checked={selectedDifficulties.includes(difficulty)}
-                              onCheckedChange={() => handleDifficultyToggle(difficulty)}
-                              data-testid={`checkbox-difficulty-${difficulty.toLowerCase()}`}
-                            />
-                            <label
-                              htmlFor={`diff-${difficulty}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                              {difficulty}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
+                      <Select value={selectedDifficulties.join(',')} onValueChange={(value) => {
+                        if (value === 'all') {
+                          setSelectedDifficulties(["Associate", "Professional", "Specialty"]);
+                        } else {
+                          setSelectedDifficulties([value]);
+                        }
+                      }}>
+                        <SelectTrigger className="w-full" data-testid="select-difficulty">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Levels</SelectItem>
+                          <SelectItem value="Associate">Associate</SelectItem>
+                          <SelectItem value="Professional">Professional</SelectItem>
+                          <SelectItem value="Specialty">Specialty</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <Separator />
@@ -362,38 +304,6 @@ export default function PracticeTests() {
 
                     <Separator />
 
-                    {/* Rating */}
-                    <div>
-                      <Label className="text-sm font-semibold mb-3 block">Minimum Rating</Label>
-                      <div className="space-y-3">
-                        {[4.5, 4.0, 3.5, 0].map((rating) => (
-                          <div key={rating} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`rating-${rating}`}
-                              checked={minRating === rating}
-                              onCheckedChange={() => setMinRating(rating)}
-                              data-testid={`checkbox-rating-${rating}`}
-                            />
-                            <label
-                              htmlFor={`rating-${rating}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-1"
-                            >
-                              {rating > 0 ? (
-                                <>
-                                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                  {rating}+ Stars
-                                </>
-                              ) : (
-                                "All Ratings"
-                              )}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <Separator />
-
                     {/* Popular Only */}
                     <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
                       <div className="flex items-center space-x-2">
@@ -414,13 +324,6 @@ export default function PracticeTests() {
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* Results Count */}
-                <div className="mt-4 text-center p-4 bg-muted rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    Showing <span className="font-bold text-foreground" data-testid="text-results-count">{filteredAndSortedTests.length}</span> of {practiceTests.length} tests
-                  </p>
-                </div>
               </div>
             </aside>
 
@@ -438,7 +341,7 @@ export default function PracticeTests() {
                   </Button>
                 </Card>
               ) : (
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredAndSortedTests.map((test) => (
                     <Card 
                       key={test.id} 
@@ -566,7 +469,7 @@ export default function PracticeTests() {
 
       {/* Features Section */}
       <section className="py-16 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
               Why Choose Our Practice Tests?

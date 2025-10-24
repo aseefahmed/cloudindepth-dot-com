@@ -39,7 +39,7 @@ open_ai_key = json.loads(get_secret_value_response['SecretString'])["key"]
 st.sidebar.title("📋 Navigation")
 menu_option = st.sidebar.radio(
     "Go to",
-    ["Home", "S3 Folder Browser", "Create Blog Post", "View Blog Posts", "Blog Detail", "About"],
+    ["Home", "S3 Folder Browser", "Create Blog Post", "View Blog Posts", "Blog Detail", "Orders", "About"],
     index=2
 )
 
@@ -268,8 +268,10 @@ if menu_option == "Home":
         """
         Use the sidebar to navigate between pages:
         - **S3 Folder Browser**: Browse your AWS S3 folders  
-        - **Create Blog Post**: Add new blog entries  
-        - **View Blog Posts**: View and delete existing blog entries  
+        - **Create Blog Post**: AI-powered blog creation with automatic content generation
+        - **View Blog Posts**: View and manage existing blog entries  
+        - **Blog Detail**: View detailed blog posts with related content
+        - **Orders**: View and manage customer purchase records
         - **About**: Learn more about this app  
         """
     )
@@ -795,13 +797,186 @@ elif menu_option == "Blog Detail":
                 - [AWS Blog](https://aws.amazon.com/blogs/)
                 """)
 
+elif menu_option == "Orders":
+    st.title("📦 Orders Management")
+    #st.markdown("View and manage customer purchase records")
+
+    # Load orders data from S3
+    orders_key = "analytics/purchase_records.json"
+    
+    with st.spinner("Loading orders data..."):
+        orders_data = read_json_from_s3(bucket_name, orders_key)
+    
+    if not orders_data:
+        st.warning("⚠️ No orders data found.")
+        st.info("Make sure the file `analytics/purchase_records.json` exists in your S3 bucket.")
+    else:
+        # Handle different data structures
+        if isinstance(orders_data, dict):
+            # If it's a dict, convert to list of values
+            orders_list = list(orders_data.values())
+        elif isinstance(orders_data, list):
+            orders_list = orders_data
+        else:
+            st.error("❌ Invalid data format in orders file.")
+            st.stop()
+        
+        if not orders_list:
+            st.warning("⚠️ No orders found in the data.")
+        else:
+            # Filter options
+            # st.markdown("### 🔧 Filter Options")
+            
+            # Checkbox to ignore test emails
+            ignore_test_emails = st.checkbox(
+                "🚫 Ignore test email addresses", 
+                value=False,
+                help="Filter out aseefahmed@gmail.com and aseefahmed.aws@gmail.com from the results"
+            )
+            
+            # Apply email filtering if checkbox is checked
+            if ignore_test_emails:
+                test_emails = [
+                    'aseefahmed@gmail.com', 
+                    'aseefahmed.aws@gmail.com',
+                    'aseefahmed866@gmail.com',
+                    'cheesecakenz@gmail.com',
+                    'cloudindepthnz@gmail.com',
+                    'cheesecakesnz@gmail.com',
+                    'mashrekha.anwar@gmail.com'
+                ]
+                original_count = len(orders_list)
+                orders_list = [order for order in orders_list if order.get('email', '') not in test_emails]
+                filtered_count = len(orders_list)
+                
+                if original_count != filtered_count:
+                    st.info(f"🔍 Filtered out {original_count - filtered_count} test email orders. Showing {filtered_count} orders.")
+            
+            # Validate and create DataFrame after filtering
+            # Ensure all items in orders_list are dictionaries
+            valid_orders = []
+            for order in orders_list:
+                if isinstance(order, dict):
+                    valid_orders.append(order)
+                else:
+                    st.warning(f"⚠️ Skipping invalid order item: {type(order)} - {order}")
+            
+            if not valid_orders:
+                st.error("❌ No valid order data found after filtering.")
+                st.stop()
+            
+            df = pd.DataFrame(valid_orders)
+            
+            # Display orders count in card format
+            #st.markdown("### 📊 Orders Overview")
+            
+            # Create a card-style display for the number of orders
+            col1, col2, col3 = st.columns([1, 2, 1])
+            
+            with col2:
+                st.markdown(f"""
+                <div style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    padding: 30px;
+                    border-radius: 15px;
+                    text-align: center;
+                    color: white;
+                    margin: 20px 0;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+                    border: 1px solid rgba(255,255,255,0.2);
+                ">
+                    <h1 style="margin: 0 0 10px 0; font-size: 3em; color: #fff;">{len(valid_orders)}</h1>
+                    <p style="margin: 0; font-size: 1.2em; color: #e2e8f0;">Total Orders</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            # Filter and reorder columns to show only email, practice_test_id, order_date
+            display_columns = ['email', 'practice_test_id', 'timestamp']
+            
+            # Check which columns exist in the data
+            available_columns = [col for col in display_columns if col in df.columns]
+            
+            if not available_columns:
+                st.warning("⚠️ None of the requested columns (email, practice_test_id, order_date) found in the data.")
+                st.info("Available columns in the data:")
+                st.write(list(df.columns))
+            else:
+                # Create filtered dataframe with only the requested columns
+                filtered_df = df[available_columns]
+                
+                # st.markdown("### 📋 Orders Table")
+                # st.markdown(f"Showing columns: {', '.join(available_columns)}")
+                
+                # Create styled table
+                def style_orders_table(df):
+                    return (
+                        df.style.set_properties(
+                            **{
+                                "text-align": "left",
+                                "background-color": "#ffffff",
+                                "border-color": "#dee2e6",
+                                "color": "#212529",
+                                "font-size": "14px",
+                                "padding": "8px",
+                            }
+                        )
+                        .set_table_styles(
+                            [
+                                {"selector": "thead th", "props": [("background-color", "#28a745"), ("color", "white"), ("font-size", "16px"), ("text-align", "left")]},
+                                {"selector": "tbody tr:nth-child(even)", "props": [("background-color", "#f8f9fa")]},
+                                {"selector": "tbody tr:hover", "props": [("background-color", "#d4edda"), ("color", "#000")]},
+                                {"selector": "tbody td", "props": [("border", "1px solid #dee2e6")]},
+                                {"selector": "table", "props": [("border-collapse", "collapse"), ("width", "100%"), ("border-radius", "12px"), ("overflow", "hidden")]},
+                            ]
+                        )
+                    )
+                
+                # Show filtered table
+                st.dataframe(
+                    style_orders_table(filtered_df), 
+                    use_container_width=True, 
+                    height=600
+                )
+            
+            # Download button for CSV (use filtered data if available)
+            if 'available_columns' in locals() and available_columns:
+                csv_data = filtered_df.to_csv(index=False)
+            else:
+                csv_data = df.to_csv(index=False)
+            
+            st.download_button(
+                label="📥 Download Orders as CSV",
+                data=csv_data,
+                file_name=f"orders_{time.strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv"
+            )
+            
+            # Show sample order details
+            if len(orders_list) > 0:
+                st.markdown("### 🔍 Sample Order Details")
+                sample_order = orders_list[0]
+                
+                with st.expander("View Sample Order Structure", expanded=False):
+                    st.json(sample_order)
+
 elif menu_option == "About":
     st.title("ℹ️ About This App")
     st.markdown(
         """
-        **CloudInDepth Dashboard** helps you manage your AWS S3 and blog data.  
-        - Browse S3 folders  
-        - Create and manage blog posts stored in S3  
-        - Securely uses **boto3** and **Streamlit** for simple management  
+        **CloudInDepth Dashboard** is a comprehensive management system for your AWS S3 and business data.  
+        
+        **Features:**
+        - 📦 **S3 Folder Browser**: Browse your AWS S3 folders and files
+        - 🤖 **AI-Powered Blog Creation**: Generate complete blog posts with content, images, and styling using OpenAI
+        - 📝 **Blog Management**: View, edit, and manage blog posts stored in S3
+        - 📊 **Orders Management**: View and analyze customer purchase records
+        - 🔒 **Secure**: Uses **boto3** and **Streamlit** for secure AWS integration
+        
+        **Technology Stack:**
+        - Streamlit for the web interface
+        - AWS S3 for data storage
+        - OpenAI GPT-4 for content generation
+        - DALL-E 3 for image generation
+        - Pandas for data analysis
         """
     )

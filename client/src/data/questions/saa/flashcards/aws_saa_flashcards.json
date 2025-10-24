@@ -1,0 +1,1112 @@
+{
+  "response": {
+    "id": "saa-c03",
+    "title": "AWS Solutions Architect Associate",
+    "description": "Key concepts and services for AWS SAA-C03 certification",
+    "totalCards": 100,
+    "category": "AWS",
+    "difficulty": "Associate",
+    "flashcards": [
+      {
+        "id": "1",
+        "front": "🧠 What is the best way to process over 30 TB of clickstream data daily in AWS? 🌐📊",
+        "back": "Use Amazon Kinesis Data Streams for real-time data ingestion, Amazon Kinesis Data Firehose to transmit data to S3, and load the data into Amazon Redshift for analysis.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "2",
+        "front": "🧠 What is the best solution for a dynamic ordering website that minimizes server maintenance and scales quickly? 🌐",
+        "back": "Host static content in Amazon S3, dynamic content using API Gateway and AWS Lambda, and use DynamoDB with on-demand capacity for the database, all delivered through Amazon CloudFront.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "3",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company runs a critical data analysis job each week before the first day of the work week. The job requires at least 1 hour to complete the analysis. The job is stateful and cannot tolerate interruptions. The company needs a solution to run the job on AWS.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements?</p>",
+        "back": "Create a container for the job. Schedule the job to run as an AWS Fargate task on an Amazon Elastic Container Service (Amazon ECS) cluster by using Amazon EventBridge Scheduler.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "4",
+        "front": "🕹️ How can a gaming company ensure high availability and low latency for their TCP/UDP application across multiple AWS Regions? 🤔",
+        "back": "By deploying internal Network Load Balancers in each Region and using AWS Global Accelerator to route traffic optimally.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "5",
+        "front": "🧠 How can a microservices application securely expose REST APIs to backend services hosted in private VPC subnets? 🌐",
+        "back": "Use Amazon API Gateway to design REST APIs, host your application in Amazon ECS within a private subnet, and create a private VPC link for API Gateway to access Amazon ECS securely.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "6",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company wants to use artificial intelligence (AI) to determine the quality of its customer service calls. The company currently manages calls in four different languages, including English. The company will offer new languages in the future. The company does not have the resources to regularly maintain machine learning (ML) models. The company needs to create written sentiment analysis reports from the customer service call recordings. The customer service call recording text must be translated into English.Which combination of steps will meet these requirements?</p>\n<p style=\"padding-top: 5px;\"></p>",
+        "back": "Use Amazon Comprehend to translate the audio recordings into English.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "7",
+        "front": "🛒 How can an ecommerce company ensure high availability and scalability of its web app and database in AWS? 🌐",
+        "back": "Migrate the web app to EC2 instances in an Auto Scaling group across two Availability Zones behind an Application Load Balancer, and use Amazon RDS with Multi-AZ deployment for the database.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "8",
+        "front": "🧠 How can a company migrate 700 TB of backup data to AWS in one month at the lowest cost? 💰",
+        "back": "Order AWS Snowball devices to quickly transfer the data and use a lifecycle policy to transition it to Amazon S3 Glacier Deep Archive for cost-effective long-term storage.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "9",
+        "front": "🧠 What do you do to use an external SSL/TLS certificate with an ALB in AWS? 🔒",
+        "back": "Import the SSL/TLS certificate into AWS Certificate Manager (ACM), apply it to the Application Load Balancer (ALB), and set up Amazon EventBridge to notify you when the certificate is nearing expiration for manual renewal.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "10",
+        "front": "🧠 What does this mean? How can a company efficiently handle data from millions of remote devices on AWS? 🌐",
+        "back": "Use AWS Glue for serverless data processing in S3 and Amazon API Gateway with Kinesis Data Streams to manage incoming data efficiently.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "11",
+        "front": "🧠 What actions should you take to audit EC2 instance provisioning and security group changes in AWS? 🤔",
+        "back": "Enable AWS CloudTrail to track API calls and AWS Config to monitor resource configurations and compliance.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "12",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company is building an ecommerce application and needs to store sensitive customer information. The company needs to give customers the ability to complete purchase transactions on the website.</p>\n<p style=\"padding-top: 5px;\">The company also needs to ensure that sensitive customer data is protected, even from database administrators.Which solution meets these requirements?</p>",
+        "back": "Store sensitive data in Amazon RDS for MySQL. Use AWS Key Management Service (AWS KMS) client-side encryption to encrypt the data.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "13",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company is developing software that uses a PostgreSQL database schema. The company needs to configure multiple development environments and databases for the company's developers.</p>\n<p style=\"padding-top: 5px;\">On average, each development environment is used for half of the 8-hour workday.Which solution will meet these requirements MOST cost-effectively?</p>",
+        "back": "Configure each development environment with its own Amazon Aurora On-Demand PostgreSQL-Compatible database",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "14",
+        "front": "🧠 What solution supports AS2 protocol and custom IdP authentication on AWS? 🤔",
+        "back": "Use AWS Transfer Family for data transfer and create an AWS Lambda function for IdP authentication.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "15",
+        "front": "🧠 What is the most cost-effective storage solution for a 900 TB text document repository in AWS? 📊",
+        "back": "Amazon S3 is the best choice as it offers scalable, low-cost object storage with high durability and availability, ideal for large data sets.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "16",
+        "front": "🧠 What solution can reduce failover time by 20% for an Aurora MySQL database with too many connections? 🤔",
+        "back": "Use Amazon RDS Proxy in front of the Aurora database to pool connections and quickly redirect traffic during failover.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "17",
+        "front": "🧠 What is the best way to reduce operational costs while processing messages from Amazon SQS? 🚀",
+        "back": "Migrate the polling and processing logic to an AWS Lambda function. This eliminates server management, automatically scales with message volume, and charges only for actual usage.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "18",
+        "front": "🧠 What can help improve read performance for a PostgreSQL RDS during high traffic? 🚀",
+        "back": "Create a read replica for the DB instance to offload read queries and reduce the load on the primary database.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "19",
+        "front": "🧠 What does this mean? Which activities does the operational team manage in AWS with RDS, ECS, and Direct Connect? 🤔",
+        "back": "The operational team is responsible for creating and configuring Amazon RDS DB instances, managing software components on Amazon ECS, and ensuring data encryption in transit through Direct Connect.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "20",
+        "front": "🧠 How can you efficiently archive AWS Systems Manager Session Manager logs to S3? 📦",
+        "back": "Enable S3 logging in the Systems Manager console and choose an S3 bucket for automatic archival of session data.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "21",
+        "front": "🧠 What does this mean? How can a company enforce approved application names for resource tagging in AWS Organizations? 🌐",
+        "back": "Create a tag policy in AWS Organizations that specifies allowed application names, ensuring resources can only be created with approved tags.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "22",
+        "front": "🧠 What solution provides secure access to confidential files for remote employees? 🔒",
+        "back": "Migrate files to Amazon FSx for Windows File Server, integrate with on-premises Active Directory, and configure AWS Client VPN for secure access.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "23",
+        "front": "🛡️ How can a company prevent unauthorized modification of cost usage tags in AWS? 🤔",
+        "back": "By creating a Service Control Policy (SCP) in AWS Organizations that denies tag modification actions except for authorized principals.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "24",
+        "front": "🧠 How can you connect two VPCs in the same region cost-effectively? 🌐💰",
+        "back": "Set up a VPC peering connection and update the route tables for inter-VPC communication. It's the most economical option for 500 GB/month of data transfer.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "25",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company is developing a file-sharing application that will use an <strong>Amazon S3</strong> bucket for storage. The company wants to serve all the files through an <strong>Amazon CloudFront</strong> distribution. The company does not want the files to be accessible through direct navigation to the S3 URL.</p>\n<p style=\"padding-top: 5px;\">What should a solutions architect do to meet these requirements?</p>",
+        "back": "Create an origin access identity (OAI). Assign the OAI to the CloudFront distribution. Configure the S3 bucket permissions so that only the OAI has read permission.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "26",
+        "front": "🧠 How can you ensure that only an ECS cluster accesses sensitive data in RDS and S3? 🔒",
+        "back": "Create a KMS customer managed key for encryption, restrict RDS access via Security Groups, and set an S3 bucket policy to allow access only through a Gateway VPC endpoint linked to the ECS task role.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "27",
+        "front": "🧠 What is the best way to ensure legacy applications on EC2 are fault-tolerant in AWS? 🌩️",
+        "back": "Create an AMI of each application, launch two EC2 instances in separate Availability Zones, and place them behind a Network Load Balancer for high availability and fault isolation.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "28",
+        "front": "🧠 What AWS solution minimizes local iSCSI storage while keeping hot data accessible? 🤔",
+        "back": "Use AWS Storage Gateway Volume Gateway in cached mode. It stores primary data in Amazon S3 and keeps only recently accessed data locally.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "29",
+        "front": "🧠 What is the most cost-effective way to analyze web traffic logs on AWS? 🌐💰",
+        "back": "Store the logs in Amazon S3 and use Amazon Athena for analysis. Athena is serverless, incurs costs only when queries are run, and supports standard SQL, making it ideal for on-demand, weekly analyses.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "30",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company is running a critical business application on <strong>Amazon EC2</strong> instances behind an <strong>Application Load Balancer</strong>. The EC2 instances run in an Auto Scaling group and access an <strong>Amazon RDS</strong> DB instance. The design did not pass an operational review because the EC2 instances and the DB instance are all located in a single Availability Zone.</p>\n<p style=\"padding-top: 5px;\">A solutions architect must update the design to use a second Availability Zone.Which solution will make the application highly available?</p>",
+        "back": "Provision a subnet in each Availability Zone. Configure the Auto Scaling group to distribute the EC2 instances across both Availability Zones. Configure the DB instance for Multi-AZ deployment.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "31",
+        "front": "🧠 What solution can help maintain MySQL database performance during monthly reporting? 📊",
+        "back": "Create a read replica of the database to offload reporting queries, preserving the primary instance's performance for daily workloads.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "32",
+        "front": "🧠 What is the best way for private EC2 instances to access the internet while minimizing maintenance? 🌐",
+        "back": "Provision a NAT gateway in a public subnet and update the private subnets' route tables to point to the NAT gateway for managed outbound internet access.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "33",
+        "front": "🧠 What solution can improve the performance of a stateful application on EC2? 🚀",
+        "back": "Replace M5 instances with R5 instances and deploy the Amazon CloudWatch agent for custom latency metrics to ensure optimal performance and effective capacity planning.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "34",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A law firm needs to share information with the public. The information includes hundreds of files that must be publicly readable.</p>\n<p style=\"padding-top: 5px;\">Modifications or deletions of the files by anyone before a designated future date are prohibited.Which solution will meet these requirements in the MOST secure way?</p>",
+        "back": "Create a new Amazon S3 bucket with S3 Versioning enabled. Use S3 Object Lock with a retention period in accordance with the designated date. Configure the S3 bucket for static website hosting. Set an S3 bucket policy to allow read-only access to the objects.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "35",
+        "front": "🧠 How can on-premises applications securely access AWS S3 files without static credentials? 🤔",
+        "back": "Use IAM Roles Anywhere to grant temporary access to the S3 bucket by obtaining security credentials through IAM Identity Center.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "36",
+        "front": "🧠 How can we improve performance for analytics jobs on EC2 with high CPU utilization? 🤔",
+        "back": "Route requests to Amazon SQS, set up an EC2 Auto Scaling group based on queue size, and update the software to read from the queue. This decouples request ingestion from processing and allows dynamic scaling based on demand.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "37",
+        "front": "🧠 <p style=\"padding-top: 5px;\">QUESTION: A company needs to use its on-premises LDAP directory service to authenticate its users to the AWS Management Console. The directory service is not compatible with Security Assertion Markup Language (SAML).</p>\n<p style=\"padding-top: 5px;\">Which solution meets these requirements?</p>",
+        "back": "Develop an on-premises custom identity broker application or process that uses AWS Security Token Service (AWS STS) to get short-lived credentials.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "38",
+        "front": "🧠 What is the best way to migrate 150 TB of data to AWS within a month using a limited network connection? 📦💻",
+        "back": "Order multiple AWS Snowball devices to ship the data to AWS, as they can handle large volumes efficiently and meet the deadline.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "39",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company recently created a disaster recovery site in a different AWS Region.</p>\n<p style=\"padding-top: 5px;\">The company needs to transfer large amounts of data back and forth between NFS file systems in the two Regions on a periodic basis.Which solution will meet these requirements with the LEAST operational overhead?</p>",
+        "back": "Use AWS DataSync.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "40",
+        "front": "🧠 What is the best way to grant AWS CloudFormation access to a private S3 template? 🌐",
+        "back": "Create a presigned URL for the S3 template object and configure CloudFormation to use that URL. This provides secure, time-limited access without making the bucket public.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "41",
+        "front": "🧠 How can a company reduce costs when serving high volumes of static web content on AWS? 🌐💰",
+        "back": "By creating an Amazon CloudFront distribution to host static web contents from an Amazon S3 bucket, reducing load on EC2 instances and optimizing costs.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "42",
+        "front": "🧠 How can a company share Savings Plan discounts across multiple AWS accounts? 🤔",
+        "back": "Enable discount sharing in the management account's Billing Preferences and invite other accounts to join the AWS Organization.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "43",
+        "front": "🧠 What solution allows you to run Amazon EKS in your own data center while keeping data local? 🌐🏢",
+        "back": "Install an AWS Outposts rack in the company’s data center to run managed EKS clusters locally and keep all data on-premises.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "44",
+        "front": "🧠 What do you need to do to use a custom domain with CloudFront and SSL/TLS for free? 🌐🔒",
+        "back": "Request a public certificate from AWS Certificate Manager (ACM) in the us-east-1 Region, as it's free and supported by CloudFront.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "45",
+        "front": "🧠 What is the most cost-effective way to migrate a 20 TB MySQL database to AWS with minimal downtime? 🤔",
+        "back": "Order an AWS Snowball Edge Storage Optimized device for bulk data transfer, then use AWS DMS and SCT for ongoing changes to ensure minimal downtime.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "46",
+        "front": "🧠 What is the most cost-effective way to add a contact form to an S3 static website and notify via email? 💻✉️",
+        "back": "Use Amazon API Gateway with AWS Lambda to handle the contact form submission and publish to an Amazon SNS topic for email notifications, minimizing costs and operational overhead.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "47",
+        "front": "🧠 How can you quickly find all AWS resources tagged with 'application' across multiple Regions? 🌐",
+        "back": "Use the AWS Resource Groups Tag Editor to run a query that reports on all resources globally with the 'application' tag. It provides a unified view and is the fastest way to discover tagged resources.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "48",
+        "front": "🧠 How can international customers improve API response times for an ERP system hosted in AWS? 🌐",
+        "back": "Set up AWS Global Accelerator to route traffic through the nearest AWS edge location, reducing latency and improving performance.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "49",
+        "front": "🧠 What solution should a company use to migrate a Kubernetes application to AWS without code changes? 🤔",
+        "back": "Use Amazon EKS with AWS Fargate for compute and Amazon DocumentDB for data storage. This solution minimizes operational overhead and maintains MongoDB compatibility.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "50",
+        "front": "🧠 How can a retail company safely release a new version of their APIs with minimal customer impact? 🤔",
+        "back": "By creating a canary release deployment stage in Amazon API Gateway, routing a small percentage of traffic to the new version while monitoring its performance before promoting it to full production.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "51",
+        "front": "🧠 What serverless solution can a company use to secure its web application globally? 🌍🔒",
+        "back": "Use Amazon Cognito for authentication, Lambda@Edge for authorization, and Amazon CloudFront for global content delivery.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "52",
+        "front": "🧠 What caching strategy ensures immediate data consistency between the cache and database in AWS? 🔄",
+        "back": "Implement the write-through caching strategy, which updates both the cache and the database simultaneously, ensuring they always match.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "53",
+        "front": "🧠 How can a company effectively track AWS costs by application? 💰",
+        "back": "Tag all AWS resources with the application's name, activate cost allocation tags, and use Cost Explorer for automated, detailed cost breakdowns.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "54",
+        "front": "🛡️ How can you securely manage permissions for new AWS users in a growing company? 🤔",
+        "back": "Create a least privilege IAM policy and attach it to the relevant IAM groups to manage permissions effectively.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "55",
+        "front": "🧠 How can an EC2 instance securely upload data to S3 without using the public internet?",
+        "back": "Create a gateway VPC endpoint for Amazon S3 in the same Availability Zone as the EC2 instance and attach a resource policy to the S3 bucket to allow access only to the EC2 instance's IAM role.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "56",
+        "front": "🧠 What solution can reduce database connection timeouts in a serverless application using AWS Lambda and Amazon RDS? 🌐",
+        "back": "Enable RDS Proxy on the RDS DB instance to pool connections, reduce overhead, and improve scalability with minimal code changes.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "57",
+        "front": "🧠 How can we ensure all data notifications are processed reliably in AWS? 🤔",
+        "back": "Configure an Amazon SQS queue as the on-failure destination for the Lambda function. This allows for durable storage of failed messages and enables retries, ensuring all notifications are eventually processed.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "58",
+        "front": "🧠 What solution ensures high availability and minimal operational overhead for a web app with an embedded NoSQL database? 🤔",
+        "back": "Modify the Auto Scaling group to use EC2 instances across three Availability Zones and migrate the embedded NoSQL database to Amazon DynamoDB using AWS DMS.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "59",
+        "front": "🧠 How can a company achieve high availability and random traffic distribution in AWS? 🌐",
+        "back": "Use Amazon Route 53 multivalue answer routing for random distribution and launch an even number of EC2 instances across multiple Availability Zones to ensure fault tolerance.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "60",
+        "front": "🧠 What’s the best way to analyze mobile app data in near-real time with minimal overhead? 📊",
+        "back": "Use Amazon Kinesis Data Firehose to ingest, encrypt, and store data in Apache Parquet format in S3, coupled with Kinesis Data Analytics for real-time analysis, all with minimal operational overhead.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "61",
+        "front": "🧠 How can a company seamlessly transfer SMB files to AWS without modifying their application? 🤔",
+        "back": "AWS Storage Gateway's File Gateway allows on-premises applications to use an SMB share, automatically syncing files to Amazon S3 over a VPN, without requiring code changes.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "62",
+        "front": "🧠 How can you securely resolve private DNS records for on-premises services in AWS? 🤔",
+        "back": "Create a Route 53 Resolver outbound endpoint and a resolver rule associated with your VPC to forward DNS queries to on-premises DNS servers over a VPN.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "63",
+        "front": "🧠 What storage solution should you use for financial reports in S3 that need to be retrieved within 6 hours after 7 days? 💰📊",
+        "back": "Use S3 Standard for the first 7 days, then transition to S3 Glacier with an S3 Lifecycle rule for cost-effective long-term storage.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "64",
+        "front": "🧠 What is the best way to centralize logs from multiple AWS accounts in the us-west-2 region while keeping costs low? 💰",
+        "back": "Use S3 Same-Region Replication to replicate logs from individual S3 buckets to a centralized S3 bucket in us-west-2 for log analysis. This solution incurs minimal operational overhead and keeps all logs within the region.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "65",
+        "front": "🧠 What AWS service should you use to validate data integrity during migration to Amazon S3? 🤔",
+        "back": "Use AWS DataSync to perform the online transfer from on-premises to S3, as it includes integrity checks with checksums before and after transfer.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "66",
+        "front": "🧠 How can you achieve high availability for an EC2 application with minimal downtime and data loss? 🌐",
+        "back": "Configure the Auto Scaling group across multiple Availability Zones and deploy Amazon Aurora in Multi-AZ mode, optionally using RDS Proxy for connection management.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "67",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company is planning to use an <strong>Amazon DynamoDB</strong> table for data storage. The company is concerned about cost optimization. The table will not be used on most mornings. In the evenings, the read and write traffic will often be unpredictable. When traffic spikes occur, they will happen very quickly.</p>\n<p style=\"padding-top: 5px;\">What should a solutions architect recommend?</p>",
+        "back": "Create a DynamoDB table in on-demand capacity mode.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "68",
+        "front": "🛡️ How can you ensure regular security scans and patching for EC2 instances in AWS?",
+        "back": "Use Amazon Inspector for vulnerability scanning and AWS Systems Manager Patch Manager for automated patching and compliance reporting.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "69",
+        "front": "🧠 What is the best way to connect VPCs across AWS Regions while minimizing operational overhead? 🌐",
+        "back": "Connect your existing Direct Connect connection to a Direct Connect gateway, allowing you to route traffic between VPCs in different Regions and your on-premises data centers efficiently.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "70",
+        "front": "🧠 What does this mean? How can a company ensure that its S3 buckets remain secure from unauthorized changes? 🤔",
+        "back": "Enable AWS Config with the appropriate rules to continuously monitor and audit S3 bucket configurations for unauthorized changes.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "71",
+        "front": "🧠 What solution should a company use for a globally consistent reservation database with sub-1-second update latency? 🌍💻",
+        "back": "Convert the application to use Amazon DynamoDB with Global Tables for multi-Region active-active replication, ensuring low latency and global consistency.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "72",
+        "front": "🧠 What does this mean? How can a company achieve single-digit latency between AWS and on-premises data centers cost-effectively? 💡",
+        "back": "Use AWS Direct Connect with a transit virtual interface (VIF) connected to an AWS Direct Connect gateway, which allows centralized connectivity to multiple VPCs and ensures high bandwidth and low latency.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "73",
+        "front": "🧠 What ensures your data is encrypted before uploading to S3 and during transit? 🔒",
+        "back": "Use client-side encryption to encrypt the data before it is uploaded to the S3 buckets. This ensures encryption at rest before upload and during transit using HTTPS.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "74",
+        "front": "🧠 How can EC2 instances in one VPC access an ElastiCache cluster in another VPC? 🤔",
+        "back": "Create a peering connection between the two VPCs, add route table entries for the peering connection, and configure the ElastiCache security group to allow access from the EC2 instances' security group.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "75",
+        "front": "🧠 What is the best serverless solution for analyzing data in S3 with encryption and cross-region replication? 🌍🔒",
+        "back": "Use an existing S3 bucket with S3 Cross-Region Replication (CRR) for automatic replication, apply server-side encryption with S3-managed keys (SSE-S3), and query data using Amazon Athena for a fully serverless solution.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "76",
+        "front": "🧠 How can you share AMIs securely between OUs in AWS Organizations? 🤔",
+        "back": "To share KMS-encrypted AMIs between OUs, add the target OU's ARN to the AMI launch permissions and update the KMS key policy to allow decryption for that OU.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "77",
+        "front": "🧠 What is the best way to manage old data in DynamoDB for an application that only needs the last 30 days of data? 🗓️",
+        "back": "Extend the application to add a timestamp attribute for TTL in DynamoDB. This automatically deletes items older than 30 days, minimizing costs and effort.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "78",
+        "front": "🧠 What storage solution should a company use for highly available Windows file shares on AWS?",
+        "back": "Extend to Amazon FSx for Windows File Server with a Multi-AZ configuration for high availability and native SMB support.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "79",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company wants to migrate its on-premises application to AWS. The application produces output files that vary in size from tens of gigabytes to hundreds of terabytes. The application data must be stored in a standard file system structure. The company wants a solution that scales automatically. is highly available, and requires minimum operational overhead.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements?</p>",
+        "back": "Migrate the application to Amazon EC2 instances in a Multi-AZ Auto Scaling group. Use Amazon Elastic File System (Amazon EFS) for storage.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "80",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A global company runs its applications in multiple AWS accounts in AWS Organizations. The company's applications use multipart uploads to upload data to multiple <strong>Amazon S3</strong> buckets across AWS Regions.</p>\n<p style=\"padding-top: 5px;\">The company wants to report on incomplete multipart uploads for cost compliance purposes.Which solution will meet these requirements with the LEAST operational overhead?</p>",
+        "back": "Configure S3 Storage Lens to report the incomplete multipart upload object count.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "81",
+        "front": "🧠 What solution allows a company to run Docker containers without managing servers or storage? 🤔",
+        "back": "Use Amazon ECS with AWS Fargate and mount an Amazon EFS volume for persistent storage.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "82",
+        "front": "🧠 How can you securely connect applications in different VPCs within the same AWS account? 🌐",
+        "back": "Configure a VPC peering connection to enable private, secure communication between the VPCs without using the public Internet.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "83",
+        "front": "🧠 What is the best way to run a containerized application on AWS for high availability and minimal operational overhead? 🚀",
+        "back": "Use Amazon Elastic Container Registry (ECR) for storing container images and deploy with Amazon Elastic Container Service (ECS) using AWS Fargate. This setup is serverless and automatically scales based on demand.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "84",
+        "front": "🛏️💤 How can an IoT mattress company process sleep data efficiently and cost-effectively? 🤔",
+        "back": "Use AWS Lambda with a Python script to process the 2 MB of nightly data in under 30 seconds, leveraging a pay-per-use model for cost efficiency.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "85",
+        "front": "🖼️ How can we scale an image analysis app efficiently on AWS? 🤔",
+        "back": "Use AWS Lambda for processing photos, store images in Amazon S3, and keep DynamoDB for metadata to ensure scalability and cost-effectiveness.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "86",
+        "front": "🧠 What solution minimizes operational overhead for a social media company's database needs? 🤔",
+        "back": "Use Amazon Neptune to store user profiles and relationships, and use Neptune Streams to monitor database changes efficiently.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "87",
+        "front": "🧠 What design ensures parallel job processing on AWS with durability and scalability? 🤔",
+        "back": "Use Amazon SQS for durable job storage, create an AMI for the processor application, and set up an Auto Scaling group that scales based on the number of messages in the SQS queue.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "88",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company has primary and secondary data centers that are 500 miles (804.7 km) apart and interconnected with high-speed fiber-optic cable. The company needs a highly available and secure network connection between its data centers and a VPC on AWS for a mission-critical workload.</p>\n<p style=\"padding-top: 5px;\">A solutions architect must choose a connection solution that provides maximum resiliency.Which solution meets these requirements?</p>",
+        "back": "Two AWS Direct Connect connections from each of the primary and secondary data centers terminating at two Direct Connect locations on two separate devices",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "89",
+        "front": "🧠 What actions can improve page load speeds for a global e-commerce web application on AWS? 🌐💻",
+        "back": "Set up an Amazon CloudFront distribution to cache static assets and create a read replica for the RDS database to offload read traffic.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "90",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company runs a highly available SFTP service. The SFTP service uses two <strong>Amazon EC2</strong> Linux instances that run with elastic IP addresses to accept traffic from trusted IP sources on the internet. The SFTP service is backed by shared storage that is attached to the instances. User accounts are created and managed as Linux users in the SFTP servers. The company wants a serverless option that provides high IOPS performance and highly configurable security.</p>\n<p style=\"padding-top: 5px;\">The company also wants to maintain control over user permissions.Which solution will meet these requirements?</p>",
+        "back": "Create an encrypted Amazon Elastic File System (Amazon EFS) volume. Create an AWS Transfer Family SFTP service with elastic IP addresses and a VPC endpoint that has internet-facing access. Attach a security group to the endpoint that allows only trusted IP addresses. Attach the EFS volume to the SFTP service endpoint. Grant users access to the SFTP service.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "91",
+        "front": "🧠 How can you reduce false alarms when monitoring CPU and disk IOPS in AWS? 🤔",
+        "back": "Use Amazon CloudWatch composite alarms to combine conditions (e.g., CPU > 50% AND Read IOPS high) into a single alert, ensuring alerts only trigger when both conditions occur simultaneously.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "92",
+        "front": "🧠 What should a company use to manage encryption keys efficiently in AWS? 🔑",
+        "back": "Use AWS Key Management Service (AWS KMS) to protect encryption keys. It is a fully managed service that handles key creation, storage, rotation, and auditing, reducing operational burden for developers.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "93",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company hosts its static website by using <strong>Amazon S3</strong>. The company wants to add a contact form to its webpage. The contact form will have dynamic server-side components for users to input their name, email address, phone number, and user message. The company anticipates that there will be fewer than 100 site visits each month.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements MOST cost-effectively?</p>",
+        "back": "Create an Amazon API Gateway endpoint with an AWS Lambda backend that makes a call to Amazon Simple Email Service (Amazon SES).",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "94",
+        "front": "🧠 What architecture maximizes efficiency for processing insurance quotes in AWS? 🚀",
+        "back": "Use a single Amazon SNS topic with message filtering to route to multiple SQS queues based on quote type. This ensures durable message delivery and minimal operational overhead.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "95",
+        "front": "🧠 What solution can a company use to predict manufacturing resources with no ML experience? 🤔",
+        "back": "Use Amazon Forecast to train a predictor with historical data in S3 and invoke it through an AWS Lambda function for predictions.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "96",
+        "front": "🧠 What is the most cost-effective serverless solution for building a web application on AWS with unpredictable traffic? 🌐💰",
+        "back": "Use Amazon API Gateway with AWS Lambda and Amazon DynamoDB for serverless computing, alongside Amazon Cognito for user authentication and AWS Amplify for hosting static content.",
+        "category": "4: Design Cost-Optimized Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Cost-Optimized Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 4: Design Cost-Optimized Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "97",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A company is developing a mobile gaming app in a single AWS Region. The app runs on multiple <strong>Amazon EC2</strong> instances in an Auto Scaling group. The company stores the app data in <strong>Amazon DynamoDB</strong>. The app communicates by using TCP traffic and UDP traffic between the users and the servers. The application will be used globally. The company wants to ensure the lowest possible latency for all users.</p>\n<p style=\"padding-top: 5px;\">Which solution will meet these requirements?</p>",
+        "back": "Use AWS Global Accelerator to create an accelerator. Create a Network Load Balancer (NLB) behind an accelerator endpoint that uses Global Accelerator integration and listening on the TCP and UDP ports. Update the Auto Scaling group to register instances on the NLB.",
+        "category": "3: Design High-Performing Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design High-Performing Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 3: Design High-Performing Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "98",
+        "front": "🧠 How can a media company secure its streaming content on CloudFront with minimal user impact? 🤔",
+        "back": "Use Signed Cookies for users who cannot modify URLs and Signed URLs for custom HTTP clients that do not support cookies.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "99",
+        "front": "🧠 <p style=\"padding-top: 5px;\">A solutions architect must provide an automated solution for a company's compliance policy that states security groups cannot include a rule that allows SSH from 0.0.0.0/0. The company needs to be notified if there is any breach in the policy. A solution is needed as soon as possible.</p>\n<p style=\"padding-top: 5px;\">What should the solutions architect do to meet these requirements with the LEAST operational overhead?</p>",
+        "back": "Enable the restricted-ssh AWS Config managed rule and generate an Amazon Simple Notification Service (Amazon SNS) notification when a noncompliant rule is created.",
+        "category": "1: Design Secure Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Secure Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 1: Design Secure Architectures and is commonly tested in the SAA-C03 exam."
+      },
+      {
+        "id": "100",
+        "front": "🧠 What architecture ensures a resilient web application for processing orders? 🌐",
+        "back": "Utilize an Application Load Balancer with EC2 Auto Scaling, Amazon SQS for buffering unprocessed orders, and Amazon RDS with Multi-AZ for high availability of processed data.",
+        "category": "2: Design Resilient Architectures",
+        "difficulty": "Medium",
+        "tags": [
+          "Design Resilient Architectures"
+        ],
+        "explanation": "This concept belongs to Domain 2: Design Resilient Architectures and is commonly tested in the SAA-C03 exam."
+      }
+    ]
+  }
+}
